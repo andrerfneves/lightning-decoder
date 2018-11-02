@@ -1,25 +1,66 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { PureComponent } from 'react';
+import LightningPayReq from './lib/bolt11';
+import './app.css';
 
-class App extends Component {
+const INPUT_PLACEHOLDER = 'Enter Lightning Invoice Here';
+
+class App extends PureComponent {
+  state = {
+    text: '',
+    decodedInvoice: {},
+  };
+
+  handleChange = (event) => {
+    const { target: { value: text } } = event;
+    this.setState(() => ({ text }));
+  }
+
+  handleKeyPress = (event) => {
+    const { text } = this.state;
+
+    if (event.key === 'Enter') {
+      this.setState(() => ({
+        decodedInvoice: LightningPayReq.decode(text),
+      }));
+    }
+  }
+
+  renderDecodedInvoice = () => {
+    const { decodedInvoice } = this.state;
+
+    return (
+      <div className='invoice-details'>
+        {Object.keys(decodedInvoice).map((key) => {
+          if (typeof decodedInvoice[key] === 'array') {
+            return null
+          }
+
+          return (
+            <div>{key}: {decodedInvoice[key]}</div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  renderInput = () => {
+    const { text } = this.state;
+
+    return (
+      <input
+        value={text}
+        onChange={this.handleChange}
+        placeholder={INPUT_PLACEHOLDER}
+        onKeyPress={this.handleKeyPress}
+      />
+    );
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className='app'>
+        {this.renderInput()}
+        {this.renderDecodedInvoice()}
       </div>
     );
   }
