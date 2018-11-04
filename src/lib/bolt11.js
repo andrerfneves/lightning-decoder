@@ -1,3 +1,4 @@
+/* eslint-disable */
 const crypto = require('crypto')
 const bech32 = require('bech32')
 const secp256k1 = require('secp256k1')

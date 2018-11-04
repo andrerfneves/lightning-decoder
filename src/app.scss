@@ -1,0 +1,260 @@
+// Variables
+$app-background: #292929;
+$background-primary: #000000;
+$text-primary: #f3f3f3;
+$text-secondary: #838383;
+$text-tertiary: #979797;
+$error-color: #3e0203;
+$border-color: #212020;
+
+$container-width: 600px;
+$border: 1px solid $border-color;
+$border-radius: 4px;
+$icon-size: 72px;
+$base-spacing: 20px;
+$transition: all 0.5s cubic-bezier(0.215, 0.610, 0.355, 1);
+
+$font-family: source-code-pro, Menlo, Monaco, Consolas,"Courier New", monospace;
+$font-weight-bold: 900;
+$font-weight-regular: 400;
+$font-small-size: 18px;
+$font-base-size: 24px;
+$font-large-size: 50px;
+
+// General
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// App Layout
+.app {
+  background: $app-background;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: $base-spacing 0;
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2 * $base-spacing;
+    position: relative;
+    transition: $transition;
+  }
+}
+
+// Input
+.input {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+
+  &__text {
+    background: $background-primary;
+    border-radius: $border-radius;
+    padding: $base-spacing 25px $base-spacing 75px;
+    font-size: $font-base-size;
+    font-weight: $font-weight-bold;
+    border: $border;
+    outline: none;
+    color: $text-primary;
+    min-width: 500px;
+    font-family: $font-family;
+    position: relative;
+  }
+
+  &__asset {
+    position: absolute;
+    left: $base-spacing;
+    top: 15px;
+    width: 35px;
+    height: 2 * $base-spacing;
+    z-index: 5;
+    opacity: 0.6;
+  }
+}
+
+// Submit
+.submit {
+  height: $icon-size;
+  width: $icon-size;
+  border-radius: 50%;
+  background: $background-primary;
+  margin-left: 2 * $base-spacing;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  right: -100px;
+  border: $border;
+
+  &:hover {
+    .submit__asset {
+      opacity: 1;
+    }
+  }
+
+  &__asset {
+    width: 60%;
+    opacity: 0.6;
+  }
+}
+
+// Invoice
+.invoice {
+  background: $background-primary;
+  border-radius: $border-radius;
+  max-width: $container-width;
+  margin: 0 auto;
+  overflow-x: scroll;
+  padding: ($base-spacing / 2) 0;
+  opacity: 0;
+  visibility: hidden;
+  border: $border;
+  transition: $transition;
+
+  &--opened {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__item {
+    padding: ($base-spacing / 2) 25px;
+    display: flex;
+    flex-direction: row;
+
+    &--nested {
+      flex-direction: column;
+    }
+  }
+
+  &__item-title {
+    color: $text-secondary;
+    font-weight: $font-weight-bold;
+    min-width: 200px;
+  }
+
+  &__item-value {
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    width: 100%;
+    overflow-x: scroll;
+
+    &--nested {
+      padding: ($base-spacing / 2) 0;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  &__nested-item {
+    padding: ($base-spacing / 4) 0;
+    display: flex;
+    flex-direction: row;
+    padding-left: $base-spacing;
+  }
+
+  &__nested-title {
+    color: $text-secondary;
+    font-weight: $font-weight-bold;
+    min-width: 180px;
+  }
+
+  &__nested-value {
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    width: 100%;
+    overflow-x: scroll;
+  }
+}
+
+// Logo
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 2 * $base-spacing;
+
+  &__title {
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    font-size: $font-large-size;
+  }
+
+  &__subtitle {
+    padding-top: $base-spacing;
+    font-weight: $font-weight-regular;
+    color: $text-tertiary;
+    font-size: $font-small-size;
+  }
+}
+
+// Error
+.error {
+  width: $container-width;
+  position: relative;
+
+  &__container {
+    align-items: center;
+    background: $error-color;
+    border: $border;
+    border-radius: $border-radius;
+    padding: ($base-spacing + 5px);
+  }
+
+  &__message {
+    color: $text-primary;
+    font-size: $font-small-size;
+    font-weight: $font-weight-bold;
+    overflow-x: scroll;
+  }
+
+  &__clear {
+    height: $icon-size;
+    width: $icon-size;
+    border-radius: 50%;
+    background: $error-color;
+    margin-left: 2 * $base-spacing;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    right: -100px;
+    top: 0;
+    border: $border;
+
+    &:hover {
+      background: lighten($error-color, 10%);
+
+      .error__clear-asset {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__clear-asset {
+    width: 60%;
+    opacity: 0.6;
+  }
+}

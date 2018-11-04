@@ -1,24 +1,34 @@
 {
   "name": "lightning-decoder",
   "version": "0.1.0",
+  "author": {
+    "email": "andrerfneves@protonmail.com",
+    "name": "André Neves",
+    "url": "https://andrenev.es"
+  },
   "private": true,
   "dependencies": {
-    "lightnode-invoice": "^0.3.0",
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0",
-    "react-scripts": "2.1.1",
     "bech32": "^1.1.2",
     "bitcoinjs-lib": "^3.3.1",
     "bn.js": "^4.11.8",
+    "classnames": "^2.2.6",
+    "date-fns": "^1.29.0",
+    "lightnode-invoice": "^0.3.0",
     "lodash": "^4.17.4",
+    "node-sass": "^4.9.4",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "react-scripts": "2.1.1",
     "safe-buffer": "^5.1.1",
-    "secp256k1": "^3.4.0"
+    "secp256k1": "^3.4.0",
+    "serve": "^10.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "now-start": "cd build && serve --single"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -28,5 +38,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
+  ],
+  "keywords": [
+    "lightning",
+    "network",
+    "bitcoin"
   ]
 }
