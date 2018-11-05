@@ -1,0 +1,55 @@
+// Media Query Specs
+
+$mqs: (
+  allSizes: 16 / 16 * 1rem,
+  smallMobile: 400 / 16 * 1rem,
+  mobile: 768 / 16 * 1rem,
+  smallTablet: 850 / 16 * 1rem,
+  tablet: 1024 / 16 * 1rem,
+  smallDesktop: 1180/ 16 * 1rem,
+  desktop: 1280 / 16 * 1rem,
+);
+
+// Main Utility Mixin
+@mixin larger-than($size) {
+  $width: #{map-get($mqs, $size)};
+
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+// Optional Utility Mixins
+@mixin smaller-than($size) {
+  $width: #{map-get($mqs, $size)};
+
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+@mixin between($min, $max) {
+  $minwidth: #{map-get($mqs, $min)};
+  $maxwidth: #{map-get($mqs, $max)};
+  @media (min-width: $minwidth) and (max-width: $maxwidth) {
+    @content;
+  }
+}
+
+// Orientation Specific
+@mixin between-queries-landscape($min, $max) {
+  $minwidth: #{map-get($mqs, $min)};
+  $maxwidth: #{map-get($mqs, $max)};
+
+  @media (min-width: $minwidth) and (max-width: $maxwidth) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin between-queries-portrait($min, $max) {
+  $minwidth: #{map-get($mqs, $min)};
+  $maxwidth: #{map-get($mqs, $max)};
+  @media (min-width: $minwidth) and (max-width: $maxwidth) and (orientation: portrait) {
+    @content;
+  }
+}

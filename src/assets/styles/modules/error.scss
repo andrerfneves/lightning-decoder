@@ -1,0 +1,50 @@
+// Error
+.error {
+  width: $container-width;
+  position: relative;
+
+  &__container {
+    align-items: center;
+    background: $error-color;
+    border: $border;
+    border-radius: $border-radius;
+    padding: ($base-spacing + 5px);
+  }
+
+  &__message {
+    color: $text-primary;
+    font-size: $font-small-size;
+    font-weight: $font-weight-bold;
+    overflow-x: scroll;
+  }
+
+  &__clear {
+    height: $icon-size;
+    width: $icon-size;
+    border-radius: 50%;
+    background: $error-color;
+    margin-left: 2 * $base-spacing;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    right: -100px;
+    top: 0;
+    border: $border;
+
+    &:hover {
+      background: lighten($error-color, 10%);
+
+      .error__clear-asset {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__clear-asset {
+    width: 60%;
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,27 @@
+// Submit
+.submit {
+  height: $icon-size;
+  width: $icon-size;
+  border-radius: 50%;
+  background: $background-primary;
+  margin-left: 2 * $base-spacing;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  right: -100px;
+  border: $border;
+
+  &:hover {
+    .submit__asset {
+      opacity: 1;
+    }
+  }
+
+  &__asset {
+    width: 60%;
+    opacity: 0.6;
+  }
+}

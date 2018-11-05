@@ -1,0 +1,69 @@
+// Invoice
+.invoice {
+  background: $background-primary;
+  border-radius: $border-radius;
+  max-width: $container-width;
+  margin: 0 auto;
+  overflow-x: scroll;
+  padding: ($base-spacing / 2) 0;
+  opacity: 0;
+  visibility: hidden;
+  border: $border;
+  transition: $transition;
+
+  &--opened {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__item {
+    padding: ($base-spacing / 2) 25px;
+    display: flex;
+    flex-direction: row;
+
+    &--nested {
+      flex-direction: column;
+    }
+  }
+
+  &__item-title {
+    color: $text-secondary;
+    font-weight: $font-weight-bold;
+    min-width: 200px;
+  }
+
+  &__item-value {
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    width: 100%;
+    overflow-x: scroll;
+
+    &--nested {
+      padding: ($base-spacing / 2) 0;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  &__nested-item {
+    padding: ($base-spacing / 4) 0;
+    display: flex;
+    flex-direction: row;
+    padding-left: $base-spacing;
+  }
+
+  &__nested-title {
+    color: $text-secondary;
+    font-weight: $font-weight-bold;
+    min-width: 180px;
+  }
+
+  &__nested-value {
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    width: 100%;
+    overflow-x: scroll;
+  }
+}

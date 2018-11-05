@@ -1,0 +1,30 @@
+// Input
+.input {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+
+  &__text {
+    background: $background-primary;
+    border-radius: $border-radius;
+    padding: $base-spacing 25px $base-spacing 75px;
+    font-size: $font-base-size;
+    font-weight: $font-weight-bold;
+    border: $border;
+    outline: none;
+    color: $text-primary;
+    min-width: 500px;
+    font-family: $font-family;
+    position: relative;
+  }
+
+  &__asset {
+    position: absolute;
+    left: $base-spacing;
+    top: 15px;
+    width: 35px;
+    height: 2 * $base-spacing;
+    z-index: 5;
+    opacity: 0.6;
+  }
+}

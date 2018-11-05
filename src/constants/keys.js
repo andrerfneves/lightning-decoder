@@ -1,3 +1,4 @@
+// BOLT11 Keys
 export const COIN_TYPE_KEY = 'coinType';
 export const COMPLETE_KEY = 'complete';
 export const PAYEE_NODE_KEY = 'payeeNodeKey';

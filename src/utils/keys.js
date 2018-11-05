@@ -1,4 +1,4 @@
-// Utilities
+// Key Formatting Utilities
 import {
   COIN_TYPE_KEY,
   COMPLETE_KEY,

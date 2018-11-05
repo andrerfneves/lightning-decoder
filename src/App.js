@@ -6,7 +6,7 @@ import { formatDetailsKey } from './utils/keys';
 import { formatTimestamp } from './utils/timestamp';
 
 // Styles
-import './app.scss';
+import './assets/styles/main.scss';
 
 // Assets
 import arrowImage from './assets/images/arrow.svg';
