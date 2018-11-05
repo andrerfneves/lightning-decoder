@@ -1,4 +1,6 @@
 /* eslint-disable */
+// forked from bitcoinjs/bolt11
+// https://github.com/bitcoinjs/bolt11
 const crypto = require('crypto')
 const bech32 = require('bech32')
 const secp256k1 = require('secp256k1')
