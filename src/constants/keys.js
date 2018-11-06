@@ -17,3 +17,5 @@ export const FALLBACK_ADDRESS_KEY = 'fallback_address';
 export const CODE_KEY = 'code';
 export const ADDRESS_KEY = 'address';
 export const ADDRESS_HASH_KEY = 'addressHash';
+export const DESCRIPTION_KEY = 'description';
+export const EXPIRY_HTLC = 'min_final_cltv_expiry';

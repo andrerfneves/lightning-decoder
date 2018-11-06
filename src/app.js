@@ -153,9 +153,10 @@ class App extends PureComponent {
     const { decodedInvoice } = this.state;
     const tags = decodedInvoice[key];
 
-    const renderTag = (tag) => (typeof tag.data !== 'string') ?
-      renderNestedTag(tag) :
-      renderNormalTag(tag);
+    const renderTag = (tag) => (
+      typeof tag.data !== 'string' &&
+      typeof tag.data !== 'number'
+    ) ? renderNestedTag(tag) : renderNormalTag(tag);
 
     const renderNestedTag = (tag) => (
       <div className='invoice__item invoice__item--nested'>
@@ -270,4 +271,4 @@ class App extends PureComponent {
   }
 }
 
-export default App;
+export { App };

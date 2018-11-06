@@ -1,11 +1,12 @@
 {
   "name": "lightning-decoder",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "email": "andrerfneves@protonmail.com",
     "name": "André Neves",
     "url": "https://andrenev.es"
   },
+  "license": "MIT",
   "dependencies": {
     "bech32": "^1.1.2",
     "bitcoinjs-lib": "^3.3.1",

@@ -15,6 +15,8 @@ import {
   ADDRESS_HASH_KEY,
   ADDRESS_KEY,
   CODE_KEY,
+  DESCRIPTION_KEY,
+  EXPIRY_HTLC,
 } from '../constants/keys';
 
 export const formatDetailsKey = (key: string) => {
@@ -49,6 +51,10 @@ export const formatDetailsKey = (key: string) => {
       return 'Address';
     case CODE_KEY:
       return 'Code';
+    case DESCRIPTION_KEY:
+      return 'Description';
+    case EXPIRY_HTLC:
+      return 'Expiry CLTV';
     default:
       break;
   }
