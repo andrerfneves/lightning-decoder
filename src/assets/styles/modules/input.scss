@@ -13,7 +13,7 @@
     border: $border;
     outline: none;
     color: $text-primary;
-    min-width: 500px;
+    min-width: $container-width;
     font-family: $font-family;
     position: relative;
   }

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
 
 // Main Component
-import App from './app';
+import { App } from './app';
 
 // Constants
 import { GA_CODE } from './constants/ga';

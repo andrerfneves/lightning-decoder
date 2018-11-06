@@ -6,6 +6,7 @@
     "name": "André Neves",
     "url": "https://andrenev.es"
   },
+  "license": "MIT",
   "dependencies": {
     "bech32": "^1.1.2",
     "bitcoinjs-lib": "^3.3.1",
