@@ -2,19 +2,34 @@
 .logo {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-bottom: 2 * $base-spacing;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2 * $base-spacing $base-spacing;
+  width: 100%;
+
+  @include larger-than(mobile) {
+    align-items: center;
+    padding-bottom: 2 * $base-spacing;
+  }
 
   &__title {
     font-weight: $font-weight-bold;
     color: $text-primary;
-    font-size: $font-large-size;
+    font-size: $font-medium-size;
+
+    @include larger-than(mobile) {
+      font-size: $font-large-size;
+    }
   }
 
   &__subtitle {
     padding-top: $base-spacing;
     font-weight: $font-weight-regular;
     color: $text-tertiary;
-    font-size: $font-small-size;
+    font-size: $font-extra-small-size;
+
+    @include larger-than(mobile) {
+      font-size: $font-small-size;
+    }
   }
 }

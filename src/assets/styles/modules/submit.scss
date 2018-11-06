@@ -4,15 +4,21 @@
   width: $icon-size;
   border-radius: 50%;
   background: $background-primary;
-  margin-left: 2 * $base-spacing;
   position: absolute;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  right: -100px;
   border: $border;
+  cursor: pointer;
+  bottom: -100px;
+  right: calc(50% - (#{$icon-size} / 2));
+
+  @include larger-than(tablet) {
+    margin-left: 2 * $base-spacing;
+    right: -100px;
+    bottom: 0;
+  }
 
   &:hover {
     .submit__asset {
