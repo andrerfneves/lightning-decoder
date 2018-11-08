@@ -1,0 +1,105 @@
+.options {
+  position: absolute;
+  bottom: $base-spacing;
+  right: $base-spacing;
+  left: $base-spacing;
+
+  @include larger-than(mobile) {
+    top: $base-spacing;
+    right: $base-spacing;
+    bottom: auto;
+    left: auto;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    @include larger-than(mobile) {
+      justify-content: flex-end;
+    }
+  }
+
+  &__bitcoin {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    order: 2;
+
+    @include larger-than(mobile) {
+      order: 1;
+    }
+
+    &--opened {
+      .options__bitcoin-address {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .options__bitcoin-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__bitcoin-address {
+    opacity: 0;
+    visibility: hidden;
+    padding-right: $base-spacing / 2;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 14px;
+  }
+
+  &__bitcoin-icon-wrapper {
+    @include reset-button;
+    width: 40px;
+    height: 40px;
+    background: $background-primary;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      .options__bitcoin-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__bitcoin-icon {
+    width: 25px;
+    height: 25px;
+    opacity: 0.6;
+  }
+
+  &__github {
+    width: 40px;
+    height: 40px;
+    background: $background-primary;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 1;
+
+    @include larger-than(mobile) {
+      order: 2;
+      margin-left: $base-spacing / 2;
+    }
+
+    &:hover {
+      .options__github-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__github-icon {
+    width: 25px;
+    height: 25px;
+    opacity: 0.6;
+  }
+}

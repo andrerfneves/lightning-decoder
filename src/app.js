@@ -11,6 +11,8 @@ import './assets/styles/main.scss';
 // Assets
 import arrowImage from './assets/images/arrow.svg';
 import closeImage from './assets/images/close.svg';
+import githubImage from './assets/images/github.svg';
+import bitcoinImage from './assets/images/bitcoin.svg';
 import boltImage from './assets/images/bolt.png';
 
 // Constants
@@ -18,6 +20,8 @@ import {
   APP_NAME,
   APP_TAGLINE,
   APP_INPUT_PLACEHOLDER,
+  APP_GITHUB,
+  DONATION_BTC,
 } from './constants/app';
 import {
   TAGS_KEY,
@@ -31,6 +35,7 @@ const INITIAL_STATE = {
   error: {},
   hasError: false,
   isInvoiceLoaded: false,
+  isBitcoinAddrOpened: false,
   text: '',
 };
 
@@ -69,6 +74,10 @@ class App extends PureComponent {
     const { text } = this.state;
     if (event.key === 'Enter') this.getInvoiceDetails(text);
   }
+
+  handleBitcoinClick = () => this.setState(prevState => ({
+    isBitcoinAddrOpened: !prevState.isBitcoinAddrOpened,
+  }));
 
   renderErrorDetails = () => {
     const { hasError, error } = this.state;
@@ -256,9 +265,52 @@ class App extends PureComponent {
     );
   }
 
+  renderOptions = () => {
+    const { isBitcoinAddrOpened } = this.state;
+    const bitcoinClassnames = cx({
+      'options__bitcoin': true,
+      'options__bitcoin--opened': isBitcoinAddrOpened,
+    });
+
+    return (
+      <div className='options'>
+        <div className='options__wrapper'>
+          <div className={bitcoinClassnames}>
+            <div className='options__bitcoin-address'>
+              {DONATION_BTC}
+            </div>
+            <button
+              onClick={this.handleBitcoinClick}
+              className='options__bitcoin-icon-wrapper'
+            >
+              <img
+                className='options__bitcoin-icon'
+                src={bitcoinImage}
+                alt='Bitcoin'
+              />
+            </button>
+          </div>
+          <a
+            href={APP_GITHUB}
+            className='options__github'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <img
+              className='options__github-icon'
+              src={githubImage}
+              alt='GitHub'
+            />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className='app'>
+        {this.renderOptions()}
         {this.renderLogo()}
         <div className='app__row'>
           {this.renderInput()}
