@@ -4,10 +4,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100%;
   width: 100%;
   padding: $base-spacing 0;
+
+  @include larger-than(mobile) {
+    justify-content: center;
+  }
 
   &__row {
     display: flex;
