@@ -320,8 +320,10 @@ class App extends PureComponent {
           {this.renderInput()}
           {this.renderSubmit()}
         </div>
-        {this.renderInvoiceDetails()}
-        {this.renderErrorDetails()}
+        <div className='app__column'>
+          {this.renderInvoiceDetails()}
+          {this.renderErrorDetails()}
+        </div>
       </div>
     );
   }
