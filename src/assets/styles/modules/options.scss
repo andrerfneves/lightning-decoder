@@ -11,6 +11,16 @@
     left: auto;
   }
 
+  &--hide {
+    opacity: 0;
+    visibility: hidden;
+
+    @include larger-than(mobile) {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
   &__wrapper {
     display: flex;
     flex-direction: row;

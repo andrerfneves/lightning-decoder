@@ -266,14 +266,18 @@ class App extends PureComponent {
   }
 
   renderOptions = () => {
-    const { isBitcoinAddrOpened } = this.state;
+    const { isBitcoinAddrOpened, isInvoiceLoaded } = this.state;
+    const optionsClassnames = cx({
+      options: true,
+      'options--hide': isInvoiceLoaded,
+    })
     const bitcoinClassnames = cx({
       'options__bitcoin': true,
       'options__bitcoin--opened': isBitcoinAddrOpened,
     });
 
     return (
-      <div className='options'>
+      <div className={optionsClassnames}>
         <div className='options__wrapper'>
           <div className={bitcoinClassnames}>
             <div className='options__bitcoin-address'>
