@@ -13,6 +13,7 @@
   cursor: pointer;
   bottom: -100px;
   right: calc(50% - (#{$icon-size} / 2));
+  z-index: 3;
 
   @include larger-than(tablet) {
     margin-left: 2 * $base-spacing;
