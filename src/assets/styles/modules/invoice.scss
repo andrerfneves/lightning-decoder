@@ -3,14 +3,17 @@
   background: $background-primary;
   border-radius: $border-radius;
   max-width: $container-width;
+  max-height: 400px;
+  width: 100%;
+
   margin: 0 auto;
-  overflow-x: scroll;
+  overflow: scroll;
   padding: ($base-spacing / 2) 0;
   opacity: 0;
   visibility: hidden;
   border: $border;
   transition: $transition;
-
+  margin-top: 2.2 * $base-spacing;
   &--opened {
     opacity: 1;
     visibility: visible;
