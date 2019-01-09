@@ -4,6 +4,7 @@ import cx from 'classnames';
 import LightningPayReq from './lib/bolt11';
 import { formatDetailsKey } from './utils/keys';
 import { formatTimestamp } from './utils/timestamp';
+import QrReader from 'react-qr-reader';
 
 // Styles
 import './assets/styles/main.scss';
@@ -14,6 +15,8 @@ import closeImage from './assets/images/close.svg';
 import githubImage from './assets/images/github.svg';
 import bitcoinImage from './assets/images/bitcoin.svg';
 import boltImage from './assets/images/bolt.png';
+import qrcodeImage from './assets/images/qrcode.png';
+
 
 // Constants
 import {
@@ -312,6 +315,19 @@ class App extends PureComponent {
       <div className='app'>
         {this.renderOptions()}
         {this.renderLogo()}
+        <div>
+          <img
+            className="qrcode"
+            src={qrcodeImage}
+            alt="QRCode"
+          />
+          <QrReader
+          delay={300}
+          onError={this.handleError}
+          onScan={this.handleScan}
+          style={{ width: '100%' }}
+        />
+        </div>
         <div className='app__row'>
           {this.renderInput()}
           {this.renderSubmit()}
