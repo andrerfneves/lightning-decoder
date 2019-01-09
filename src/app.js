@@ -67,7 +67,11 @@ class App extends PureComponent {
 
   handleChange = (event) => {
     const { target: { value: text } } = event;
-    this.setState(() => ({ text }));
+    this.setState(() => ({
+      text,
+      hasError: false,
+      error: {},
+    }));
   }
 
   handleKeyPress = (event) => {
@@ -90,16 +94,6 @@ class App extends PureComponent {
           <div className='error__message'>
             {error.message}
           </div>
-        </div>
-        <div
-          className='error__clear'
-          onClick={this.clearInvoiceDetails}
-        >
-          <img
-            alt='Clear'
-            src={closeImage}
-            className='error__clear-asset'
-          />
         </div>
       </div>
     );
