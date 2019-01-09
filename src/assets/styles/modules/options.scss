@@ -66,6 +66,8 @@
 
     @include larger-than(mobile) {
       position: relative;
+      top: auto;
+      right: auto;
       padding-right: $base-spacing / 2;
       font-size: 14px;
     }
