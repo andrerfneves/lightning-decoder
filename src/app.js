@@ -2,9 +2,9 @@
 import React, { PureComponent } from 'react';
 import cx from 'classnames';
 import LightningPayReq from './lib/bolt11';
+import QrReader from 'react-qr-reader';
 import { formatDetailsKey } from './utils/keys';
 import { formatTimestamp } from './utils/timestamp';
-import QrReader from 'react-qr-reader';
 
 // Styles
 import './assets/styles/main.scss';
@@ -310,24 +310,30 @@ class App extends PureComponent {
     );
   }
 
-  render() {
+  renderQRCode = () => {
     return (
-      <div className='app'>
-        {this.renderOptions()}
-        {this.renderLogo()}
-        <div>
-          <img
-            className="qrcode"
-            src={qrcodeImage}
-            alt="QRCode"
-          />
-          <QrReader
+      <div>
+        <img
+          className="qrcode"
+          src={qrcodeImage}
+          alt="QRCode"
+        />
+        <QrReader
           delay={300}
           onError={this.handleError}
           onScan={this.handleScan}
           style={{ width: '100%' }}
         />
-        </div>
+      </div>
+    )
+  }
+
+  render() {
+    return (
+      <div className='app'>
+        {this.renderOptions()}
+        {this.renderLogo()}
+        {this.renderQRCode()}
         <div className='app__row'>
           {this.renderInput()}
           {this.renderSubmit()}
