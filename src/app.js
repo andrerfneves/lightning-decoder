@@ -317,12 +317,21 @@ class App extends PureComponent {
 
   renderQRCode = () => {
     const show = this.state.showQRReader;
+    const styleQRContainer = cx({
+      'qrcode' : true,
+      'qrcode--opened': show
+    });
+    const styleImgQR = cx({
+      'qrcode__img': true,
+      'qrcode__img--opened': show
+    });
+    const srcImage = show ? closeImage : qrcodeImage;
 
     return (
-      <div>
+      <div className={styleQRContainer}>
         <img
-          className="qrcode"
-          src={qrcodeImage}
+          className={styleImgQR}
+          src={srcImage}
           alt="QRCode"
           onClick={this.handleShowQRReader}
         />
@@ -332,7 +341,7 @@ class App extends PureComponent {
             delay={300}
             onError={this.handleError}
             onScan={this.handleScan}
-            style={{ width: '100%' }}
+            style={{ width: '100%', border: '2pt solid #000000' }}
           />
           : null
         }
