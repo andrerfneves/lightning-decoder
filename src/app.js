@@ -40,6 +40,7 @@ const INITIAL_STATE = {
   isInvoiceLoaded: false,
   isBitcoinAddrOpened: false,
   text: '',
+  showQRReader: false,
 };
 
 class App extends PureComponent {
@@ -81,6 +82,10 @@ class App extends PureComponent {
   handleBitcoinClick = () => this.setState(prevState => ({
     isBitcoinAddrOpened: !prevState.isBitcoinAddrOpened,
   }));
+
+  handleShowQRReader = () => this.setState(prevState => ({
+    showQRReader: !prevState.showQRReader
+  }))
 
   renderErrorDetails = () => {
     const { hasError, error } = this.state;
@@ -311,19 +316,26 @@ class App extends PureComponent {
   }
 
   renderQRCode = () => {
+    const show = this.state.showQRReader;
+
     return (
       <div>
         <img
           className="qrcode"
           src={qrcodeImage}
           alt="QRCode"
+          onClick={this.handleShowQRReader}
         />
-        <QrReader
-          delay={300}
-          onError={this.handleError}
-          onScan={this.handleScan}
-          style={{ width: '100%' }}
-        />
+        {
+          show ? 
+          <QrReader
+            delay={300}
+            onError={this.handleError}
+            onScan={this.handleScan}
+            style={{ width: '100%' }}
+          />
+          : null
+        }
       </div>
     )
   }
