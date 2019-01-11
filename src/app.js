@@ -326,6 +326,11 @@ class App extends PureComponent {
       'qrcode__img--opened': show
     });
     const srcImage = show ? closeImage : qrcodeImage;
+    const handleScan = (value) => {
+      if(!Object.is(value, null)){
+        this.getInvoiceDetails(value)
+      }
+    }
 
     return (
       <div className={styleQRContainer}>
@@ -340,7 +345,7 @@ class App extends PureComponent {
           <QrReader
             delay={300}
             onError={this.handleError}
-            onScan={this.handleScan}
+            onScan={handleScan}
             style={{ width: '100%', border: '2pt solid #000000' }}
           />
           : null
