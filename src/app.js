@@ -331,6 +331,13 @@ class App extends PureComponent {
         this.getInvoiceDetails(value)
       }
     }
+    const handleError = (error) => {
+      this.setState({
+        isInvoiceLoaded: false,
+        hasError: true,
+        error,
+      })
+    }
 
     return (
       <div className={styleQRContainer}>
@@ -344,7 +351,7 @@ class App extends PureComponent {
           show ? 
           <QrReader
             delay={300}
-            onError={this.handleError}
+            onError={handleError}
             onScan={handleScan}
             style={{ width: '100%', border: '2pt solid #000000' }}
           />
