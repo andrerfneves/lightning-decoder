@@ -40,7 +40,7 @@ const INITIAL_STATE = {
   isInvoiceLoaded: false,
   isBitcoinAddrOpened: false,
   text: '',
-  showQRReader: false,
+  isQRCodeOpened: false,
 };
 
 class App extends PureComponent {
@@ -87,8 +87,8 @@ class App extends PureComponent {
     isBitcoinAddrOpened: !prevState.isBitcoinAddrOpened,
   }));
 
-  handleShowQRReader = () => this.setState(prevState => ({
-    showQRReader: !prevState.showQRReader
+  handleQRCode = () => this.setState(prevState => ({
+    isQRCodeOpened: !prevState.isQRCodeOpened
   }))
 
   renderErrorDetails = () => {
@@ -318,59 +318,63 @@ class App extends PureComponent {
   }
 
   renderQRCode = () => {
-    const show = this.state.showQRReader;
+    const { isQRCodeOpened, isInvoiceLoaded } = this.state;
     const styleQRWrapper = cx({
       'qrcode' : true,
-      'qrcode--opened': show
+      'qrcode--opened': isQRCodeOpened,
     });
     const styleQRContainer = cx({
       'qrcode__container' : true,
-      'qrcode__container--opened': show
+      'qrcode__container--opened': isQRCodeOpened
     });
     const styleImgQR = cx({
       'qrcode__img': true,
-      'qrcode__img--opened': show
+      'qrcode__img--opened': isQRCodeOpened,
     });
-    const srcImage = show ? closeImage : qrcodeImage;
+
+    const srcImage = isQRCodeOpened ? closeImage : qrcodeImage;
+
     const handleScan = (value) => {
-      if(!Object.is(value, null)){
-        this.getInvoiceDetails(value)
-        this.setState({
-          showQRReader: false
-        })
-      }
+      if(Object.is(value, null)) return
+      this.getInvoiceDetails(value)
+      this.setState(() => ({
+        isQRCodeOpened: false,
+        text: value,
+      }))
     }
     const handleError = (error) => {
-      this.setState({
+      this.setState(() => ({
         isInvoiceLoaded: false,
         hasError: true,
         error,
-        showQRReader: false
-      })
+        isQRCodeOpened: false
+      }))
     }
 
     return (
-      <div className={styleQRWrapper}>
-        { show && <div className='qrcode__modal'></div> }
-        <div className={styleQRContainer}>
-          <img
-            className={styleImgQR}
-            src={srcImage}
-            alt='QRCode'
-            onClick={this.handleShowQRReader}
-          />
-          {
-            show ? 
-            <QrReader
-              delay={300}
-              onError={handleError}
-              onScan={handleScan}
-              style={{ width: '100%', border: '2pt solid #000000' }}
-            />
-            : null
-          }
-        </div>
-      </div>
+      isInvoiceLoaded
+        ? null
+        : (<div className={styleQRWrapper}>
+            { isQRCodeOpened && <div className='qrcode__modal'></div> }
+            <div className={styleQRContainer}>
+              <img
+                className={styleImgQR}
+                src={srcImage}
+                alt='QRCode'
+                onClick={this.handleQRCode}
+              />
+              {
+                isQRCodeOpened ?
+                <QrReader
+                  delay={300}
+                  onError={handleError}
+                  onScan={handleScan}
+                  style={{ width: '100%', border: '2pt solid #000000' }}
+                />
+                : null
+              }
+            </div>
+        </div>)
     )
   }
 
