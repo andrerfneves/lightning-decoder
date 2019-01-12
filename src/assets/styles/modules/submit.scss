@@ -16,6 +16,7 @@
   z-index: 3;
 
   @include larger-than(tablet) {
+    border-radius: 50%;
     margin-left: 2 * $base-spacing;
     right: -100px;
     bottom: 0;
@@ -34,7 +35,7 @@
 
   &__close {
     bottom: auto;
-    border-radius: none;
+    border-radius: unset;
     border: 0;
     right: 0px;
     height: 60px;
