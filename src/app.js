@@ -2,9 +2,9 @@
 import React, { PureComponent } from 'react';
 import cx from 'classnames';
 import LightningPayReq from './lib/bolt11';
+import QrReader from 'react-qr-reader';
 import { formatDetailsKey } from './utils/keys';
 import { formatTimestamp } from './utils/timestamp';
-import QrReader from 'react-qr-reader';
 
 // Styles
 import './assets/styles/main.scss';
@@ -40,6 +40,7 @@ const INITIAL_STATE = {
   isInvoiceLoaded: false,
   isBitcoinAddrOpened: false,
   text: '',
+  showQRReader: false,
 };
 
 class App extends PureComponent {
@@ -85,6 +86,10 @@ class App extends PureComponent {
   handleBitcoinClick = () => this.setState(prevState => ({
     isBitcoinAddrOpened: !prevState.isBitcoinAddrOpened,
   }));
+
+  handleShowQRReader = () => this.setState(prevState => ({
+    showQRReader: !prevState.showQRReader
+  }))
 
   renderErrorDetails = () => {
     const { hasError, error } = this.state;
@@ -312,6 +317,63 @@ class App extends PureComponent {
     );
   }
 
+  renderQRCode = () => {
+    const show = this.state.showQRReader;
+    const styleQRWrapper = cx({
+      'qrcode' : true,
+      'qrcode--opened': show
+    });
+    const styleQRContainer = cx({
+      'qrcode__container' : true,
+      'qrcode__container--opened': show
+    });
+    const styleImgQR = cx({
+      'qrcode__img': true,
+      'qrcode__img--opened': show
+    });
+    const srcImage = show ? closeImage : qrcodeImage;
+    const handleScan = (value) => {
+      if(!Object.is(value, null)){
+        this.getInvoiceDetails(value)
+        this.setState({
+          showQRReader: false
+        })
+      }
+    }
+    const handleError = (error) => {
+      this.setState({
+        isInvoiceLoaded: false,
+        hasError: true,
+        error,
+        showQRReader: false
+      })
+    }
+
+    return (
+      <div className={styleQRWrapper}>
+        { show && <div className='qrcode__modal'></div> }
+        <div className={styleQRContainer}>
+          <img
+            className={styleImgQR}
+            src={srcImage}
+            alt='QRCode'
+            onClick={this.handleShowQRReader}
+          />
+          {
+            show ? 
+            <QrReader
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={{ width: '100%', border: '2pt solid #000000' }}
+            />
+            : null
+          }
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const { isInvoiceLoaded } = this.state;
 
@@ -324,19 +386,7 @@ class App extends PureComponent {
       <div className='app'>
         {this.renderOptions()}
         {this.renderLogo()}
-        <div>
-          <img
-            className="qrcode"
-            src={qrcodeImage}
-            alt="QRCode"
-          />
-          <QrReader
-          delay={300}
-          onError={this.handleError}
-          onScan={this.handleScan}
-          style={{ width: '100%' }}
-        />
-        </div>
+        {this.renderQRCode()}
         <div className='app__row'>
           {this.renderInput()}
           {this.renderSubmit()}
