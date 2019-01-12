@@ -237,6 +237,10 @@ class App extends PureComponent {
 
   renderSubmit = () => {
     const { isInvoiceLoaded, text } = this.state;
+    const submitClassnames = cx({
+      submit: true,
+      'submit__close': isInvoiceLoaded,
+    })
     const onClick = () => {
       if (isInvoiceLoaded) {
         this.clearInvoiceDetails();
@@ -248,7 +252,7 @@ class App extends PureComponent {
     return (
       <div
         onClick={onClick}
-        className='submit'
+        className={submitClassnames}
       >
         <img
           alt='Submit'
@@ -306,6 +310,13 @@ class App extends PureComponent {
   }
 
   render() {
+    const { isInvoiceLoaded } = this.state;
+
+    const appColumnClasses = cx({
+      app__column: true,
+      'app__column--invoice-loaded': isInvoiceLoaded,
+    })
+
     return (
       <div className='app'>
         {this.renderOptions()}
@@ -314,7 +325,7 @@ class App extends PureComponent {
           {this.renderInput()}
           {this.renderSubmit()}
         </div>
-        <div className='app__column'>
+        <div className={appColumnClasses}>
           {this.renderInvoiceDetails()}
           {this.renderErrorDetails()}
         </div>
