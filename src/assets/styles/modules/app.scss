@@ -27,6 +27,7 @@
   }
 
   &__column {
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,6 +37,10 @@
 
     @include larger-than(mobile) {
       width: $container-width;
+    }
+    
+    &--invoice-loaded {
+      margin-top: 0;
     }
   }
 }
