@@ -317,9 +317,13 @@ class App extends PureComponent {
 
   renderQRCode = () => {
     const show = this.state.showQRReader;
-    const styleQRContainer = cx({
+    const styleQRWrapper = cx({
       'qrcode' : true,
       'qrcode--opened': show
+    });
+    const styleQRContainer = cx({
+      'qrcode__container' : true,
+      'qrcode__container--opened': show
     });
     const styleImgQR = cx({
       'qrcode__img': true,
@@ -329,6 +333,9 @@ class App extends PureComponent {
     const handleScan = (value) => {
       if(!Object.is(value, null)){
         this.getInvoiceDetails(value)
+        this.setState({
+          showQRReader: false
+        })
       }
     }
     const handleError = (error) => {
@@ -336,27 +343,31 @@ class App extends PureComponent {
         isInvoiceLoaded: false,
         hasError: true,
         error,
+        showQRReader: false
       })
     }
 
     return (
-      <div className={styleQRContainer}>
-        <img
-          className={styleImgQR}
-          src={srcImage}
-          alt="QRCode"
-          onClick={this.handleShowQRReader}
-        />
-        {
-          show ? 
-          <QrReader
-            delay={300}
-            onError={handleError}
-            onScan={handleScan}
-            style={{ width: '100%', border: '2pt solid #000000' }}
+      <div className={styleQRWrapper}>
+        { show && <div className='qrcode__modal'></div> }
+        <div className={styleQRContainer}>
+          <img
+            className={styleImgQR}
+            src={srcImage}
+            alt='QRCode'
+            onClick={this.handleShowQRReader}
           />
-          : null
-        }
+          {
+            show ? 
+            <QrReader
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={{ width: '100%', border: '2pt solid #000000' }}
+            />
+            : null
+          }
+        </div>
       </div>
     )
   }
