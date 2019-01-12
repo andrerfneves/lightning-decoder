@@ -13,8 +13,12 @@
 
   &__message {
     color: $text-primary;
-    font-size: $font-small-size;
+    font-size: $font-extra-small-size;
     font-weight: $font-weight-bold;
     overflow-x: scroll;
+
+    @include larger-than(mobile) {
+      font-size: $font-small-size;
+    }
   }
 }
