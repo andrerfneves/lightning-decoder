@@ -6,7 +6,7 @@
   align-items: center;
   height: 100%;
   width: 100%;
-  padding: $base-spacing 0;
+  padding: $base-spacing;
 
   @include larger-than(mobile) {
     justify-content: center;
@@ -20,11 +20,27 @@
     position: relative;
     transition: $transition;
     width: 100%;
-    padding: 0 $base-spacing;
 
     @include larger-than(mobile) {
       width: $container-width;
-      padding: 0;
+    }
+  }
+
+  &__column {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: $transition;
+    width: 100%;
+
+    @include larger-than(mobile) {
+      width: $container-width;
+    }
+    
+    &--invoice-loaded {
+      margin-top: 0;
     }
   }
 }

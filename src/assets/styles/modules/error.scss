@@ -1,7 +1,7 @@
 // Error
 .error {
-  width: $container-width;
   position: relative;
+  width: 100%;
 
   &__container {
     align-items: center;
@@ -13,38 +13,12 @@
 
   &__message {
     color: $text-primary;
-    font-size: $font-small-size;
+    font-size: $font-extra-small-size;
     font-weight: $font-weight-bold;
     overflow-x: scroll;
-  }
 
-  &__clear {
-    height: $icon-size;
-    width: $icon-size;
-    border-radius: 50%;
-    background: $error-color;
-    margin-left: 2 * $base-spacing;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: absolute;
-    right: -100px;
-    top: 0;
-    border: $border;
-
-    &:hover {
-      background: lighten($error-color, 10%);
-
-      .error__clear-asset {
-        opacity: 1;
-      }
+    @include larger-than(mobile) {
+      font-size: $font-small-size;
     }
-  }
-
-  &__clear-asset {
-    width: 60%;
-    opacity: 0.6;
   }
 }

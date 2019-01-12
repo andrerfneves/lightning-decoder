@@ -11,6 +11,16 @@
     left: auto;
   }
 
+  &--hide {
+    opacity: 0;
+    visibility: hidden;
+
+    @include larger-than(mobile) {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
   &__wrapper {
     display: flex;
     flex-direction: row;
@@ -44,12 +54,23 @@
   }
 
   &__bitcoin-address {
+    position: absolute;
+    right: -5px;
+    top: -1.5 * $base-spacing;
     opacity: 0;
     visibility: hidden;
-    padding-right: $base-spacing / 2;
+    margin-right: $base-spacing / 2;
     color: #ffffff;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 12px;
+
+    @include larger-than(mobile) {
+      position: relative;
+      top: auto;
+      right: auto;
+      padding-right: $base-spacing / 2;
+      font-size: 14px;
+    }
   }
 
   &__bitcoin-icon-wrapper {

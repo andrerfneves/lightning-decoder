@@ -11,8 +11,9 @@
   justify-content: center;
   border: $border;
   cursor: pointer;
-  bottom: -100px;
+  bottom: -90px;
   right: calc(50% - (#{$icon-size} / 2));
+  z-index: 3;
 
   @include larger-than(tablet) {
     margin-left: 2 * $base-spacing;
@@ -29,5 +30,14 @@
   &__asset {
     width: 60%;
     opacity: 0.6;
+  }
+
+  &__close {
+    bottom: auto;
+    border-radius: none;
+    border: 0;
+    right: 0px;
+    height: 60px;
+    width: 60px;
   }
 }
