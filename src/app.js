@@ -67,7 +67,11 @@ class App extends PureComponent {
 
   handleChange = (event) => {
     const { target: { value: text } } = event;
-    this.setState(() => ({ text }));
+    this.setState(() => ({
+      text,
+      hasError: false,
+      error: {},
+    }));
   }
 
   handleKeyPress = (event) => {
@@ -90,16 +94,6 @@ class App extends PureComponent {
           <div className='error__message'>
             {error.message}
           </div>
-        </div>
-        <div
-          className='error__clear'
-          onClick={this.clearInvoiceDetails}
-        >
-          <img
-            alt='Clear'
-            src={closeImage}
-            className='error__clear-asset'
-          />
         </div>
       </div>
     );
@@ -243,6 +237,10 @@ class App extends PureComponent {
 
   renderSubmit = () => {
     const { isInvoiceLoaded, text } = this.state;
+    const submitClassnames = cx({
+      submit: true,
+      'submit__close': isInvoiceLoaded,
+    })
     const onClick = () => {
       if (isInvoiceLoaded) {
         this.clearInvoiceDetails();
@@ -254,7 +252,7 @@ class App extends PureComponent {
     return (
       <div
         onClick={onClick}
-        className='submit'
+        className={submitClassnames}
       >
         <img
           alt='Submit'
@@ -266,14 +264,18 @@ class App extends PureComponent {
   }
 
   renderOptions = () => {
-    const { isBitcoinAddrOpened } = this.state;
+    const { isBitcoinAddrOpened, isInvoiceLoaded } = this.state;
+    const optionsClassnames = cx({
+      options: true,
+      'options--hide': isInvoiceLoaded,
+    })
     const bitcoinClassnames = cx({
       'options__bitcoin': true,
       'options__bitcoin--opened': isBitcoinAddrOpened,
     });
 
     return (
-      <div className='options'>
+      <div className={optionsClassnames}>
         <div className='options__wrapper'>
           <div className={bitcoinClassnames}>
             <div className='options__bitcoin-address'>
@@ -308,6 +310,13 @@ class App extends PureComponent {
   }
 
   render() {
+    const { isInvoiceLoaded } = this.state;
+
+    const appColumnClasses = cx({
+      app__column: true,
+      'app__column--invoice-loaded': isInvoiceLoaded,
+    })
+
     return (
       <div className='app'>
         {this.renderOptions()}
@@ -316,8 +325,10 @@ class App extends PureComponent {
           {this.renderInput()}
           {this.renderSubmit()}
         </div>
-        {this.renderInvoiceDetails()}
-        {this.renderErrorDetails()}
+        <div className={appColumnClasses}>
+          {this.renderInvoiceDetails()}
+          {this.renderErrorDetails()}
+        </div>
       </div>
     );
   }
