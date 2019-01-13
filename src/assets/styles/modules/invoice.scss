@@ -36,7 +36,6 @@
     font-weight: $font-weight-bold;
     color: $text-primary;
     width: 100%;
-    overflow-x: scroll;
 
     &--nested {
       padding: ($base-spacing / 2) 0;
@@ -64,6 +63,5 @@
     font-weight: $font-weight-bold;
     color: $text-primary;
     width: 100%;
-    overflow-x: scroll;
   }
 }
