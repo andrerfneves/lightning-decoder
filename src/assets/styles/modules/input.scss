@@ -20,7 +20,7 @@
 
     @include larger-than(mobile) {
       font-size: $font-base-size;
-      min-width: $container-width;
+      min-width: $input-container-width;
       padding: $base-spacing 25px $base-spacing 75px;
     }
   }

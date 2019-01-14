@@ -10,7 +10,6 @@
   opacity: 0;
   visibility: hidden;
   border: $border;
-  transition: $transition;
   &--opened {
     opacity: 1;
     visibility: visible;

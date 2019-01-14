@@ -1,25 +1,21 @@
+$submit-icon-size: 40px;
+
 // Submit
 .submit {
   height: $icon-size;
   width: $icon-size;
   border-radius: 50%;
   background: $background-primary;
-  position: absolute;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   border: $border;
   cursor: pointer;
-  bottom: -90px;
-  right: calc(50% - (#{$icon-size} / 2));
   z-index: 3;
 
   @include larger-than(tablet) {
     border-radius: 50%;
-    margin-left: 2 * $base-spacing;
-    right: -100px;
-    bottom: 0;
   }
 
   &:hover {
@@ -34,11 +30,16 @@
   }
 
   &__close {
-    bottom: auto;
     border-radius: unset;
     border: 0;
-    right: 0px;
-    height: 60px;
-    width: 60px;
+    height: $submit-icon-size;
+    width: $submit-icon-size;
+    top: $base-spacing / 2;
+
+    @include larger-than(mobile) {
+      margin-top: 4px;
+      border-radius: 50%;
+      margin-right: 1px;
+    }
   }
 }

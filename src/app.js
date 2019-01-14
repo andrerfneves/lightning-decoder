@@ -1,13 +1,10 @@
 // Core Libs & Utils
 import React, { PureComponent } from 'react';
 import cx from 'classnames';
-import LightningPayReq from './lib/bolt11';
 import QrReader from 'react-qr-reader';
+import LightningPayReq from './lib/bolt11';
 import { formatDetailsKey } from './utils/keys';
 import { formatTimestamp } from './utils/timestamp';
-
-// Styles
-import './assets/styles/main.scss';
 
 // Assets
 import arrowImage from './assets/images/arrow.svg';
@@ -16,7 +13,6 @@ import githubImage from './assets/images/github.svg';
 import bitcoinImage from './assets/images/bitcoin.svg';
 import boltImage from './assets/images/bolt.png';
 import qrcodeImage from './assets/images/qrcode.png';
-
 
 // Constants
 import {
@@ -33,6 +29,9 @@ import {
   TIMESTAMP_STRING_KEY,
 } from './constants/keys';
 
+// Styles
+import './assets/styles/main.scss';
+
 const INITIAL_STATE = {
   decodedInvoice: {},
   error: {},
@@ -43,7 +42,7 @@ const INITIAL_STATE = {
   isQRCodeOpened: false,
 };
 
-class App extends PureComponent {
+export class App extends PureComponent {
   state = INITIAL_STATE;
 
   clearInvoiceDetails = () => this.setState(() => ({
@@ -71,6 +70,7 @@ class App extends PureComponent {
 
   handleChange = (event) => {
     const { target: { value: text } } = event;
+
     this.setState(() => ({
       text,
       hasError: false,
@@ -80,7 +80,10 @@ class App extends PureComponent {
 
   handleKeyPress = (event) => {
     const { text } = this.state;
-    if (event.key === 'Enter') this.getInvoiceDetails(text);
+
+    if (event.key === 'Enter') {
+      this.getInvoiceDetails(text);
+    }
   }
 
   handleBitcoinClick = () => this.setState(prevState => ({
@@ -123,6 +126,7 @@ class App extends PureComponent {
           onChange={this.handleChange}
           onKeyPress={this.handleKeyPress}
           placeholder={APP_INPUT_PLACEHOLDER}
+          autoFocus
         />
       </div>
     );
@@ -130,10 +134,10 @@ class App extends PureComponent {
 
   renderInvoiceDetails = () => {
     const { decodedInvoice, isInvoiceLoaded } = this.state;
-    const invoiceContainerClassnames = cx({
-      'invoice': true,
-      'invoice--opened': isInvoiceLoaded,
-    });
+    const invoiceContainerClassnames = cx(
+      'invoice',
+      { 'invoice--opened': isInvoiceLoaded },
+    );
 
     const invoiceDetails = Object.keys(decodedInvoice)
       .map((key) => {
@@ -153,7 +157,7 @@ class App extends PureComponent {
         }
       });
 
-    return (
+    return !isInvoiceLoaded ? null : (
       <div className={invoiceContainerClassnames}>
         {invoiceDetails}
       </div>
@@ -245,10 +249,11 @@ class App extends PureComponent {
 
   renderSubmit = () => {
     const { isInvoiceLoaded, text } = this.state;
-    const submitClassnames = cx({
-      submit: true,
-      'submit__close': isInvoiceLoaded,
-    })
+    const submitClassnames = cx(
+      'submit',
+      { 'submit__close': isInvoiceLoaded },
+    );
+
     const onClick = () => {
       if (isInvoiceLoaded) {
         this.clearInvoiceDetails();
@@ -273,14 +278,14 @@ class App extends PureComponent {
 
   renderOptions = () => {
     const { isBitcoinAddrOpened, isInvoiceLoaded } = this.state;
-    const optionsClassnames = cx({
-      options: true,
-      'options--hide': isInvoiceLoaded,
-    })
-    const bitcoinClassnames = cx({
-      'options__bitcoin': true,
-      'options__bitcoin--opened': isBitcoinAddrOpened,
-    });
+    const optionsClassnames = cx(
+      'options',
+      { 'options--hide': isInvoiceLoaded },
+    );
+    const bitcoinClassnames = cx(
+      'options__bitcoin',
+      { 'options__bitcoin--opened': isBitcoinAddrOpened },
+    );
 
     return (
       <div className={optionsClassnames}>
@@ -317,83 +322,105 @@ class App extends PureComponent {
     );
   }
 
-  renderQRCode = () => {
+  renderCamera = () => {
     const { isQRCodeOpened, isInvoiceLoaded } = this.state;
+
     const styleQRWrapper = cx({
       'qrcode' : true,
       'qrcode--opened': isQRCodeOpened,
     });
-    const styleQRContainer = cx({
-      'qrcode__container' : true,
-      'qrcode__container--opened': isQRCodeOpened
-    });
-    const styleImgQR = cx({
-      'qrcode__img': true,
-      'qrcode__img--opened': isQRCodeOpened,
-    });
+    const styleQRContainer = cx(
+      'qrcode__container',
+      { 'qrcode__container--opened': isQRCodeOpened },
+    );
+    const styleImgQR = cx(
+      'qrcode__img',
+      { 'qrcode__img--opened': isQRCodeOpened },
+    );
+
+    const qrReaderStyles = {
+      width: '100%',
+      border: '2pt solid #000000',
+    };
 
     const srcImage = isQRCodeOpened ? closeImage : qrcodeImage;
 
     const handleScan = (value) => {
-      if(Object.is(value, null)) return
-      this.getInvoiceDetails(value)
+      if (Object.is(value, null)) return;
+
+      let text = value;
+      if (value.includes('lightning')) {
+        text = value.split('lightning:')[1];
+      }
+
+      this.getInvoiceDetails(text);
       this.setState(() => ({
         isQRCodeOpened: false,
-        text: value,
-      }))
-    }
-    const handleError = (error) => {
-      this.setState(() => ({
-        isInvoiceLoaded: false,
-        hasError: true,
-        error,
-        isQRCodeOpened: false
-      }))
+        text,
+      }));
     }
 
-    return (
-      isInvoiceLoaded
-        ? null
-        : (<div className={styleQRWrapper}>
-            { isQRCodeOpened && <div className='qrcode__modal'></div> }
-            <div className={styleQRContainer}>
-              <img
-                className={styleImgQR}
-                src={srcImage}
-                alt='QRCode'
-                onClick={this.handleQRCode}
-              />
-              {
-                isQRCodeOpened ?
-                <QrReader
-                  delay={300}
-                  onError={handleError}
-                  onScan={handleScan}
-                  style={{ width: '100%', border: '2pt solid #000000' }}
-                />
-                : null
-              }
-            </div>
-        </div>)
-    )
+    const handleError = (error) => this.setState(() => ({
+      isInvoiceLoaded: false,
+      hasError: true,
+      error,
+      isQRCodeOpened: false
+    }));
+
+    return isInvoiceLoaded ? null : (
+      <div className={styleQRWrapper}>
+        {isQRCodeOpened && (
+          <div className='qrcode__modal' />
+        )}
+        <div className={styleQRContainer}>
+          <img
+            className={styleImgQR}
+            src={srcImage}
+            alt='QRCode'
+            onClick={this.handleQRCode}
+          />
+          {!isQRCodeOpened ? null : (
+            <QrReader
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={qrReaderStyles}
+            />
+          )}
+        </div>
+      </div>
+    );
   }
 
   render() {
-    const { isInvoiceLoaded } = this.state;
+    const { isInvoiceLoaded, hasError } = this.state;
 
-    const appColumnClasses = cx({
-      app__column: true,
-      'app__column--invoice-loaded': isInvoiceLoaded,
-    })
+    const appClasses = cx(
+      'app',
+      { 'app--opened': isInvoiceLoaded },
+    );
+    const appColumnClasses = cx(
+      'app__column',
+      {
+        'app__column--invoice-loaded': isInvoiceLoaded,
+        'app__column--error': hasError,
+      },
+    );
+    const appSubmitClasses = cx(
+      'app__submit',
+      { 'app__submit--invoice-loaded': isInvoiceLoaded },
+    );
 
     return (
-      <div className='app'>
+      <div className={appClasses}>
         {this.renderOptions()}
         {this.renderLogo()}
-        {this.renderQRCode()}
         <div className='app__row'>
           {this.renderInput()}
-          {this.renderSubmit()}
+          <div className={appSubmitClasses}>
+            {this.renderSubmit()}
+            {this.renderCamera()}
+          </div>
         </div>
         <div className={appColumnClasses}>
           {this.renderInvoiceDetails()}
@@ -403,5 +430,3 @@ class App extends PureComponent {
     );
   }
 }
-
-export { App };

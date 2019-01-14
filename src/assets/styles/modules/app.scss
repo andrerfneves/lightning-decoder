@@ -1,3 +1,5 @@
+$container-width: 700px;
+
 // App Layout
 .app {
   background: $app-background;
@@ -10,37 +12,69 @@
 
   @include larger-than(mobile) {
     justify-content: center;
+    height: 100%;
+  }
+
+  &--opened {
+    @include larger-than(mobile) {
+      height: auto;
+    }
   }
 
   &__row {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 2 * $base-spacing;
     position: relative;
-    transition: $transition;
     width: 100%;
+    margin-bottom: $base-spacing;
 
     @include larger-than(mobile) {
-      width: $container-width;
+      width: 100%;
+      max-width: $container-width;
+      margin-bottom: 2 * $base-spacing;
+      flex-direction: row;
+      margin-left: 4 * $base-spacing;
     }
   }
 
   &__column {
-    margin-top: 50px;
+    margin-top: 2.5 * $base-spacing;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    transition: $transition;
     width: 100%;
 
     @include larger-than(mobile) {
       width: $container-width;
     }
-    
+
     &--invoice-loaded {
       margin-top: 0;
+    }
+
+    &--error {
+      margin-top: 0;
+    }
+  }
+
+  &__submit {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    margin-top: $base-spacing;
+
+    @include larger-than(mobile) {
+      margin-top: 0;
+      padding-left: $base-spacing / 2;
+    }
+
+    &--invoice-loaded {
+      position: absolute;
+      margin-top: 0;
+      right: 0;
+      top: 7px;
     }
   }
 }
