@@ -2,7 +2,7 @@
 
 > [https://lightningdecoder.com](https://lightningdecoder.com)
 
-![Image of Lightning Decoder](https://i.imgur.com/qpW1RQq.png)
+![Image of Lightning Decoder](https://i.imgur.com/tZKaU9P.png)
 
 Lightning Decoder is a utility app that helps with understanding the individual parts of a Lightning Network Invoice/Payment Request (BOLT 11). It aims to be a tool for  developers building applications on top of the LN network.
 
@@ -31,4 +31,4 @@ export const GA_CODE = 'UA-XXXXXXX-X';
 
 I'm always aiming to introduce new features and improvements to the application. If you see a need and would like to contribute, please send a PR with detailed descriptions and I'll evaluate as early as I can.
 
-MIT Licensed 2018
+MIT Licensed 2019
