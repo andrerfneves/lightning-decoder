@@ -14,7 +14,7 @@
     "classnames": "^2.2.6",
     "date-fns": "^1.29.0",
     "lightnode-invoice": "^0.3.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "node-sass": "^4.9.4",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
