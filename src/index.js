@@ -7,10 +7,10 @@ import ReactGA from 'react-ga';
 import { App } from './app';
 
 // Constants
-import { GA_CODE } from './constants/ga';
+// import { GA_CODE } from './constants/ga';
 
 // Analytics Hook
-ReactGA.initialize(GA_CODE);
+// ReactGA.initialize(GA_CODE);
 ReactGA.pageview(
   window.location.pathname + window.location.search
 );
