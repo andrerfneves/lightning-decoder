@@ -5,20 +5,25 @@
   width: 100%;
 
   margin: 0 auto;
-  overflow-x: scroll;
   padding: ($base-spacing / 2) 0;
   opacity: 0;
   visibility: hidden;
   border: $border;
+  margin-bottom: 20px;
+
   &--opened {
     opacity: 1;
     visibility: visible;
   }
 
   &__item {
-    padding: ($base-spacing / 2) 25px;
+    padding: ($base-spacing / 2) 20px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+
+    @include larger-than(mobile) {
+      flex-direction: row;
+    }
 
     &--nested {
       flex-direction: column;
@@ -29,12 +34,18 @@
     color: $text-secondary;
     font-weight: $font-weight-bold;
     min-width: 200px;
+    padding-bottom: 5px;
+
+    @include larger-than(mobile) {
+      padding-bottom: 0;
+    }
   }
 
   &__item-value {
     font-weight: $font-weight-bold;
     color: $text-primary;
     width: 100%;
+    word-break: break-all;
 
     &--nested {
       padding: ($base-spacing / 2) 0;
