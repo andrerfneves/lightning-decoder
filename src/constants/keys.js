@@ -25,6 +25,3 @@ export const MIN_FINAL_CLTV_EXPIRY = 'min_final_cltv_expiry';
 export const TIME_EXPIRE_DATE_STRING = 'timeExpireDateString';
 export const TIME_EXPIRE_DATE = 'timeExpireDate';
 export const timeExpireDate = 'min_final_cltv_expiry';
-// export const EXPIRY_HTLC = 'min_final_cltv_expiry';
-// export const EXPIRY_HTLC = 'min_final_cltv_expiry';
-// export const EXPIRY_HTLC = 'min_final_cltv_expiry';
