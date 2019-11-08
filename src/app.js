@@ -22,8 +22,6 @@ import {
 } from './constants/app';
 import {
   TAGS_KEY,
-  TIMESTAMP_KEY,
-  WORDS_TEMP_KEY,
   TIMESTAMP_STRING_KEY,
   COMPLETE_KEY,
 } from './constants/keys';
@@ -137,13 +135,9 @@ export class App extends PureComponent {
 
     const invoiceDetails = Object.keys(decodedInvoice)
       .map((key) => {
-        console.log(key);
         switch (key) {
           case COMPLETE_KEY:
             return null;
-          // case WORDS_TEMP_KEY:
-          // case TIMESTAMP_KEY:
-          //   return null;
           case TAGS_KEY:
             return this.renderInvoiceInnerItem(key);
           case TIMESTAMP_STRING_KEY:
@@ -211,7 +205,6 @@ export class App extends PureComponent {
 
   renderInvoiceItem = (key, valuePropFormat) => {
     const { decodedInvoice } = this.state;
-    console.log({decodedInvoice})
 
     let value = `${decodedInvoice[key]}`;
     if (
