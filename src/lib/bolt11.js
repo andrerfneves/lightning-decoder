@@ -1,18 +1,31 @@
 /* eslint-disable */
-// forked from bitcoinjs/bolt11
-// https://github.com/bitcoinjs/bolt11
 const crypto = require('crypto')
 const bech32 = require('bech32')
 const secp256k1 = require('secp256k1')
 const Buffer = require('safe-buffer').Buffer
 const BN = require('bn.js')
-const bitcoinjsNetworks = require('bitcoinjs-lib/src/networks')
 const bitcoinjsAddress = require('bitcoinjs-lib/src/address')
 const cloneDeep = require('lodash/cloneDeep')
+const coininfo = require('coininfo')
+
+const BITCOINJS_NETWORK_INFO = {
+  bitcoin: coininfo.bitcoin.main.toBitcoinJS(),
+  testnet: coininfo.bitcoin.test.toBitcoinJS(),
+  regtest: coininfo.bitcoin.regtest.toBitcoinJS(),
+  simnet: coininfo.bitcoin.regtest.toBitcoinJS(),
+  litecoin: coininfo.litecoin.main.toBitcoinJS(),
+  litecoin_testnet: coininfo.litecoin.test.toBitcoinJS()
+}
+BITCOINJS_NETWORK_INFO.bitcoin.bech32 = 'bc'
+BITCOINJS_NETWORK_INFO.testnet.bech32 = 'tb'
+BITCOINJS_NETWORK_INFO.regtest.bech32 = 'bcrt'
+BITCOINJS_NETWORK_INFO.simnet.bech32 = 'sb'
+BITCOINJS_NETWORK_INFO.litecoin.bech32 = 'ltc'
+BITCOINJS_NETWORK_INFO.litecoin_testnet.bech32 = 'tltc'
 
 // defaults for encode; default timestamp is current time at call
-const DEFAULTNETWORKSTRING = 'testnet'
-const DEFAULTNETWORK = bitcoinjsNetworks[DEFAULTNETWORKSTRING]
+const DEFAULTNETWORKSTRING = 'main'
+const DEFAULTNETWORK = BITCOINJS_NETWORK_INFO[DEFAULTNETWORKSTRING]
 const DEFAULTEXPIRETIME = 3600
 const DEFAULTCLTVEXPIRY = 9
 const DEFAULTDESCRIPTION = ''
@@ -22,22 +35,26 @@ const VALIDWITNESSVERSIONS = [0]
 const BECH32CODES = {
   bc: 'bitcoin',
   tb: 'testnet',
-  bcrt: 'regtest'
+  bcrt: 'regtest',
+  sb: 'simnet',
+  ltc: 'litecoin',
+  tltc: 'litecoin_testnet'
 }
 
 const DIVISORS = {
-  m: new BN('1000', 10),
-  u: new BN('1000000', 10),
-  n: new BN('1000000000', 10),
-  p: new BN('1000000000000', 10)
+  m: new BN(1e3, 10),
+  u: new BN(1e6, 10),
+  n: new BN(1e9, 10),
+  p: new BN(1e12, 10)
 }
 
-const MAX_SATS = new BN('2100000000000000', 10)
+const MAX_MILLISATS = new BN('2100000000000000000', 10)
 
-const SATS_PER_BTC = new BN(1e8, 10)
-const SATS_PER_MILLIBTC = new BN(1e5, 10)
-const SATS_PER_MICROBTC = new BN(1e2, 10)
-const NANOBTC_PER_SATS = new BN(10, 10)
+const MILLISATS_PER_BTC = new BN(1e11, 10)
+const MILLISATS_PER_MILLIBTC = new BN(1e8, 10)
+const MILLISATS_PER_MICROBTC = new BN(1e5, 10)
+const MILLISATS_PER_NANOBTC = new BN(1e2, 10)
+const PICOBTC_PER_MILLISATS = new BN(10, 10)
 
 const TAGCODES = {
   payment_hash: 1,
@@ -78,6 +95,20 @@ const TAGPARSERS = {
   '24': wordsToIntBE, // default: 9
   '9': fallbackAddressParser,
   '3': routingInfoParser // for extra routing info (private etc.)
+}
+
+const unknownTagName = 'unknownTag'
+
+function unknownEncoder (data) {
+  data.words = bech32.decode(data.words, Number.MAX_SAFE_INTEGER).words
+  return data
+}
+
+function getUnknownParser (tagCode) {
+  return (words) => ({
+    tagCode: parseInt(tagCode),
+    words: bech32.encode('unknown', words, Number.MAX_SAFE_INTEGER)
+  })
 }
 
 function wordsToIntBE (words) {
@@ -226,13 +257,13 @@ function routingInfoParser (words) {
 // after encoding these 51 byte chunks and concatenating them
 // convert to words right padding 0 bits.
 function routingInfoEncoder (datas) {
-  let buffer = Buffer(0)
+  let buffer = Buffer.from([])
   datas.forEach(data => {
     buffer = Buffer.concat([buffer, hexToBuffer(data.pubkey)])
     buffer = Buffer.concat([buffer, hexToBuffer(data.short_channel_id)])
-    buffer = Buffer.concat([buffer, Buffer([0, 0, 0].concat(intBEToWords(data.fee_base_msat, 8)).slice(-4))])
-    buffer = Buffer.concat([buffer, Buffer([0, 0, 0].concat(intBEToWords(data.fee_proportional_millionths, 8)).slice(-4))])
-    buffer = Buffer.concat([buffer, Buffer([0].concat(intBEToWords(data.cltv_expiry_delta, 8)).slice(-2))])
+    buffer = Buffer.concat([buffer, Buffer.from([0, 0, 0].concat(intBEToWords(data.fee_base_msat, 8)).slice(-4))])
+    buffer = Buffer.concat([buffer, Buffer.from([0, 0, 0].concat(intBEToWords(data.fee_proportional_millionths, 8)).slice(-4))])
+    buffer = Buffer.concat([buffer, Buffer.from([0].concat(intBEToWords(data.cltv_expiry_delta, 8)).slice(-2))])
   })
   return hexToWord(buffer)
 }
@@ -275,27 +306,47 @@ function satToHrp (satoshis) {
   if (!satoshis.toString().match(/^\d+$/)) {
     throw new Error('satoshis must be an integer')
   }
-  let satoshisBN = new BN(satoshis, 10)
-  let satoshisString = satoshisBN.toString(10)
-  let satoshisLength = satoshisString.length
+  let millisatoshisBN = new BN(satoshis, 10)
+  return millisatToHrp(millisatoshisBN.mul(new BN(1000, 10)))
+}
+
+function millisatToHrp (millisatoshis) {
+  if (!millisatoshis.toString().match(/^\d+$/)) {
+    throw new Error('millisatoshis must be an integer')
+  }
+  let millisatoshisBN = new BN(millisatoshis, 10)
+  let millisatoshisString = millisatoshisBN.toString(10)
+  let millisatoshisLength = millisatoshisString.length
   let divisorString, valueString
-  if (satoshisLength > 8 && /0{8}$/.test(satoshisString)) {
+  if (millisatoshisLength > 11 && /0{11}$/.test(millisatoshisString)) {
     divisorString = ''
-    valueString = satoshisBN.div(SATS_PER_BTC).toString(10)
-  } else if (satoshisLength > 5 && /0{5}$/.test(satoshisString)) {
+    valueString = millisatoshisBN.div(MILLISATS_PER_BTC).toString(10)
+  } else if (millisatoshisLength > 8 && /0{8}$/.test(millisatoshisString)) {
     divisorString = 'm'
-    valueString = satoshisBN.div(SATS_PER_MILLIBTC).toString(10)
-  } else if (satoshisLength > 2 && /0{2}$/.test(satoshisString)) {
+    valueString = millisatoshisBN.div(MILLISATS_PER_MILLIBTC).toString(10)
+  } else if (millisatoshisLength > 5 && /0{5}$/.test(millisatoshisString)) {
     divisorString = 'u'
-    valueString = satoshisBN.div(SATS_PER_MICROBTC).toString(10)
-  } else {
+    valueString = millisatoshisBN.div(MILLISATS_PER_MICROBTC).toString(10)
+  } else if (millisatoshisLength > 2 && /0{2}$/.test(millisatoshisString)) {
     divisorString = 'n'
-    valueString = satoshisBN.mul(NANOBTC_PER_SATS).toString(10)
+    valueString = millisatoshisBN.div(MILLISATS_PER_NANOBTC).toString(10)
+  } else {
+    divisorString = 'p'
+    valueString = millisatoshisBN.mul(PICOBTC_PER_MILLISATS).toString(10)
   }
   return valueString + divisorString
 }
 
 function hrpToSat (hrpString, outputString) {
+  let millisatoshisBN = hrpToMillisat(hrpString, false)
+  if (!millisatoshisBN.mod(new BN(1000, 10)).eq(new BN(0, 10))) {
+    throw new Error('Amount is outside of valid range')
+  }
+  let result = millisatoshisBN.div(new BN(1000, 10))
+  return outputString ? result.toString() : result
+}
+
+function hrpToMillisat (hrpString, outputString) {
   let divisor, value
   if (hrpString.slice(-1).match(/^[munp]$/)) {
     divisor = hrpString.slice(-1)
@@ -310,17 +361,16 @@ function hrpToSat (hrpString, outputString) {
 
   let valueBN = new BN(value, 10)
 
-  let satoshisBN = divisor
-    ? valueBN.mul(SATS_PER_BTC).div(DIVISORS[divisor])
-    : valueBN.mul(SATS_PER_BTC)
+  let millisatoshisBN = divisor
+    ? valueBN.mul(MILLISATS_PER_BTC).div(DIVISORS[divisor])
+    : valueBN.mul(MILLISATS_PER_BTC)
 
-  if (((divisor === 'n' && !valueBN.mod(new BN(10, 10)).eq(new BN(0, 10))) ||
-      satoshisBN.gt(MAX_SATS)) ||
-      divisor === 'p') {
+  if (((divisor === 'p' && !valueBN.mod(new BN(10, 10)).eq(new BN(0, 10))) ||
+      millisatoshisBN.gt(MAX_MILLISATS))) {
     throw new Error('Amount is outside of valid range')
   }
 
-  return outputString ? satoshisBN.toString() : satoshisBN
+  return outputString ? millisatoshisBN.toString() : millisatoshisBN
 }
 
 function sign (inputPayReqObj, inputPrivateKey) {
@@ -415,8 +465,8 @@ function encode (inputData, addDefaults) {
     throw new Error('Need coinType for proper payment request reconstruction')
   } else {
     // if the coinType is not a valid name of a network in bitcoinjs-lib, fail
-    if (!bitcoinjsNetworks[data.coinType]) throw new Error('Unknown coin type')
-    coinTypeObj = bitcoinjsNetworks[data.coinType]
+    if (!BITCOINJS_NETWORK_INFO[data.coinType]) throw new Error('Unknown coin type')
+    coinTypeObj = BITCOINJS_NETWORK_INFO[data.coinType]
   }
 
   // use current time as default timestamp (seconds)
@@ -568,7 +618,15 @@ function encode (inputData, addDefaults) {
   let hrpString
   // calculate the smallest possible integer (removing zeroes) and add the best
   // divisor (m = milli, u = micro, n = nano, p = pico)
-  if (data.satoshis) {
+  if (data.millisatoshis && data.satoshis) {
+    hrpString = millisatToHrp(new BN(data.millisatoshis, 10))
+    let hrpStringSat = satToHrp(new BN(data.satoshis, 10))
+    if (hrpStringSat !== hrpString) {
+      throw new Error('satoshis and millisatoshis do not match')
+    }
+  } else if (data.millisatoshis) {
+    hrpString = millisatToHrp(new BN(data.millisatoshis, 10))
+  } else if (data.satoshis) {
     hrpString = satToHrp(new BN(data.satoshis, 10))
   } else {
     hrpString = ''
@@ -584,14 +642,25 @@ function encode (inputData, addDefaults) {
   let tags = data.tags
   let tagWords = []
   tags.forEach(tag => {
+    const possibleTagNames = Object.keys(TAGENCODERS)
+    if (canReconstruct) possibleTagNames.push(unknownTagName)
     // check if the tagName exists in the encoders object, if not throw Error.
-    if (Object.keys(TAGENCODERS).indexOf(tag.tagName) === -1) {
+    if (possibleTagNames.indexOf(tag.tagName) === -1) {
       throw new Error('Unknown tag key: ' + tag.tagName)
     }
-    // each tag starts with 1 word code for the tag
-    tagWords.push(TAGCODES[tag.tagName])
-    let encoder = TAGENCODERS[tag.tagName]
-    let words = encoder(tag.data)
+
+    let words
+    if (tag.tagName !== unknownTagName) {
+      // each tag starts with 1 word code for the tag
+      tagWords.push(TAGCODES[tag.tagName])
+
+      const encoder = TAGENCODERS[tag.tagName]
+      words = encoder(tag.data)
+    } else {
+      let result = unknownEncoder(tag.data)
+      tagWords.push(result.tagCode)
+      words = result.words
+    }
     // after the tag code, 2 words are used to store the length (in 5 bit words) of the tag data
     // (also left padded, most integers are left padded while buffers are right padded)
     tagWords = tagWords.concat([0].concat(intBEToWords(words.length)).slice(-2))
@@ -653,9 +722,11 @@ function encode (inputData, addDefaults) {
 
 // decode will only have extra comments that aren't covered in encode comments.
 // also if anything is hard to read I'll comment.
-function decode (paymentRequest) {
-  if (paymentRequest.slice(0, 2) !== 'ln') throw new Error('Not a proper lightning payment request')
+function decode (paymentRequest, network) {
+  if (typeof paymentRequest !== 'string') throw new Error('Lightning Payment Request must be string')
+  if (paymentRequest.slice(0, 2).toLowerCase() !== 'ln') throw new Error('Not a proper lightning payment request')
   let decoded = bech32.decode(paymentRequest, Number.MAX_SAFE_INTEGER)
+  paymentRequest = paymentRequest.toLowerCase()
   let prefix = decoded.prefix
   let words = decoded.words
 
@@ -686,22 +757,33 @@ function decode (paymentRequest) {
     throw new Error('Not a proper lightning payment request')
   }
 
-  let coinType = prefixMatches[1]
-  let coinNetwork
-  if (BECH32CODES[coinType]) {
-    coinType = BECH32CODES[coinType]
-    coinNetwork = bitcoinjsNetworks[coinType]
-  } else {
+  let bech32Prefix = prefixMatches[1]
+  let coinNetwork, coinType
+  if (BECH32CODES[bech32Prefix]) {
+    coinType = BECH32CODES[bech32Prefix]
+    coinNetwork = BITCOINJS_NETWORK_INFO[coinType]
+  } else if (network && network.bech32) {
+    coinType = 'unknown'
+    coinNetwork = network
+  }
+  if (!coinNetwork || coinNetwork.bech32 !== bech32Prefix) {
     throw new Error('Unknown coin bech32 prefix')
   }
 
   let value = prefixMatches[2]
-  let satoshis
+  let satoshis, millisatoshis, removeSatoshis
   if (value) {
     let divisor = prefixMatches[3]
-    satoshis = parseInt(hrpToSat(value + divisor, true))
+    try {
+      satoshis = parseInt(hrpToSat(value + divisor, true))
+    } catch (e) {
+      satoshis = null
+      removeSatoshis = true
+    }
+    millisatoshis = hrpToMillisat(value + divisor, true)
   } else {
     satoshis = null
+    millisatoshis = null
   }
 
   // reminder: left padded 0 bits
@@ -714,8 +796,9 @@ function decode (paymentRequest) {
   // we have no tag count to go on, so just keep hacking off words
   // until we have none.
   while (words.length > 0) {
-    tagName = TAGNAMES[words[0].toString()]
-    parser = TAGPARSERS[words[0].toString()]
+    let tagCode = words[0].toString()
+    tagName = TAGNAMES[tagCode] || unknownTagName
+    parser = TAGPARSERS[tagCode] || getUnknownParser(tagCode)
     words = words.slice(1)
 
     tagLength = wordsToIntBE(words.slice(0, 2))
@@ -753,12 +836,17 @@ function decode (paymentRequest) {
     wordsTemp: bech32.encode('temp', wordsNoSig.concat(sigWords), Number.MAX_SAFE_INTEGER),
     coinType,
     satoshis,
+    millisatoshis,
     timestamp,
     timestampString,
     payeeNodeKey: sigPubkey.toString('hex'),
     signature: sigBuffer.toString('hex'),
     recoveryFlag,
     tags
+  }
+
+  if (removeSatoshis) {
+    delete finalResult['satoshis']
   }
 
   if (timeExpireDate) {
@@ -773,5 +861,7 @@ module.exports = {
   decode,
   sign,
   satToHrp,
-  hrpToSat
+  millisatToHrp,
+  hrpToSat,
+  hrpToMillisat
 }

@@ -4,13 +4,12 @@ import cx from 'classnames';
 import QrReader from 'react-qr-reader';
 import LightningPayReq from './lib/bolt11';
 import { formatDetailsKey } from './utils/keys';
-import { formatTimestamp } from './utils/timestamp';
+// import { formatTimestamp } from './utils/timestamp';
 
 // Assets
 import arrowImage from './assets/images/arrow.svg';
 import closeImage from './assets/images/close.svg';
 import githubImage from './assets/images/github.svg';
-import bitcoinImage from './assets/images/bitcoin.svg';
 import boltImage from './assets/images/bolt.png';
 import qrcodeImage from './assets/images/qrcode.png';
 
@@ -20,7 +19,6 @@ import {
   APP_TAGLINE,
   APP_INPUT_PLACEHOLDER,
   APP_GITHUB,
-  DONATION_BTC,
 } from './constants/app';
 import {
   TAGS_KEY,
@@ -51,7 +49,8 @@ export class App extends PureComponent {
 
   getInvoiceDetails = (text) => this.setState(() => {
     try {
-      const decodedInvoice = LightningPayReq.decode(text);
+      const payReq = text.toLowerCase();
+      const decodedInvoice = LightningPayReq.decode(payReq);
 
       return {
         decodedInvoice,
@@ -218,7 +217,8 @@ export class App extends PureComponent {
       valuePropFormat &&
       valuePropFormat === TIMESTAMP_STRING_KEY
     ) {
-      value = `${formatTimestamp(decodedInvoice[key])}`;
+      // TODO: this breaks
+      // value = `${formatTimestamp(decodedInvoice[key])}`;
     }
 
     return (
@@ -277,34 +277,15 @@ export class App extends PureComponent {
   }
 
   renderOptions = () => {
-    const { isBitcoinAddrOpened, isInvoiceLoaded } = this.state;
+    const { isInvoiceLoaded } = this.state;
     const optionsClassnames = cx(
       'options',
       { 'options--hide': isInvoiceLoaded },
-    );
-    const bitcoinClassnames = cx(
-      'options__bitcoin',
-      { 'options__bitcoin--opened': isBitcoinAddrOpened },
     );
 
     return (
       <div className={optionsClassnames}>
         <div className='options__wrapper'>
-          <div className={bitcoinClassnames}>
-            <div className='options__bitcoin-address'>
-              {DONATION_BTC}
-            </div>
-            <button
-              onClick={this.handleBitcoinClick}
-              className='options__bitcoin-icon-wrapper'
-            >
-              <img
-                className='options__bitcoin-icon'
-                src={bitcoinImage}
-                alt='Bitcoin'
-              />
-            </button>
-          </div>
           <a
             href={APP_GITHUB}
             className='options__github'
