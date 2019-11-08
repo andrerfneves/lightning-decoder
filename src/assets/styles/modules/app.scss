@@ -1,6 +1,10 @@
 $container-width: 700px;
 
 // App Layout
+body {
+  background: $app-background;
+}
+
 .app {
   background: $app-background;
   display: flex;
@@ -32,9 +36,7 @@ $container-width: 700px;
     @include larger-than(mobile) {
       width: 100%;
       max-width: $container-width;
-      margin-bottom: 2 * $base-spacing;
       flex-direction: row;
-      margin-left: 4 * $base-spacing;
     }
   }
 

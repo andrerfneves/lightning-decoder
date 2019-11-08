@@ -22,9 +22,8 @@ import {
 } from './constants/app';
 import {
   TAGS_KEY,
-  TIMESTAMP_KEY,
-  WORDS_TEMP_KEY,
   TIMESTAMP_STRING_KEY,
+  COMPLETE_KEY,
 } from './constants/keys';
 
 // Styles
@@ -85,10 +84,6 @@ export class App extends PureComponent {
     }
   }
 
-  handleBitcoinClick = () => this.setState(prevState => ({
-    isBitcoinAddrOpened: !prevState.isBitcoinAddrOpened,
-  }));
-
   handleQRCode = () => this.setState(prevState => ({
     isQRCodeOpened: !prevState.isQRCodeOpened
   }))
@@ -141,8 +136,7 @@ export class App extends PureComponent {
     const invoiceDetails = Object.keys(decodedInvoice)
       .map((key) => {
         switch (key) {
-          case WORDS_TEMP_KEY:
-          case TIMESTAMP_KEY:
+          case COMPLETE_KEY:
             return null;
           case TAGS_KEY:
             return this.renderInvoiceInnerItem(key);
@@ -173,7 +167,7 @@ export class App extends PureComponent {
     ) ? renderNestedTag(tag) : renderNormalTag(tag);
 
     const renderNestedTag = (tag) => (
-      <div className='invoice__item invoice__item--nested'>
+      <div key={tag.data.key} className='invoice__item invoice__item--nested'>
         <div className='invoice__item-title'>
           {formatDetailsKey(tag.tagName)}
         </div>
@@ -187,7 +181,7 @@ export class App extends PureComponent {
                 {formatDetailsKey(key)}
               </div>
               <div className='invoice__nested-value'>
-                {`${tag.data[key]}`}
+                {`${tag.data[key] || '--'}`}
               </div>
             </div>
           ))}
@@ -196,12 +190,12 @@ export class App extends PureComponent {
     );
 
     const renderNormalTag = (tag) => (
-      <div className='invoice__item'>
+      <div key={tag.data.key} className='invoice__item'>
         <div className='invoice__item-title'>
           {formatDetailsKey(tag.tagName)}
         </div>
         <div className='invoice__item-value'>
-          {`${tag.data}`}
+          {`${tag.data || '--'}`}
         </div>
       </div>
     )
