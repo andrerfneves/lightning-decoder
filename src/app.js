@@ -2,9 +2,6 @@
 import React, { PureComponent } from 'react';
 import cx from 'classnames';
 import QrReader from 'react-qr-reader';
-import LightningPayReq from './lib/bolt11';
-import { formatDetailsKey } from './utils/keys';
-// import { formatTimestamp } from './utils/timestamp';
 
 // Assets
 import arrowImage from './assets/images/arrow.svg';
@@ -12,6 +9,10 @@ import closeImage from './assets/images/close.svg';
 import githubImage from './assets/images/github.svg';
 import boltImage from './assets/images/bolt.png';
 import qrcodeImage from './assets/images/qrcode.png';
+
+// Utils
+import { formatDetailsKey } from './utils/keys';
+import { parseInvoice } from './utils/invoices';
 
 // Constants
 import {
@@ -46,25 +47,35 @@ export class App extends PureComponent {
     ...INITIAL_STATE,
   }));
 
-  getInvoiceDetails = (text) => this.setState(() => {
-    try {
-      const payReq = text.toLowerCase();
-      const decodedInvoice = LightningPayReq.decode(payReq);
+  getInvoiceDetails = (text) => {
+    let result;
 
-      return {
-        decodedInvoice,
-        isInvoiceLoaded: true,
-        hasError: false,
-        error: {},
-      };
-    } catch (error) {
-      return {
-        isInvoiceLoaded: false,
-        hasError: true,
-        error,
-      };
-    }
-  });
+    parseInvoice(text)
+      .then(res => {
+        result = {
+          decodedInvoice: res,
+          isInvoiceLoaded: true,
+          hasError: false,
+          error: {},
+        };
+
+        this.setState(() => ({
+          ...result,
+        }))
+      })
+      .catch(err => {
+        result = {
+          decodedInvoice: {},
+          isInvoiceLoaded: false,
+          hasError: true,
+          error: err,
+        };
+
+        this.setState(() => ({
+          ...result,
+        }))
+      });
+  }
 
   handleChange = (event) => {
     const { target: { value: text } } = event;
