@@ -1,14 +1,14 @@
 // Core Libs & Utils
 import React, { PureComponent } from 'react';
-import cx from 'classnames';
 import QrReader from 'react-qr-reader';
+import cx from 'classnames';
 
 // Assets
+import boltImage from './assets/images/bolt.png';
 import arrowImage from './assets/images/arrow.svg';
 import closeImage from './assets/images/close.svg';
-import githubImage from './assets/images/github.svg';
-import boltImage from './assets/images/bolt.png';
 import qrcodeImage from './assets/images/qrcode.png';
+import githubImage from './assets/images/github.svg';
 
 // Utils
 import { formatDetailsKey } from './utils/keys';
@@ -17,27 +17,27 @@ import { parseInvoice } from './utils/invoices';
 // Constants
 import {
   APP_NAME,
+  APP_GITHUB,
   APP_TAGLINE,
   APP_INPUT_PLACEHOLDER,
-  APP_GITHUB,
 } from './constants/app';
 import {
   TAGS_KEY,
-  TIMESTAMP_STRING_KEY,
   COMPLETE_KEY,
+  TIMESTAMP_STRING_KEY,
 } from './constants/keys';
 
 // Styles
 import './assets/styles/main.scss';
 
 const INITIAL_STATE = {
-  decodedInvoice: {},
+  text: '',
   error: {},
   hasError: false,
+  decodedInvoice: {},
+  isQRCodeOpened: false,
   isInvoiceLoaded: false,
   isBitcoinAddrOpened: false,
-  text: '',
-  isQRCodeOpened: false,
 };
 
 export class App extends PureComponent {
@@ -47,34 +47,29 @@ export class App extends PureComponent {
     ...INITIAL_STATE,
   }));
 
-  getInvoiceDetails = (text) => {
-    let result;
+  getInvoiceDetails = async (text) => {
+    console.log({ text });
 
-    parseInvoice(text)
-      .then(res => {
-        result = {
-          decodedInvoice: res,
-          isInvoiceLoaded: true,
-          hasError: false,
+    try {
+      const response = await parseInvoice(text);
+      console.log({ response });
+
+      if (response) {
+        this.setState(() => ({
           error: {},
-        };
-
-        this.setState(() => ({
-          ...result,
-        }))
-      })
-      .catch(err => {
-        result = {
-          decodedInvoice: {},
-          isInvoiceLoaded: false,
-          hasError: true,
-          error: err,
-        };
-
-        this.setState(() => ({
-          ...result,
-        }))
-      });
+          hasError: false,
+          isInvoiceLoaded: true,
+          decodedInvoice: response,
+        }));
+      }
+    } catch(error) {
+      this.setState(() => ({
+        error: error,
+        hasError: true,
+        decodedInvoice: {},
+        isInvoiceLoaded: false,
+      }));
+    }
   }
 
   handleChange = (event) => {
@@ -82,8 +77,8 @@ export class App extends PureComponent {
 
     this.setState(() => ({
       text,
-      hasError: false,
       error: {},
+      hasError: false,
     }));
   }
 
@@ -177,25 +172,47 @@ export class App extends PureComponent {
       typeof tag.data !== 'number'
     ) ? renderNestedTag(tag) : renderNormalTag(tag);
 
+    const renderNestedItem = (label, value) => (
+      <div
+        key={label}
+        className='invoice__nested-item'
+      >
+        <div className='invoice__nested-title'>
+          {formatDetailsKey(label)}
+        </div>
+        <div className='invoice__nested-value'>
+          {value}
+        </div>
+      </div>
+    );
+
     const renderNestedTag = (tag) => (
-      <div key={tag.data.key} className='invoice__item invoice__item--nested'>
+      <div key={tag.tagName} className='invoice__item invoice__item--nested'>
         <div className='invoice__item-title'>
           {formatDetailsKey(tag.tagName)}
         </div>
         <div className='invoice__item-value invoice__item-value--nested'>
-          {Object.keys(tag.data).map((key) => (
-            <div
-              key={key}
-              className='invoice__nested-item'
-            >
-              <div className='invoice__nested-title'>
-                {formatDetailsKey(key)}
-              </div>
-              <div className='invoice__nested-value'>
-                {`${tag.data[key] || '--'}`}
-              </div>
+          {/* Strings */}
+          {typeof tag.data === 'string' && (
+            <div className='invoice__nested-value'>
+              {tag.data}
             </div>
+          )}
+          {/* Array of Objects */}
+          {Array.isArray(tag.data) && tag.data.map((item) => (
+            <>
+              {Object.keys(item).map((label) => renderNestedItem(label, item[label]))}
+            </>
           ))}
+          {/* Objects */}
+          {(
+            !Array.isArray(tag.data) && (
+              (typeof tag.data !== 'string') || (typeof tag.data !== 'number'))
+            ) && (
+            <>
+              {Object.keys(tag.data).map((label) => renderNestedItem(label, tag.data[label]))}
+            </>
+          )}
         </div>
       </div>
     );

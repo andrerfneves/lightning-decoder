@@ -1,28 +1,37 @@
 // Key Formatting Utilities
 import {
-  COIN_TYPE_KEY,
-  PAYEE_NODE_KEY,
-  PAYMENT_REQUEST_KEY,
-  PREFIX_KEY,
-  TIMESTAMP_STRING_KEY,
-  TIMESTAMP_KEY,
-  SATOSHIS_KEY,
-  SIGNATURE_KEY,
-  RECOVERY_FLAG_KEY,
-  COMMIT_HASH_KEY,
-  PAYMENT_HASH_KEY,
-  FALLBACK_ADDRESS_KEY,
-  ADDRESS_HASH_KEY,
-  ADDRESS_KEY,
-  MILLISATOSHIS_KEY,
   CODE_KEY,
-  DESCRIPTION_KEY,
-  EXPIRY_HTLC,
-  TIME_EXPIRE_DATE,
-  WORDS_TEMP_KEY,
+  PREFIX_KEY,
+  PUBKEY_KEY,
   EXPIRE_TIME,
-  TIME_EXPIRE_DATE_STRING,
+  ADDRESS_KEY,
+  EXPIRY_HTLC,
+  SATOSHIS_KEY,
+  TAG_CODE_KEY,
+  TAG_WORDS_KEY,
+  SIGNATURE_KEY,
+  COIN_TYPE_KEY,
+  TIMESTAMP_KEY,
+  WORDS_TEMP_KEY,
+  PAYEE_NODE_KEY,
+  DESCRIPTION_KEY,
+  COMMIT_HASH_KEY,
+  UNKNOWN_TAG_KEY,
+  ROUTING_INFO_KEY,
+  PAYMENT_HASH_KEY,
+  ADDRESS_HASH_KEY,
+  TIME_EXPIRE_DATE,
+  RECOVERY_FLAG_KEY,
+  MILLISATOSHIS_KEY,
+  FEE_BASE_MSAT_KEY,
+  SHORT_CHANNEL_KEY,
+  PAYMENT_REQUEST_KEY,
+  FEE_PROPORTIONAL_KEY,
+  FALLBACK_ADDRESS_KEY,
+  TIMESTAMP_STRING_KEY,
   MIN_FINAL_CLTV_EXPIRY,
+  CLTV_EXPIRY_DELTA_KEY,
+  TIME_EXPIRE_DATE_STRING,
 } from '../constants/keys';
 
 export const formatDetailsKey = (key: string) => {
@@ -73,6 +82,24 @@ export const formatDetailsKey = (key: string) => {
       return 'Timestamp';
     case MIN_FINAL_CLTV_EXPIRY:
       return 'Minimum Final CLTV Expiry';
+    case UNKNOWN_TAG_KEY:
+      return 'Unknown Tag';
+    case ROUTING_INFO_KEY:
+      return 'Routing Info';
+    case TAG_CODE_KEY:
+      return 'Tag Code';
+    case TAG_WORDS_KEY:
+      return 'Tag Words';
+    case CLTV_EXPIRY_DELTA_KEY:
+      return 'CLTV Expiry Delta';
+    case FEE_BASE_MSAT_KEY:
+      return 'Fee Base (MSats)';
+    case FEE_PROPORTIONAL_KEY:
+      return 'Tag Words';
+    case PUBKEY_KEY:
+      return 'Public Key';
+    case SHORT_CHANNEL_KEY:
+      return 'Short Channel ID';
     default:
       break;
   }

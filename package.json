@@ -1,10 +1,10 @@
 {
   "name": "lightning-decoder",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "author": {
     "email": "andrerfneves@protonmail.com",
     "name": "André Neves",
-    "url": "https://andrenev.es"
+    "url": "https://zebedee.io"
   },
   "license": "MIT",
   "dependencies": {
@@ -33,7 +33,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "yarn build && cd build && now"
+    "deploy": "npm run build && cd build && now"
   },
   "eslintConfig": {
     "extends": "react-app"

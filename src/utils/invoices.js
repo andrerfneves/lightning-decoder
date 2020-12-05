@@ -3,32 +3,39 @@ import axios from 'axios';
 import { Buffer } from 'buffer';
 import LightningPayReq from '../lib/bolt11';
 
+const LIGHTNING_SCHEME = 'lightning';
 const BOLT11_SCHEME = 'lnbc';
-const LNURL_SCHEME = 'LNURL';
-const LNURL_ERROR_TYPE = 'ERROR';
+const LNURL_SCHEME = 'lnurl';
 
 export const parseInvoice = (invoice: string) => {
   if (!invoice || invoice === '') {
     return null;
   }
 
-  // Check if Invoice has `lightning` prefix
-  // (9 chars + the `:` or `=` chars) --> 10 characters total
-  const lcInvoice = invoice.toLowerCase();
-  const hasLightningPrefix = lcInvoice.indexOf('lightning') !== -1;
+  const lcInvoice = invoice.trim().toLowerCase();
+  let requestCode = lcInvoice;
 
-  let parsedInvoice = lcInvoice;
+  // Check if Invoice has `lightning` or `lnurl` prefixes
+  // (9 chars + the `:` or `=` chars) --> 10 characters total
+  const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}:`) !== -1;
   if (hasLightningPrefix) {
     // Remove the `lightning` prefix
-    parsedInvoice = lcInvoice.slice(10, lcInvoice.length);
+    requestCode = lcInvoice.slice(10, lcInvoice.length);
+  }
+
+  // (5 chars + the `:` or `=` chars) --> 6 characters total
+  const hasLNURLPrefix = lcInvoice.indexOf(`${LNURL_SCHEME}:`) !== -1;
+  if (hasLNURLPrefix) {
+    // Remove the `lightning` prefix
+    requestCode = lcInvoice.slice(6, lcInvoice.length);
   }
 
   // Parse LNURL or BOLT11
-  const isLNURL = invoice.indexOf(LNURL_SCHEME) !== -1;
+  const isLNURL = requestCode.startsWith(LNURL_SCHEME);
   if (isLNURL) {
-    return handleLNURL(parsedInvoice);
+    return handleLNURL(requestCode);
   } else {
-    return handleBOLT11(parsedInvoice);
+    return handleBOLT11(requestCode);
   }
 };
 
@@ -37,11 +44,16 @@ const handleLNURL = (invoice: string) => {
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
+  console.log({ url });
+
   return axios.get(url, {
     headers: {
       'Access-Control-Allow-Origin': '*',
     }
-  }).then(res => res.json());
+  }).then(res => {
+    const result = res.json();
+    console.log({ result });
+  })
 };
 
 const handleBOLT11 = (invoice: string) => {
@@ -50,7 +62,9 @@ const handleBOLT11 = (invoice: string) => {
     return null;
   }
 
-  const bolt11 = invoice.toLowerCase();
+  // Decoded BOLT11 Invoice
+  const result = LightningPayReq.decode(invoice);
+  console.log({ result });
 
-  return LightningPayReq.decode(bolt11);;
+  return result;
 };
