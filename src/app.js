@@ -24,7 +24,10 @@ import {
 import {
   TAGS_KEY,
   COMPLETE_KEY,
+  LNURL_METADATA_KEY,
   TIMESTAMP_STRING_KEY,
+  CALLBACK_KEY,
+  LNURL_TAG_KEY,
 } from './constants/keys';
 
 // Styles
@@ -51,11 +54,18 @@ export class App extends PureComponent {
     console.log({ text });
 
     try {
-      const response = await parseInvoice(text);
-      console.log({ response });
+      let response;
+      const { isLNURL, data } = await parseInvoice(text);
+
+      if (isLNURL) {
+        response = await data;
+      } else {
+        response = data;
+      }
 
       if (response) {
         this.setState(() => ({
+          isLNURL,
           error: {},
           hasError: false,
           isInvoiceLoaded: true,
@@ -218,7 +228,7 @@ export class App extends PureComponent {
     );
 
     const renderNormalTag = (tag) => (
-      <div key={tag.data.key} className='invoice__item'>
+      <div key={tag.tagName} className='invoice__item'>
         <div className='invoice__item-title'>
           {formatDetailsKey(tag.tagName)}
         </div>
@@ -268,6 +278,100 @@ export class App extends PureComponent {
       </div>
     </div>
   );
+
+  renderLNURLDetails = () => {
+    const { decodedInvoice, isInvoiceLoaded } = this.state;
+    const invoiceContainerClassnames = cx(
+      'invoice',
+      { 'invoice--opened': isInvoiceLoaded },
+    );
+
+    return !isInvoiceLoaded ? null : (
+      <div className={invoiceContainerClassnames}>
+        {Object.keys(decodedInvoice).map((key) => {
+          let text = decodedInvoice[key];
+
+          if (key === LNURL_TAG_KEY) {
+            switch (key) {
+              case 'payRequest':
+                text = 'LNURL Pay (payRequest)'
+                break;
+              case 'withdrawRequest':
+                text = 'LNURL Withdraw (withdrawRequest)'
+                break;
+              default:
+                break;
+            }
+          }
+
+          if (key === CALLBACK_KEY) {
+            return (
+              <div key={key} className='invoice__item'>
+                <div className='invoice__item-title'>
+                  {formatDetailsKey(key)}
+                </div>
+                <div className='invoice__item-value'>
+                  <a href={decodedInvoice[key]}>
+                    {decodedInvoice[key]}
+                  </a>
+                </div>
+              </div>
+            )
+          }
+
+          if (key === LNURL_METADATA_KEY) {
+            const splitMetadata = JSON.parse(decodedInvoice[key]);
+
+            // eslint-disable-next-line array-callback-return
+            const toRender = splitMetadata.map((arrOfData) => {
+              if (arrOfData[0] === 'text/plain') {
+                return (
+                  <div key={key} className='invoice__item'>
+                    <div className='invoice__item-title'>
+                      Description
+                    </div>
+                    <div className='invoice__item-value'>
+                      {arrOfData[1]}
+                    </div>
+                  </div>
+                )
+              }
+
+              if (arrOfData[0] === 'image/png;base64') {
+                return (
+                  <div key={key} className='invoice__item'>
+                    <div className='invoice__item-title'>
+                      Image
+                    </div>
+                    <div className='invoice__item-value'>
+                      <img
+                        alt='Imager'
+                        style={{ maxWidth: '200px' }}
+                        src={`data:image/png;base64,${arrOfData[1]}`}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+            });
+
+            return toRender;
+          }
+
+          return (
+            <div key={key} className='invoice__item'>
+              <div className='invoice__item-title'>
+                {formatDetailsKey(key)}
+              </div>
+              <div className='invoice__item-value'>
+                {decodedInvoice[key]}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   renderSubmit = () => {
     const { isInvoiceLoaded, text } = this.state;
@@ -396,7 +500,7 @@ export class App extends PureComponent {
   }
 
   render() {
-    const { isInvoiceLoaded, hasError } = this.state;
+    const { isLNURL, isInvoiceLoaded, hasError } = this.state;
 
     const appClasses = cx(
       'app',
@@ -426,7 +530,7 @@ export class App extends PureComponent {
           </div>
         </div>
         <div className={appColumnClasses}>
-          {this.renderInvoiceDetails()}
+          {isLNURL ? this.renderLNURLDetails() : this.renderInvoiceDetails()}
           {this.renderErrorDetails()}
         </div>
       </div>

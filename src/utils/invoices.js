@@ -33,9 +33,15 @@ export const parseInvoice = (invoice: string) => {
   // Parse LNURL or BOLT11
   const isLNURL = requestCode.startsWith(LNURL_SCHEME);
   if (isLNURL) {
-    return handleLNURL(requestCode);
+    return {
+      isLNURL: true,
+      data: handleLNURL(requestCode)
+    };
   } else {
-    return handleBOLT11(requestCode);
+    return {
+      isLNURL: false,
+      data: handleBOLT11(requestCode)
+    };
   }
 };
 
@@ -44,15 +50,12 @@ const handleLNURL = (invoice: string) => {
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
-  console.log({ url });
-
   return axios.get(url, {
     headers: {
       'Access-Control-Allow-Origin': '*',
     }
   }).then(res => {
-    const result = res.json();
-    console.log({ result });
+    return res.data;
   })
 };
 
@@ -64,7 +67,6 @@ const handleBOLT11 = (invoice: string) => {
 
   // Decoded BOLT11 Invoice
   const result = LightningPayReq.decode(invoice);
-  console.log({ result });
 
   return result;
 };

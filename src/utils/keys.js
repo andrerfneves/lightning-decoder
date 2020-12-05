@@ -8,6 +8,9 @@ import {
   EXPIRY_HTLC,
   SATOSHIS_KEY,
   TAG_CODE_KEY,
+  CALLBACK_KEY,
+  LNURL_K1_KEY,
+  LNURL_TAG_KEY,
   TAG_WORDS_KEY,
   SIGNATURE_KEY,
   COIN_TYPE_KEY,
@@ -17,6 +20,8 @@ import {
   DESCRIPTION_KEY,
   COMMIT_HASH_KEY,
   UNKNOWN_TAG_KEY,
+  MAX_SENDABLE_KEY,
+  MIN_SENDABLE_KEY,
   ROUTING_INFO_KEY,
   PAYMENT_HASH_KEY,
   ADDRESS_HASH_KEY,
@@ -25,13 +30,18 @@ import {
   MILLISATOSHIS_KEY,
   FEE_BASE_MSAT_KEY,
   SHORT_CHANNEL_KEY,
+  LNURL_METADATA_KEY,
+  COMMENT_ALLOWED_KEY,
   PAYMENT_REQUEST_KEY,
+  MAX_WITHDRAWABLE_KEY,
+  MIN_WITHDRAWABLE_KEY,
   FEE_PROPORTIONAL_KEY,
   FALLBACK_ADDRESS_KEY,
   TIMESTAMP_STRING_KEY,
   MIN_FINAL_CLTV_EXPIRY,
   CLTV_EXPIRY_DELTA_KEY,
   TIME_EXPIRE_DATE_STRING,
+  DEFAULT_DESCRIPTION_KEY,
 } from '../constants/keys';
 
 export const formatDetailsKey = (key: string) => {
@@ -100,6 +110,26 @@ export const formatDetailsKey = (key: string) => {
       return 'Public Key';
     case SHORT_CHANNEL_KEY:
       return 'Short Channel ID';
+    case CALLBACK_KEY:
+      return 'Callback URL';
+    case COMMENT_ALLOWED_KEY:
+      return 'Comment Allowed (Chars)';
+    case MAX_SENDABLE_KEY:
+      return 'Max Sendable (MSats)';
+    case MIN_SENDABLE_KEY:
+      return 'Min Sendable (MSats)';
+    case MAX_WITHDRAWABLE_KEY:
+      return 'Max Withdrawable (MSats)';
+    case MIN_WITHDRAWABLE_KEY:
+      return 'Min Withdrawable (MSats)';
+    case LNURL_TAG_KEY:
+      return 'LNURL Tag/Type';
+    case LNURL_METADATA_KEY:
+      return 'LNURL Metadata';
+    case LNURL_K1_KEY:
+      return 'K1';
+    case DEFAULT_DESCRIPTION_KEY:
+      return 'Description';
     default:
       break;
   }
