@@ -302,6 +302,19 @@ export class App extends PureComponent {
               default:
                 break;
             }
+
+            return (
+              <div key={key} className='invoice__item'>
+                <div className='invoice__item-title'>
+                  {formatDetailsKey(key)}
+                </div>
+                <div className='invoice__item-value'>
+                  <a href={decodedInvoice[key]}>
+                    {text}
+                  </a>
+                </div>
+              </div>
+            )
           }
 
           if (key === CALLBACK_KEY) {
