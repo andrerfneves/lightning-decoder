@@ -1,5 +1,4 @@
 import bech32 from 'bech32';
-import axios from 'axios';
 import { Buffer } from 'buffer';
 import LightningPayReq from '../lib/bolt11';
 
@@ -15,33 +14,30 @@ export const parseInvoice = (invoice: string) => {
   const lcInvoice = invoice.trim().toLowerCase();
   let requestCode = lcInvoice;
 
-  // Check if Invoice has `lightning` or `lnurl` prefixes
-  // (9 chars + the `:` or `=` chars) --> 10 characters total
-  const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}:`) !== -1;
+  // Check if Invoice has `lightning:` prefix
+  // (9 chars + the `:` char) --> 10 characters total
+  const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}`) !== -1;
   if (hasLightningPrefix) {
     // Remove the `lightning` prefix
     requestCode = lcInvoice.slice(10, lcInvoice.length);
   }
 
-  // (5 chars + the `:` or `=` chars) --> 6 characters total
-  const hasLNURLPrefix = lcInvoice.indexOf(`${LNURL_SCHEME}:`) !== -1;
-  if (hasLNURLPrefix) {
-    // Remove the `lightning` prefix
-    requestCode = lcInvoice.slice(6, lcInvoice.length);
-  }
+  // It has to be either LNURL or BOLT11 mainnet (LNBC)
+  const hasLNURLprefix = lcInvoice.indexOf(`${LNURL_SCHEME}`) !== -1;
+  const hasLNBCprefix = lcInvoice.indexOf(`${BOLT11_SCHEME}`) !== -1;
 
-  // Parse LNURL or BOLT11
-  const isLNURL = requestCode.startsWith(LNURL_SCHEME);
-  if (isLNURL) {
+  if (hasLNURLprefix) {
     return {
       isLNURL: true,
       data: handleLNURL(requestCode)
     };
-  } else {
+  } else if (hasLNBCprefix) {
     return {
       isLNURL: false,
       data: handleBOLT11(requestCode)
     };
+  } else {
+    return null;
   }
 };
 
@@ -50,13 +46,17 @@ const handleLNURL = (invoice: string) => {
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
-  return axios.get('https://cors-anywhere.herokuapp.com/' + url, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    }
-  }).then(res => {
-    return res.data;
-  })
+  return fetch(url)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      return data;
+    })
+    .catch(function () {
+      return null;
+    });
+
 };
 
 const handleBOLT11 = (invoice: string) => {
@@ -67,6 +67,5 @@ const handleBOLT11 = (invoice: string) => {
 
   // Decoded BOLT11 Invoice
   const result = LightningPayReq.decode(invoice);
-
   return result;
 };
