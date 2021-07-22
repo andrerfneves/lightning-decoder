@@ -1,6 +1,6 @@
 {
   "name": "lightning-decoder",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": {
     "email": "andrerfneves@protonmail.com",
     "name": "André Neves",
@@ -16,7 +16,6 @@
     "classnames": "^2.2.6",
     "coininfo": "https://github.com/cryptocoinjs/coininfo#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
     "date-fns": "^2.1.0",
-    "history": "^5.0.0",
     "lightnode-invoice": "^0.3.0",
     "lodash": "^4.17.15",
     "node-sass": "^4.12.0",
