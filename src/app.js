@@ -46,13 +46,28 @@ const INITIAL_STATE = {
 export class App extends PureComponent {
   state = INITIAL_STATE;
 
-  clearInvoiceDetails = () => this.setState(() => ({
-    ...INITIAL_STATE,
-  }));
+  componentDidMount() {
+    const invoiceOnURLParam = window.location.pathname;
+
+    // Remove first `/` from pathname
+    const cleanInvoice = invoiceOnURLParam.split('/')[1];
+    if (cleanInvoice && cleanInvoice !== '') {
+      this.setState(() => ({ text: cleanInvoice }));
+      this.getInvoiceDetails(cleanInvoice);
+    }
+  }
+
+  clearInvoiceDetails = () => {
+    // Reset URL address
+    const currentOrigin = window.location.origin;
+    window.history.pushState({}, null, `${currentOrigin}`);
+
+    this.setState(() => ({
+      ...INITIAL_STATE,
+    }));
+  };
 
   getInvoiceDetails = async (text) => {
-    console.log({ text });
-
     try {
       let response;
       const { isLNURL, data } = await parseInvoice(text);
@@ -64,6 +79,21 @@ export class App extends PureComponent {
       }
 
       if (response) {
+        // On successful response, set the request content on the addressbar
+        // if there isn't one already in there from before (user-entered)
+        const currentUrl = window.location;
+        const currentOrigin = window.location.origin;
+        const currentPathname = window.location.pathname;
+        const hasPathnameAlready = currentPathname && currentPathname !== '';
+
+        // If there's a pathname already, we can just remove it and let the
+        // new pathname be entered
+        if (hasPathnameAlready) {
+          window.history.pushState({}, null, `${currentOrigin}`);
+        }
+
+        window.history.pushState({}, null, `${currentUrl}${text}`);
+
         this.setState(() => ({
           isLNURL,
           error: {},
