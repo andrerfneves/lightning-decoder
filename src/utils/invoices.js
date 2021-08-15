@@ -50,7 +50,7 @@ const handleLNURL = (invoice: string) => {
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
-  return axios.get('https://cors-anywhere.herokuapp.com/' + url, {
+  return axios.get('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url), {
     headers: {
       'Access-Control-Allow-Origin': '*',
     }
