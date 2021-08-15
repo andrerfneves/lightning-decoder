@@ -1,19 +1,35 @@
-import bech32 from 'bech32';
 import axios from 'axios';
+import bech32 from 'bech32';
 import { Buffer } from 'buffer';
+
+import { validateInternetIdentifier } from './internet-identifier';
 import LightningPayReq from '../lib/bolt11';
 
 const LIGHTNING_SCHEME = 'lightning';
 const BOLT11_SCHEME = 'lnbc';
 const LNURL_SCHEME = 'lnurl';
 
-export const parseInvoice = (invoice: string) => {
+export const parseInvoice = async (invoice: string) => {
   if (!invoice || invoice === '') {
     return null;
   }
 
   const lcInvoice = invoice.trim().toLowerCase();
   let requestCode = lcInvoice;
+
+  // Check if this is a Lightning Address
+  if (validateInternetIdentifier(requestCode)) {
+    const { success, data, message } = await handleLightningAddress(requestCode);
+    console.log({ success, data, message });
+
+    if (!success) {
+      return {
+        data: null,
+        error: message,
+        isLNURL: false,
+      };
+    }
+  }
 
   // Check if Invoice has `lightning` or `lnurl` prefixes
   // (9 chars + the `:` or `=` chars) --> 10 characters total
@@ -59,6 +75,58 @@ const handleLNURL = (invoice: string) => {
   })
 };
 
+const handleLightningAddress = (internetIdentifier: string) => {
+  const addressArr = internetIdentifier.split('@');
+
+  // Must only have 2 fields (username and domain name)
+  if (addressArr.length !== 2) {
+    return {
+      success: false,
+      message: 'Invalid internet identifier format.',
+    };
+  }
+
+  const [username, domain] = addressArr;
+
+  // Must only have 2 fields (username and domain name)
+  if (addressArr[1].indexOf('.') === -1) {
+    return {
+      success: false,
+      message: 'Invalid internet identifier format.',
+    };
+  }
+
+  const url = `https://${domain}/.well-known/lnurlp/${username}`;
+
+  return axios.get('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url), {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    }
+  }).then(res => {
+    console.log({ url, username, domain });
+    const imageEntry = JSON.parse(res.data.metadata)
+      .find(([k]) => k.startsWith('image/'));
+
+    res.data.decodedMetadata = JSON.parse(res.data.metadata);
+    res.data.domain = domain;
+
+    return {
+      success: true,
+      data: {
+        domain,
+        username,
+        lnurlParams: res.data,
+        image: imageEntry && `data:${imageEntry.join(',')}`,
+      },
+    }
+  }).catch(_ => {
+    return {
+      success: false,
+      message: 'This identifier does not support Lightning Address yet.',
+    };
+  });
+};
+
 const handleBOLT11 = (invoice: string) => {
   // Check if Invoice starts with `lnbc` prefix
   if (!invoice.includes(BOLT11_SCHEME)) {
@@ -70,3 +138,4 @@ const handleBOLT11 = (invoice: string) => {
 
   return result;
 };
+

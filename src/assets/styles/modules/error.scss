@@ -15,6 +15,7 @@
     color: $text-primary;
     font-size: $font-extra-small-size;
     font-weight: $font-weight-bold;
+    line-height: 1.6;
 
     @include larger-than(mobile) {
       font-size: $font-small-size;

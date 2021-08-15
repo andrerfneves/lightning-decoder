@@ -19,6 +19,7 @@ import {
   APP_NAME,
   APP_GITHUB,
   APP_TAGLINE,
+  APP_SUBTAGLINE,
   APP_INPUT_PLACEHOLDER,
 } from './constants/app';
 import {
@@ -70,7 +71,40 @@ export class App extends PureComponent {
   getInvoiceDetails = async (text) => {
     try {
       let response;
-      const { isLNURL, data } = await parseInvoice(text);
+      const parsedInvoiceResponse = await parseInvoice(text);
+
+      // If this returns null is because there is no invoice to parse
+      if (!parsedInvoiceResponse) {
+        return this.setState(() => ({
+          hasError: true,
+          decodedInvoice: {},
+          isInvoiceLoaded: false,
+          error: { message: 'Please enter a valid invoice and try again.'},
+        }));
+      }
+
+      const { isLNURL, data, error } = parsedInvoiceResponse;
+
+      // If an error comes back from a nested operation in parsing it must
+      // propagate back to the end user
+      if (error && error.length > 0) {
+        return this.setState(() => ({
+          hasError: true,
+          decodedInvoice: {},
+          isInvoiceLoaded: false,
+          error: { message: error },
+        }));
+      }
+
+      // If data is null it means the parser could not understand the invoice
+      if (!data) {
+        return this.setState(() => ({
+          hasError: true,
+          decodedInvoice: {},
+          isInvoiceLoaded: false,
+          error: { message: 'Could not parse/understand this invoice or request. Please try again.'},
+        }));
+      }
 
       if (isLNURL) {
         response = await data;
@@ -305,6 +339,7 @@ export class App extends PureComponent {
       </div>
       <div className='logo__subtitle'>
         {APP_TAGLINE}
+        <span className="logo__subtitle-small">{APP_SUBTAGLINE}</span>
       </div>
     </div>
   );
