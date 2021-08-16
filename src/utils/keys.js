@@ -40,6 +40,8 @@ import {
   TIMESTAMP_STRING_KEY,
   MIN_FINAL_CLTV_EXPIRY,
   CLTV_EXPIRY_DELTA_KEY,
+  LN_ADDRESS_DOMAIN_KEY,
+  LN_ADDRESS_USERNAME_KEY,
   TIME_EXPIRE_DATE_STRING,
   DEFAULT_DESCRIPTION_KEY,
 } from '../constants/keys';
@@ -130,6 +132,10 @@ export const formatDetailsKey = (key: string) => {
       return 'K1';
     case DEFAULT_DESCRIPTION_KEY:
       return 'Description';
+    case LN_ADDRESS_DOMAIN_KEY:
+      return 'Domain';
+    case LN_ADDRESS_USERNAME_KEY:
+      return 'Username';
     default:
       break;
   }

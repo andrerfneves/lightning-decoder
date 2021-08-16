@@ -19,19 +19,20 @@ export const parseInvoice = async (invoice: string) => {
   // Check if this is a Lightning Address
   if (validateInternetIdentifier(requestCode)) {
     const { success, data, message } = await handleLightningAddress(requestCode);
-    console.log({ success, data, message });
 
     if (!success) {
       return {
         data: null,
         error: message,
         isLNURL: false,
+        isLNAddress: true,
       };
     }
 
     return {
       data,
-      isLNURL: true
+      isLNURL: true,
+      isLNAddress: true,
     }
   }
 
@@ -100,20 +101,14 @@ const handleLightningAddress = (internetIdentifier: string) => {
   return fetch('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url))
   .then(r => r.json())
   .then(data => {
-    console.log({ url, username, domain });
-    const imageEntry = JSON.parse(data.metadata)
-      .find(([k]) => k.startsWith('image/'));
-
-    data.decodedMetadata = JSON.parse(data.metadata);
     data.domain = domain;
 
     return {
       success: true,
       data: {
+        ...data,
         domain,
         username,
-        lnurlParams: data,
-        image: imageEntry && `data:${imageEntry.join(',')}`,
       },
     }
   }).catch(_ => {

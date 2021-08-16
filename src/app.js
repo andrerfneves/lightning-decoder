@@ -39,6 +39,7 @@ const INITIAL_STATE = {
   error: {},
   hasError: false,
   decodedInvoice: {},
+  isLNAddress: false,
   isQRCodeOpened: false,
   isInvoiceLoaded: false,
   isBitcoinAddrOpened: false,
@@ -69,6 +70,16 @@ export class App extends PureComponent {
   };
 
   getInvoiceDetails = async (text) => {
+    // If this returns null is because there is no invoice to parse
+    if (!text) {
+      return this.setState(() => ({
+        hasError: true,
+        decodedInvoice: {},
+        isInvoiceLoaded: false,
+        error: { message: 'Please enter a valid request or address and try again.'},
+      }));
+    }
+
     try {
       let response;
       const parsedInvoiceResponse = await parseInvoice(text);
@@ -79,11 +90,11 @@ export class App extends PureComponent {
           hasError: true,
           decodedInvoice: {},
           isInvoiceLoaded: false,
-          error: { message: 'Please enter a valid invoice and try again.'},
+          error: { message: 'Please enter a valid request or address and try again.'},
         }));
       }
 
-      const { isLNURL, data, error } = parsedInvoiceResponse;
+      const { isLNURL, data, error, isLNAddress } = parsedInvoiceResponse;
 
       // If an error comes back from a nested operation in parsing it must
       // propagate back to the end user
@@ -106,9 +117,17 @@ export class App extends PureComponent {
         }));
       }
 
+      // Handle LNURLs differently
       if (isLNURL) {
-        response = await data;
+        // If this is a Lightning Address, the contents have already been fetched
+        if (isLNAddress) {
+          response = data;
+        } else {
+          // Otherwise this is an LNURL ready to be fetched
+          response = await data;
+        }
       } else {
+        // Handle normal invoices
         response = data;
       }
 
@@ -131,6 +150,7 @@ export class App extends PureComponent {
         this.setState(() => ({
           isLNURL,
           error: {},
+          isLNAddress,
           hasError: false,
           isInvoiceLoaded: true,
           decodedInvoice: response,
@@ -351,10 +371,16 @@ export class App extends PureComponent {
       { 'invoice--opened': isInvoiceLoaded },
     );
 
+    let requestContents = decodedInvoice;
+
     return !isInvoiceLoaded ? null : (
       <div className={invoiceContainerClassnames}>
-        {Object.keys(decodedInvoice).map((key) => {
+        {Object.keys(requestContents).map((key) => {
           let text = decodedInvoice[key];
+
+          if (key === 'status') {
+            return <></>
+          }
 
           if (key === LNURL_TAG_KEY) {
             switch (key) {
@@ -369,7 +395,7 @@ export class App extends PureComponent {
             }
 
             return (
-              <div key={key} className='invoice__item'>
+              <div key={`${key}-${Math.random()}`} className='invoice__item'>
                 <div className='invoice__item-title'>
                   {formatDetailsKey(key)}
                 </div>
@@ -384,7 +410,7 @@ export class App extends PureComponent {
 
           if (key === CALLBACK_KEY) {
             return (
-              <div key={key} className='invoice__item'>
+              <div key={`${key}-${Math.random()}`} className='invoice__item'>
                 <div className='invoice__item-title'>
                   {formatDetailsKey(key)}
                 </div>
@@ -404,7 +430,7 @@ export class App extends PureComponent {
             const toRender = splitMetadata.map((arrOfData) => {
               if (arrOfData[0] === 'text/plain') {
                 return (
-                  <div key={key} className='invoice__item'>
+                  <div key={`${key}-${Math.random()}`} className='invoice__item'>
                     <div className='invoice__item-title'>
                       Description
                     </div>
@@ -415,9 +441,22 @@ export class App extends PureComponent {
                 )
               }
 
+              if (arrOfData[0] === 'text/identifier') {
+                return (
+                  <div key={`${key}-${Math.random()}`} className='invoice__item'>
+                    <div className='invoice__item-title'>
+                      Lightning Address
+                    </div>
+                    <div className='invoice__item-value'>
+                      {arrOfData[1]}
+                    </div>
+                  </div>
+                )
+              }
+
               if (arrOfData[0] === 'image/png;base64') {
                 return (
-                  <div key={key} className='invoice__item'>
+                  <div key={`${key}-${Math.random()}`} className='invoice__item'>
                     <div className='invoice__item-title'>
                       Image
                     </div>
@@ -437,7 +476,7 @@ export class App extends PureComponent {
           }
 
           return (
-            <div key={key} className='invoice__item'>
+            <div key={`${key}-${Math.random()}`} className='invoice__item'>
               <div className='invoice__item-title'>
                 {formatDetailsKey(key)}
               </div>

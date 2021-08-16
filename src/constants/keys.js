@@ -44,3 +44,5 @@ export const MIN_SENDABLE_KEY = 'minSendable';
 export const MAX_SENDABLE_KEY = 'maxSendable';
 export const MAX_WITHDRAWABLE_KEY = 'minWithdrawable';
 export const MIN_WITHDRAWABLE_KEY = 'minWithdrawable';
+export const LN_ADDRESS_DOMAIN_KEY = 'domain';
+export const LN_ADDRESS_USERNAME_KEY = 'username';
