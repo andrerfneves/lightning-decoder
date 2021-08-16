@@ -1,4 +1,3 @@
-import axios from 'axios';
 import bech32 from 'bech32';
 import { Buffer } from 'buffer';
 
@@ -28,6 +27,11 @@ export const parseInvoice = async (invoice: string) => {
         error: message,
         isLNURL: false,
       };
+    }
+
+    return {
+      data,
+      isLNURL: true
     }
   }
 
@@ -66,13 +70,8 @@ const handleLNURL = (invoice: string) => {
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
-  return axios.get('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url), {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    }
-  }).then(res => {
-    return res.data;
-  })
+  return fetch('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url))
+  .then(r => r.json())
 };
 
 const handleLightningAddress = (internetIdentifier: string) => {
@@ -98,24 +97,22 @@ const handleLightningAddress = (internetIdentifier: string) => {
 
   const url = `https://${domain}/.well-known/lnurlp/${username}`;
 
-  return axios.get('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url), {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    }
-  }).then(res => {
+  return fetch('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url))
+  .then(r => r.json())
+  .then(data => {
     console.log({ url, username, domain });
-    const imageEntry = JSON.parse(res.data.metadata)
+    const imageEntry = JSON.parse(data.metadata)
       .find(([k]) => k.startsWith('image/'));
 
-    res.data.decodedMetadata = JSON.parse(res.data.metadata);
-    res.data.domain = domain;
+    data.decodedMetadata = JSON.parse(data.metadata);
+    data.domain = domain;
 
     return {
       success: true,
       data: {
         domain,
         username,
-        lnurlParams: res.data,
+        lnurlParams: data,
         image: imageEntry && `data:${imageEntry.join(',')}`,
       },
     }
