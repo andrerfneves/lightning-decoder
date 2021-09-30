@@ -410,6 +410,7 @@ export class App extends PureComponent {
 
           if (key === CALLBACK_KEY) {
             return (
+              <>
               <div key={`${key}-${Math.random()}`} className='invoice__item'>
                 <div className='invoice__item-title'>
                   {formatDetailsKey(key)}
@@ -420,6 +421,19 @@ export class App extends PureComponent {
                   </a>
                 </div>
               </div>
+
+              {decodedInvoice[`minSendable`] ? <div key={`${key}-${Math.random()}`} className='invoice__item'>
+                <div className='invoice__item-title'>
+                  Sample Invoice
+                </div>
+                <div className='invoice__item-value'>
+                  <a href={`${decodedInvoice[key]}?amount=${decodedInvoice[`minSendable`]}`}>
+                    {decodedInvoice[key]}?amount={decodedInvoice[`minSendable`]}
+                  </a>
+                </div>
+              </div> : null}
+
+              </>
             )
           }
 
