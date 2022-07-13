@@ -382,6 +382,10 @@ export class App extends PureComponent {
             return <></>
           }
 
+          if (key === 'payerData') {
+            return <></>
+          }
+
           if (key === LNURL_TAG_KEY) {
             switch (key) {
               case 'payRequest':
