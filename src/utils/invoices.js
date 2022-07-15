@@ -5,7 +5,8 @@ import { validateInternetIdentifier } from './internet-identifier';
 import LightningPayReq from '../lib/bolt11';
 
 const LIGHTNING_SCHEME = 'lightning';
-const BOLT11_SCHEME = 'lnbc';
+const BOLT11_SCHEME_MAINNET = 'lnbc';
+const BOLT11_SCHEME_TESTNET = 'lntb';
 const LNURL_SCHEME = 'lnurl';
 
 export const parseInvoice = async (invoice: string) => {
@@ -121,7 +122,7 @@ const handleLightningAddress = (internetIdentifier: string) => {
 
 const handleBOLT11 = (invoice: string) => {
   // Check if Invoice starts with `lnbc` prefix
-  if (!invoice.includes(BOLT11_SCHEME)) {
+  if (!invoice.includes(BOLT11_SCHEME_MAINNET) && !invoice.includes(BOLT11_SCHEME_TESTNET)) {
     return null;
   }
 
