@@ -29,6 +29,7 @@ import {
   TIMESTAMP_STRING_KEY,
   CALLBACK_KEY,
   LNURL_TAG_KEY,
+  PAYER_DATA,
 } from './constants/keys';
 
 // Styles
@@ -473,6 +474,10 @@ export class App extends PureComponent {
             });
 
             return toRender;
+          }
+
+          if (key === PAYER_DATA) {
+            return <></>
           }
 
           return (
