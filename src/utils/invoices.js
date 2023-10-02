@@ -72,7 +72,7 @@ const handleLNURL = (invoice: string) => {
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
-  return fetch('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url))
+  return fetch(url)
   .then(r => r.json())
 };
 
@@ -99,7 +99,7 @@ const handleLightningAddress = (internetIdentifier: string) => {
 
   const url = `https://${domain}/.well-known/lnurlp/${username}`;
 
-  return fetch('https://satcors.fiatjaf.com/?url=' + encodeURIComponent(url))
+  return fetch(url)
   .then(r => r.json())
   .then(data => {
     data.domain = domain;
