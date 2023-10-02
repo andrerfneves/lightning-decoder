@@ -46,7 +46,8 @@ import {
   DEFAULT_DESCRIPTION_KEY,
 } from '../constants/keys';
 
-export const formatDetailsKey = (key: string) => {
+export const formatDetailsKey = (key) => {
+  console.log('formatDetailsKey', key);
   switch (key) {
     case COIN_TYPE_KEY:
       return 'Chain';
@@ -137,6 +138,6 @@ export const formatDetailsKey = (key: string) => {
     case LN_ADDRESS_USERNAME_KEY:
       return 'Username';
     default:
-      break;
+      return 'Error';
   }
 }

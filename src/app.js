@@ -377,7 +377,12 @@ export class App extends PureComponent {
       <div className={invoiceContainerClassnames}>
         {Object.keys(requestContents).map((key) => {
           let text = decodedInvoice[key];
-
+          
+          if (typeof decodedInvoice[key] === 'object') {
+            return <></>;
+          }
+          
+          console.log({ text });
           if (key === 'status') {
             return <></>
           }
