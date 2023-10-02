@@ -16,7 +16,6 @@
     "coininfo": "https://github.com/cryptocoinjs/coininfo#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
     "date-fns": "^2.1.0",
     "eslint": "^5.16.0",
-    "lightnode-invoice": "^0.3.0",
     "lodash": "^4.17.15",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
