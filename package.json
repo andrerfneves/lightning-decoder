@@ -1,10 +1,10 @@
 {
   "name": "lightning-decoder",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": {
     "email": "andrerfneves@protonmail.com",
     "name": "André Neves",
-    "url": "https://zebedee.io"
+    "url": "https://zbd.gg"
   },
   "license": "MIT",
   "dependencies": {
@@ -15,6 +15,7 @@
     "classnames": "^2.2.6",
     "coininfo": "https://github.com/cryptocoinjs/coininfo#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
     "date-fns": "^2.1.0",
+    "eslint": "^5.16.0",
     "lightnode-invoice": "^0.3.0",
     "lodash": "^4.17.15",
     "react": "^16.9.0",
@@ -28,8 +29,8 @@
     "serve": "^11.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "npm run build && cd build && now"
@@ -47,5 +48,9 @@
     "lightning",
     "network",
     "bitcoin"
-  ]
+  ],
+  "devDependencies": {
+    "node": "^18.9.0",
+    "eslint": "^6.1.0"
+  }
 }

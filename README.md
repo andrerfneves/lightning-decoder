@@ -18,4 +18,4 @@ To build the assets for production, use script `yarn build` or `npm run build`. 
 
 I'm always aiming to introduce new features and improvements to the application. If you see a need and would like to contribute, please send a PR with detailed descriptions and I'll evaluate as early as I can.
 
-MIT Licensed 2018
+MIT Licensed 2023
