@@ -758,16 +758,13 @@ function decode (paymentRequest, network) {
   }
 
   let bech32Prefix = prefixMatches[1]
-  let coinNetwork, coinType
+  let coinType = 'unknown'
+  let coinNetwork
   if (BECH32CODES[bech32Prefix]) {
     coinType = BECH32CODES[bech32Prefix]
     coinNetwork = BITCOINJS_NETWORK_INFO[coinType]
   } else if (network && network.bech32) {
-    coinType = 'unknown'
     coinNetwork = network
-  }
-  if (!coinNetwork || coinNetwork.bech32 !== bech32Prefix) {
-    throw new Error('Unknown coin bech32 prefix')
   }
 
   let value = prefixMatches[2]
