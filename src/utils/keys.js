@@ -47,7 +47,6 @@ import {
 } from '../constants/keys';
 
 export const formatDetailsKey = (key) => {
-  console.log('formatDetailsKey', key);
   switch (key) {
     case COIN_TYPE_KEY:
       return 'Chain';

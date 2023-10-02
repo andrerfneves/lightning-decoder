@@ -382,7 +382,6 @@ export class App extends PureComponent {
             return <></>;
           }
           
-          console.log({ text });
           if (key === 'status') {
             return <></>
           }
