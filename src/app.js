@@ -29,8 +29,11 @@ import {
   TIMESTAMP_STRING_KEY,
   CALLBACK_KEY,
   LNURL_TAG_KEY,
+  OFFER_PATHS_KEY,
+  OFFER_PATH_HOPS_KEY,
 } from './constants/keys';
 
+import { LNADDRESS, LNURL, BOLT12 } from './constants/invoices';
 // Styles
 import './assets/styles/main.scss';
 
@@ -76,7 +79,7 @@ export class App extends PureComponent {
         hasError: true,
         decodedInvoice: {},
         isInvoiceLoaded: false,
-        error: { message: 'Please enter a valid request or address and try again.'},
+        error: { message: 'Please enter a valid request or address and try again.' },
       }));
     }
 
@@ -90,11 +93,11 @@ export class App extends PureComponent {
           hasError: true,
           decodedInvoice: {},
           isInvoiceLoaded: false,
-          error: { message: 'Please enter a valid request or address and try again.'},
+          error: { message: 'Please enter a valid request or address and try again.' },
         }));
       }
 
-      const { isLNURL, data, error, isLNAddress } = parsedInvoiceResponse;
+      const { isLNURL, data, error, isLNAddress, encodingType } = parsedInvoiceResponse;
 
       // If an error comes back from a nested operation in parsing it must
       // propagate back to the end user
@@ -113,7 +116,7 @@ export class App extends PureComponent {
           hasError: true,
           decodedInvoice: {},
           isInvoiceLoaded: false,
-          error: { message: 'Could not parse/understand this invoice or request. Please try again.'},
+          error: { message: 'Could not parse/understand this invoice or request. Please try again.' },
         }));
       }
 
@@ -151,12 +154,13 @@ export class App extends PureComponent {
           isLNURL,
           error: {},
           isLNAddress,
+          encodingType,
           hasError: false,
           isInvoiceLoaded: true,
           decodedInvoice: response,
         }));
       }
-    } catch(error) {
+    } catch (error) {
       this.setState(() => ({
         error: error,
         hasError: true,
@@ -302,11 +306,11 @@ export class App extends PureComponent {
           {(
             !Array.isArray(tag.data) && (
               (typeof tag.data !== 'string') || (typeof tag.data !== 'number'))
-            ) && (
-            <>
-              {Object.keys(tag.data).map((label) => renderNestedItem(label, tag.data[label]))}
-            </>
-          )}
+          ) && (
+              <>
+                {Object.keys(tag.data).map((label) => renderNestedItem(label, tag.data[label]))}
+              </>
+            )}
         </div>
       </div>
     );
@@ -364,6 +368,84 @@ export class App extends PureComponent {
     </div>
   );
 
+  renderOfferDetails = () => {
+    const { decodedInvoice, isInvoiceLoaded } = this.state;
+    const invoiceContainerClassnames = cx(
+      'invoice',
+      { 'invoice--opened': isInvoiceLoaded },
+    );
+
+    const renderInnerObject = (object, innerKey) => {
+      return <div key={innerKey} className='invoice__item invoice__item--nested'>
+        <div className='invoice__item-title'>
+          {formatDetailsKey(innerKey)}
+        </div>
+        <div className='invoice__item-value'>
+          {object[innerKey]}
+        </div>
+      </div>
+    };
+
+    const renderHops = (hops) => {
+      const child = hops.map((hop, index) => {
+        const hop_child = Object.keys(hop).map((key) => (renderInnerObject(hop, key)));
+
+        return <div key={OFFER_PATH_HOPS_KEY + index}>
+          <div className='invoice__item invoice__item-value'>
+            <p> {formatDetailsKey(OFFER_PATH_HOPS_KEY) + ` ${index}`} </p>
+          </div>
+          {hop_child}
+        </div>
+      });
+
+      return <div key={OFFER_PATH_HOPS_KEY}>
+        {child}
+      </div>
+    }
+
+    const renderPaths = (paths) => {
+      const child = paths.map((path, index) => {
+        const path_child = Object.keys(path).map((key) => {
+          switch (key) {
+            case OFFER_PATH_HOPS_KEY:
+              return renderHops(path[key]);
+            default:
+              return renderInnerObject(path, key);
+          }
+        })
+
+        return <div key={path.offer_path_introduction_node}>
+          <div className='invoice__item invoice__item-value'>
+            <p> {formatDetailsKey(OFFER_PATHS_KEY) + ` ${index}`}   </p>
+          </div>
+          {path_child}
+        </div>
+      });
+
+      return <div key={OFFER_PATHS_KEY}>
+        {child}
+      </div>
+    }
+
+    const invoiceDetails = Object.keys(decodedInvoice)
+      .map((key) => {
+        switch (key) {
+          case OFFER_PATHS_KEY:
+            return renderPaths(decodedInvoice[key]);
+
+          default:
+            return this.renderInvoiceItem(key);
+        }
+      });
+
+
+    return !isInvoiceLoaded ? null : (
+      <div className={invoiceContainerClassnames}>
+        {invoiceDetails}
+      </div>
+    );
+  }
+
   renderLNURLDetails = () => {
     const { decodedInvoice, isInvoiceLoaded } = this.state;
     const invoiceContainerClassnames = cx(
@@ -377,11 +459,11 @@ export class App extends PureComponent {
       <div className={invoiceContainerClassnames}>
         {Object.keys(requestContents).map((key) => {
           let text = decodedInvoice[key];
-          
+
           if (typeof decodedInvoice[key] === 'object') {
             return <></>;
           }
-          
+
           if (key === 'status') {
             return <></>
           }
@@ -554,7 +636,7 @@ export class App extends PureComponent {
     const { isQRCodeOpened, isInvoiceLoaded } = this.state;
 
     const styleQRWrapper = cx({
-      'qrcode' : true,
+      'qrcode': true,
       'qrcode--opened': isQRCodeOpened,
     });
     const styleQRContainer = cx(
@@ -621,7 +703,7 @@ export class App extends PureComponent {
   }
 
   render() {
-    const { isLNURL, isInvoiceLoaded, hasError } = this.state;
+    const { isInvoiceLoaded, encodingType, hasError } = this.state;
 
     const appClasses = cx(
       'app',
@@ -651,7 +733,10 @@ export class App extends PureComponent {
           </div>
         </div>
         <div className={appColumnClasses}>
-          {isLNURL ? this.renderLNURLDetails() : this.renderInvoiceDetails()}
+          {((encodingType === LNADDRESS || encodingType === LNURL) && this.renderLNURLDetails()) ||
+            (encodingType === BOLT12 && this.renderOfferDetails())
+            || this.renderInvoiceDetails()
+          }
           {this.renderErrorDetails()}
         </div>
       </div>

@@ -45,4 +45,18 @@ export const MAX_SENDABLE_KEY = 'maxSendable';
 export const MAX_WITHDRAWABLE_KEY = 'minWithdrawable';
 export const MIN_WITHDRAWABLE_KEY = 'minWithdrawable';
 export const LN_ADDRESS_DOMAIN_KEY = 'domain';
-export const LN_ADDRESS_USERNAME_KEY = 'username';
+export const LN_ADDRESS_USERNAME_KEY = 'username'
+// Offer Keys
+export const OFFER_ID_KEY = 'offer_id';
+export const OFFER_SIGNING_PUBKEY_KEY = 'offer_signing_pubkey';
+export const OFFER_AMOUNT_MSATS_KEY = 'offer_amount_msats';
+export const OFFER_AMOUNT_CURRENCY_KEY = 'offer_amount_currency';
+export const OFFER_DESCRIPTION_KEY = 'offer_description';
+export const OFFER_PATHS_KEY = 'offer_paths';
+// Offer Path Keys
+export const OFFER_PATH_INTRODUCTION_NODE_KEY = 'offer_path_introduction_node';
+export const OFFER_PATH_BLINDING_POINT_KEY = 'offer_path_blinding_point';
+export const OFFER_PATH_HOPS_KEY = 'offer_path_hops';
+// Offer Path Hop Keys
+export const OFFER_HOP_PUBKEY_KEY = 'offer_hop_pubkey';
+export const OFFER_HOP_ENCRYPTED_PAYLOAD_KEY = 'offer_hop_encrypted_payload';

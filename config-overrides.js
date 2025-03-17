@@ -27,22 +27,22 @@ module.exports = function override(config, env) {
   /**
    * Add WASM support
    */
-  // Make file-loader ignore WASM files
-  const wasmExtensionRegExp = /\.wasm$/;
+  config.experiments = {
+    ...config.experiments,
+    asyncWebAssembly: true, // Native async WASM support in Webpack 5
+  };
+
+  // Add .wasm to resolved extensions
   config.resolve.extensions.push('.wasm');
+
+  const wasmExtensionRegExp = /\.wasm$/;
   config.module.rules.forEach(rule => {
     (rule.oneOf || []).forEach(oneOf => {
-      if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
+      if (oneOf.type === 'asset/resource') {
+        oneOf.exclude = oneOf.exclude || [];
         oneOf.exclude.push(wasmExtensionRegExp);
       }
     });
-  });
-
-  // Add a dedicated loader for WASM
-  config.module.rules.push({
-    test: wasmExtensionRegExp,
-    include: path.resolve(__dirname, 'src'),
-    use: [{ loader: require.resolve('wasm-loader'), options: {} }]
   });
 
   return config;
