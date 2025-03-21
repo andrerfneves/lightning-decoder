@@ -3290,10 +3290,10 @@ body-parser@1.20.3:
     type-is "~1.6.18"
     unpipe "1.0.0"
 
-boltz-bolt12@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/boltz-bolt12/-/boltz-bolt12-0.1.3.tgz#849874f5028a4f03276d6077dd526e174f9b2115"
-  integrity sha512-uGjFdIekthQHPJiNJyN78m7vyYpLR/dY5Qm2qLcrbwnPZ6D1LqMNaaY527bqu999K9SuR8nUBaK+w2d5uObtVw==
+boltz-bolt12@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/boltz-bolt12/-/boltz-bolt12-0.2.0.tgz#01f17e188fc1de8bba01945b9139a4836427d109"
+  integrity sha512-FnvSbNlNvMFcPeFJ23VA4PQXrKGwz3MywTGqOfDHCApXBLiP0QyFubCsoYA50eAnIWF0VggNQaywrkPDvfYoRQ==
 
 bonjour-service@^1.0.11:
   version "1.3.0"

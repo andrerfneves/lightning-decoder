@@ -55,6 +55,10 @@ import {
   OFFER_PATH_HOPS_KEY,
   OFFER_HOP_PUBKEY_KEY,
   OFFER_HOP_ENCRYPTED_PAYLOAD_KEY,
+  OFFER_EXPIRY,
+  OFFER_QUANTITY,
+  OFFER_ISSUER,
+  OFFER_CHAINS
 } from '../constants/keys';
 
 export const formatDetailsKey = (key) => {
@@ -169,6 +173,14 @@ export const formatDetailsKey = (key) => {
       return 'Pubkey';
     case OFFER_HOP_ENCRYPTED_PAYLOAD_KEY:
       return 'Encrypted Payload';
+    case OFFER_EXPIRY:
+      return 'Time Expire Date';
+    case OFFER_ISSUER:
+      return 'Issuer'; 
+    case OFFER_QUANTITY:
+      return 'Qantity';
+    case OFFER_CHAINS:
+      return 'Chains';
     default:
       return 'Error';
   }

@@ -53,6 +53,10 @@ export const OFFER_AMOUNT_MSATS_KEY = 'offer_amount_msats';
 export const OFFER_AMOUNT_CURRENCY_KEY = 'offer_amount_currency';
 export const OFFER_DESCRIPTION_KEY = 'offer_description';
 export const OFFER_PATHS_KEY = 'offer_paths';
+export const OFFER_EXPIRY = 'offer_expiry';
+export const OFFER_ISSUER = 'offer_issuer';
+export const OFFER_QUANTITY = 'offer_quantity';
+export const OFFER_CHAINS = 'offer_chains'
 // Offer Path Keys
 export const OFFER_PATH_INTRODUCTION_NODE_KEY = 'offer_path_introduction_node';
 export const OFFER_PATH_BLINDING_POINT_KEY = 'offer_path_blinding_point';
