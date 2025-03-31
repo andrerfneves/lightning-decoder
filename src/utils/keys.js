@@ -44,6 +44,21 @@ import {
   LN_ADDRESS_USERNAME_KEY,
   TIME_EXPIRE_DATE_STRING,
   DEFAULT_DESCRIPTION_KEY,
+  OFFER_ID_KEY,
+  OFFER_SIGNING_PUBKEY_KEY,
+  OFFER_AMOUNT_MSATS_KEY,
+  OFFER_AMOUNT_CURRENCY_KEY,
+  OFFER_DESCRIPTION_KEY,
+  OFFER_PATHS_KEY,
+  OFFER_PATH_INTRODUCTION_NODE_KEY,
+  OFFER_PATH_BLINDING_POINT_KEY,
+  OFFER_PATH_HOPS_KEY,
+  OFFER_HOP_PUBKEY_KEY,
+  OFFER_HOP_ENCRYPTED_PAYLOAD_KEY,
+  OFFER_EXPIRY,
+  OFFER_QUANTITY,
+  OFFER_ISSUER,
+  OFFER_CHAINS
 } from '../constants/keys';
 
 export const formatDetailsKey = (key) => {
@@ -136,6 +151,36 @@ export const formatDetailsKey = (key) => {
       return 'Domain';
     case LN_ADDRESS_USERNAME_KEY:
       return 'Username';
+    case OFFER_ID_KEY:
+      return 'Offer ID';
+    case OFFER_SIGNING_PUBKEY_KEY:
+      return 'Signing Pubkey';
+    case OFFER_AMOUNT_MSATS_KEY:
+      return 'Amount (MSats)';
+    case OFFER_AMOUNT_CURRENCY_KEY:
+      return 'Currency';
+    case OFFER_DESCRIPTION_KEY:
+      return 'Description';
+    case OFFER_PATHS_KEY:
+      return 'Paths';
+    case OFFER_PATH_INTRODUCTION_NODE_KEY:
+      return 'Introduction Node';
+    case OFFER_PATH_BLINDING_POINT_KEY:
+      return 'Blinding Point';
+    case OFFER_PATH_HOPS_KEY:
+      return 'Hops';
+    case OFFER_HOP_PUBKEY_KEY:
+      return 'Pubkey';
+    case OFFER_HOP_ENCRYPTED_PAYLOAD_KEY:
+      return 'Encrypted Payload';
+    case OFFER_EXPIRY:
+      return 'Time Expire Date';
+    case OFFER_ISSUER:
+      return 'Issuer'; 
+    case OFFER_QUANTITY:
+      return 'Qantity';
+    case OFFER_CHAINS:
+      return 'Chains';
     default:
       return 'Error';
   }

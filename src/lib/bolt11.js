@@ -1,12 +1,12 @@
 /* eslint-disable */
-const crypto = require('crypto')
-const bech32 = require('bech32')
-const secp256k1 = require('secp256k1')
-const Buffer = require('safe-buffer').Buffer
-const BN = require('bn.js')
-const bitcoinjsAddress = require('bitcoinjs-lib/src/address')
-const cloneDeep = require('lodash/cloneDeep')
-const coininfo = require('coininfo')
+import crypto from 'crypto-browserify'
+import bech32 from 'bech32'
+import secp256k1 from 'secp256k1'
+import { Buffer } from 'safe-buffer'
+import BN from 'bn.js'
+import * as bitcoinjsAddress from 'bitcoinjs-lib/src/address'
+import cloneDeep from 'lodash/cloneDeep'
+import coininfo from 'coininfo'
 
 const BITCOINJS_NETWORK_INFO = {
   bitcoin: coininfo.bitcoin.main.toBitcoinJS(),
@@ -99,25 +99,25 @@ const TAGPARSERS = {
 
 const unknownTagName = 'unknownTag'
 
-function unknownEncoder (data) {
+function unknownEncoder(data) {
   data.words = bech32.decode(data.words, Number.MAX_SAFE_INTEGER).words
   return data
 }
 
-function getUnknownParser (tagCode) {
+function getUnknownParser(tagCode) {
   return (words) => ({
     tagCode: parseInt(tagCode),
     words: bech32.encode('unknown', words, Number.MAX_SAFE_INTEGER)
   })
 }
 
-function wordsToIntBE (words) {
+function wordsToIntBE(words) {
   return words.reverse().reduce((total, item, index) => {
     return total + item * Math.pow(32, index)
   }, 0)
 }
 
-function intBEToWords (intBE, bits) {
+function intBEToWords(intBE, bits) {
   let words = []
   if (bits === undefined) bits = 5
   intBE = Math.floor(intBE)
@@ -129,11 +129,11 @@ function intBEToWords (intBE, bits) {
   return words.reverse()
 }
 
-function sha256 (data) {
+function sha256(data) {
   return crypto.createHash('sha256').update(data).digest()
 }
 
-function convert (data, inBits, outBits) {
+function convert(data, inBits, outBits) {
   let value = 0
   let bits = 0
   let maxV = (1 << outBits) - 1
@@ -156,7 +156,7 @@ function convert (data, inBits, outBits) {
   return result
 }
 
-function wordsToBuffer (words, trim) {
+function wordsToBuffer(words, trim) {
   let buffer = Buffer.from(convert(words, 5, 8, true))
   if (trim && words.length * 5 % 8 !== 0) {
     buffer = buffer.slice(0, -1)
@@ -164,32 +164,32 @@ function wordsToBuffer (words, trim) {
   return buffer
 }
 
-function hexToBuffer (hex) {
+function hexToBuffer(hex) {
   if (hex !== undefined &&
-      (typeof hex === 'string' || hex instanceof String) &&
-      hex.match(/^([a-zA-Z0-9]{2})*$/)) {
+    (typeof hex === 'string' || hex instanceof String) &&
+    hex.match(/^([a-zA-Z0-9]{2})*$/)) {
     return Buffer.from(hex, 'hex')
   }
   return hex
 }
 
-function textToBuffer (text) {
+function textToBuffer(text) {
   return Buffer.from(text, 'utf8')
 }
 
-function hexToWord (hex) {
+function hexToWord(hex) {
   let buffer = hexToBuffer(hex)
   return bech32.toWords(buffer)
 }
 
-function textToWord (text) {
+function textToWord(text) {
   let buffer = textToBuffer(text)
   let words = bech32.toWords(buffer)
   return words
 }
 
 // see encoder for details
-function fallbackAddressParser (words, network) {
+function fallbackAddressParser(words, network) {
   let version = words[0]
   words = words.slice(1)
 
@@ -220,13 +220,13 @@ function fallbackAddressParser (words, network) {
 // anything besides code 17 or 18 should be bech32 encoded address.
 // 1 word for the code, and right pad with 0 if necessary for the addressHash
 // (address parsing for encode is done in the encode function)
-function fallbackAddressEncoder (data, network) {
+function fallbackAddressEncoder(data, network) {
   return [data.code].concat(hexToWord(data.addressHash))
 }
 
 // first convert from words to buffer, trimming padding where necessary
 // parse in 51 byte chunks. See encoder for details.
-function routingInfoParser (words) {
+function routingInfoParser(words) {
   let routes = []
   let pubkey, shortChannelId, feeBaseMSats, feeProportionalMillionths, cltvExpiryDelta
   let routesBuffer = wordsToBuffer(words, true)
@@ -256,7 +256,7 @@ function routingInfoParser (words) {
 // 4 byte fee proportional millionths and a 2 byte left padded CLTV expiry delta.
 // after encoding these 51 byte chunks and concatenating them
 // convert to words right padding 0 bits.
-function routingInfoEncoder (datas) {
+function routingInfoEncoder(datas) {
   let buffer = Buffer.from([])
   datas.forEach(data => {
     buffer = Buffer.concat([buffer, hexToBuffer(data.pubkey)])
@@ -270,7 +270,7 @@ function routingInfoEncoder (datas) {
 
 // if text, return the sha256 hash of the text as words.
 // if hex, return the words representation of that data.
-function purposeCommitEncoder (data) {
+function purposeCommitEncoder(data) {
   let buffer
   if (data !== undefined && (typeof data === 'string' || data instanceof String)) {
     if (data.match(/^([a-zA-Z0-9]{2})*$/)) {
@@ -284,17 +284,17 @@ function purposeCommitEncoder (data) {
   return bech32.toWords(buffer)
 }
 
-function tagsItems (tags, tagName) {
+function tagsItems(tags, tagName) {
   let tag = tags.filter(item => item.tagName === tagName)
   let data = tag.length > 0 ? tag[0].data : null
   return data
 }
 
-function tagsContainItem (tags, tagName) {
+function tagsContainItem(tags, tagName) {
   return tagsItems(tags, tagName) !== null
 }
 
-function orderKeys (unorderedObj) {
+function orderKeys(unorderedObj) {
   let orderedObj = {}
   Object.keys(unorderedObj).sort().forEach((key) => {
     orderedObj[key] = unorderedObj[key]
@@ -302,7 +302,7 @@ function orderKeys (unorderedObj) {
   return orderedObj
 }
 
-function satToHrp (satoshis) {
+function satToHrp(satoshis) {
   if (!satoshis.toString().match(/^\d+$/)) {
     throw new Error('satoshis must be an integer')
   }
@@ -310,7 +310,7 @@ function satToHrp (satoshis) {
   return millisatToHrp(millisatoshisBN.mul(new BN(1000, 10)))
 }
 
-function millisatToHrp (millisatoshis) {
+function millisatToHrp(millisatoshis) {
   if (!millisatoshis.toString().match(/^\d+$/)) {
     throw new Error('millisatoshis must be an integer')
   }
@@ -337,7 +337,7 @@ function millisatToHrp (millisatoshis) {
   return valueString + divisorString
 }
 
-function hrpToSat (hrpString, outputString) {
+function hrpToSat(hrpString, outputString) {
   let millisatoshisBN = hrpToMillisat(hrpString, false)
   if (!millisatoshisBN.mod(new BN(1000, 10)).eq(new BN(0, 10))) {
     throw new Error('Amount is outside of valid range')
@@ -346,7 +346,7 @@ function hrpToSat (hrpString, outputString) {
   return outputString ? result.toString() : result
 }
 
-function hrpToMillisat (hrpString, outputString) {
+function hrpToMillisat(hrpString, outputString) {
   let divisor, value
   if (hrpString.slice(-1).match(/^[munp]$/)) {
     divisor = hrpString.slice(-1)
@@ -366,20 +366,20 @@ function hrpToMillisat (hrpString, outputString) {
     : valueBN.mul(MILLISATS_PER_BTC)
 
   if (((divisor === 'p' && !valueBN.mod(new BN(10, 10)).eq(new BN(0, 10))) ||
-      millisatoshisBN.gt(MAX_MILLISATS))) {
+    millisatoshisBN.gt(MAX_MILLISATS))) {
     throw new Error('Amount is outside of valid range')
   }
 
   return outputString ? millisatoshisBN.toString() : millisatoshisBN
 }
 
-function sign (inputPayReqObj, inputPrivateKey) {
+function sign(inputPayReqObj, inputPrivateKey) {
   let payReqObj = cloneDeep(inputPayReqObj)
   let privateKey = hexToBuffer(inputPrivateKey)
   if (payReqObj.complete && payReqObj.paymentRequest) return payReqObj
 
   if (privateKey === undefined || privateKey.length !== 32 ||
-      !secp256k1.privateKeyVerify(privateKey)) {
+    !secp256k1.privateKeyVerify(privateKey)) {
     throw new Error('privateKey must be a 32 byte Buffer and valid private key')
   }
 
@@ -447,7 +447,7 @@ function sign (inputPayReqObj, inputPrivateKey) {
   IF tags[TAGNAMES['9']] (fallback_address) THEN MUST CHECK THAT THE ADDRESS IS A VALID TYPE
   IF tags[TAGNAMES['3']] (routing_info) THEN MUST CHECK FOR ALL INFO IN EACH
 */
-function encode (inputData, addDefaults) {
+function encode(inputData, addDefaults) {
   // we don't want to affect the data being passed in, so we copy the object
   let data = cloneDeep(inputData)
 
@@ -497,7 +497,7 @@ function encode (inputData, addDefaults) {
   // If a description exists, check to make sure the buffer isn't greater than
   // 639 bytes long, since 639 * 8 / 5 = 1023 words (5 bit) when padded
   if (tagsContainItem(data.tags, TAGNAMES['13']) &&
-      Buffer.from(tagsItems(data.tags, TAGNAMES['13']), 'utf8').length > 639) {
+    Buffer.from(tagsItems(data.tags, TAGNAMES['13']), 'utf8').length > 639) {
     throw new Error('Description is too long: Max length 639 bytes')
   }
 
@@ -566,7 +566,7 @@ function encode (inputData, addDefaults) {
         throw new Error('Fallback address network type does not match payment request network type')
       }
       if (base58addr && base58addr.version !== coinTypeObj.pubKeyHash &&
-          base58addr.version !== coinTypeObj.scriptHash) {
+        base58addr.version !== coinTypeObj.scriptHash) {
         throw new Error('Fallback address version (base58) is unknown or the network type is incorrect')
       }
 
@@ -722,7 +722,7 @@ function encode (inputData, addDefaults) {
 
 // decode will only have extra comments that aren't covered in encode comments.
 // also if anything is hard to read I'll comment.
-function decode (paymentRequest, network) {
+function decode(paymentRequest, network) {
   if (typeof paymentRequest !== 'string') throw new Error('Lightning Payment Request must be string')
   if (paymentRequest.slice(0, 2).toLowerCase() !== 'ln') throw new Error('Not a proper lightning payment request')
   let decoded = bech32.decode(paymentRequest, Number.MAX_SAFE_INTEGER)
@@ -847,13 +847,14 @@ function decode (paymentRequest, network) {
   }
 
   if (timeExpireDate) {
-    finalResult = Object.assign(finalResult, {timeExpireDate, timeExpireDateString})
+    finalResult = Object.assign(finalResult, { timeExpireDate, timeExpireDateString })
   }
 
   return orderKeys(finalResult)
 }
 
-module.exports = {
+// Replace CommonJS exports with ES module exports
+export default {
   encode,
   decode,
   sign,
