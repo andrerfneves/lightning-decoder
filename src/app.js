@@ -577,8 +577,12 @@ export class App extends PureComponent {
       if (Object.is(value, null)) return;
 
       let text = value;
-      if (value.includes('lightning')) {
+      if (value.includes('lightning:')) {
         text = value.split('lightning:')[1];
+      }
+
+      if (value.includes('lightning=')) {
+        text = value.split('lightning=')[1];
       }
 
       this.getInvoiceDetails(text);

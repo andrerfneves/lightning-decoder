@@ -37,14 +37,17 @@ export const parseInvoice = async (invoice: string) => {
     }
   }
 
-  // Check if Invoice has `lightning` or `lnurl` prefixes
-  // (9 chars + the `:` or `=` chars) --> 10 characters total
-  const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}:`) !== -1;
-  if (hasLightningPrefix) {
-    // Remove the `lightning` prefix
-    requestCode = lcInvoice.slice(10, lcInvoice.length);
+  // Check if Invoice has `lightning:` or `lightning=` prefix
+  // and remove the prefix and before, so string starts with the invoice
+  if(lcInvoice.includes(`${LIGHTNING_SCHEME}:`)) {
+    requestCode = lcInvoice.split(`${LIGHTNING_SCHEME}:`)[1];
   }
 
+  if(lcInvoice.includes(`${LIGHTNING_SCHEME}=`)) {
+    requestCode = lcInvoice.split(`${LIGHTNING_SCHEME}=`)[1];
+  }
+
+  // Check if Invoice has `lnurl` prefix
   // (5 chars + the `:` or `=` chars) --> 6 characters total
   const hasLNURLPrefix = lcInvoice.indexOf(`${LNURL_SCHEME}:`) !== -1;
   if (hasLNURLPrefix) {
