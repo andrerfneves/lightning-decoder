@@ -1,14 +1,7 @@
 // Core Libs & Utils
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import QrReader from 'react-qr-reader';
-import cx from 'classnames';
-
-// Assets
-import boltImage from './assets/images/bolt.png';
-import arrowImage from './assets/images/arrow.svg';
-import closeImage from './assets/images/close.svg';
-import qrcodeImage from './assets/images/qrcode.png';
-import githubImage from './assets/images/github.svg';
+import { Github, QrCode, RotateCcw, Search, Zap } from 'lucide-react';
 
 // Utils
 import { formatDetailsKey } from './utils/keys';
@@ -31,630 +24,466 @@ import {
   LNURL_TAG_KEY,
 } from './constants/keys';
 
-// Styles
-import './assets/styles/main.scss';
+import { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
+import { Badge } from './components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './components/ui/dialog';
+import { Button } from './components/ui/button';
+import { Input } from './components/ui/input';
 
 const INITIAL_STATE = {
   text: '',
-  error: {},
-  hasError: false,
+  error: null,
   decodedInvoice: {},
+  isLNURL: false,
   isLNAddress: false,
   isQRCodeOpened: false,
   isInvoiceLoaded: false,
-  isBitcoinAddrOpened: false,
 };
 
-export class App extends PureComponent {
-  state = INITIAL_STATE;
+export function App() {
+  const [text, setText] = useState(INITIAL_STATE.text);
+  const [error, setError] = useState(INITIAL_STATE.error);
+  const [decodedInvoice, setDecodedInvoice] = useState(INITIAL_STATE.decodedInvoice);
+  const [isLNURL, setIsLNURL] = useState(INITIAL_STATE.isLNURL);
+  const [isLNAddress, setIsLNAddress] = useState(INITIAL_STATE.isLNAddress);
+  const [isQRCodeOpened, setIsQRCodeOpened] = useState(INITIAL_STATE.isQRCodeOpened);
+  const [isInvoiceLoaded, setIsInvoiceLoaded] = useState(INITIAL_STATE.isInvoiceLoaded);
 
-  componentDidMount() {
+  useEffect(() => {
     const invoiceOnURLParam = window.location.pathname;
-
-    // Remove first `/` from pathname
     const cleanInvoice = invoiceOnURLParam.split('/')[1];
     if (cleanInvoice && cleanInvoice !== '') {
-      this.setState(() => ({ text: cleanInvoice }));
-      this.getInvoiceDetails(cleanInvoice);
+      setText(cleanInvoice);
+      getInvoiceDetails(cleanInvoice);
     }
-  }
+  }, []);
 
-  clearInvoiceDetails = () => {
-    // Reset URL address
+  const clearInvoiceDetails = () => {
     const currentOrigin = window.location.origin;
     window.history.pushState({}, null, `${currentOrigin}`);
 
-    this.setState(() => ({
-      ...INITIAL_STATE,
-    }));
+    setText(INITIAL_STATE.text);
+    setError(INITIAL_STATE.error);
+    setDecodedInvoice(INITIAL_STATE.decodedInvoice);
+    setIsLNURL(INITIAL_STATE.isLNURL);
+    setIsLNAddress(INITIAL_STATE.isLNAddress);
+    setIsQRCodeOpened(INITIAL_STATE.isQRCodeOpened);
+    setIsInvoiceLoaded(INITIAL_STATE.isInvoiceLoaded);
   };
 
-  getInvoiceDetails = async (text) => {
-    // If this returns null is because there is no invoice to parse
-    if (!text) {
-      return this.setState(() => ({
-        hasError: true,
-        decodedInvoice: {},
-        isInvoiceLoaded: false,
-        error: { message: 'Please enter a valid request or address and try again.'},
-      }));
+  const setErrorState = (message) => {
+    setError({ message });
+    setDecodedInvoice({});
+    setIsInvoiceLoaded(false);
+  };
+
+  const getInvoiceDetails = async (textValue) => {
+    if (!textValue) {
+      return setErrorState('Please enter a valid request or address and try again.');
     }
 
     try {
       let response;
-      const parsedInvoiceResponse = await parseInvoice(text);
+      const parsedInvoiceResponse = await parseInvoice(textValue);
 
-      // If this returns null is because there is no invoice to parse
       if (!parsedInvoiceResponse) {
-        return this.setState(() => ({
-          hasError: true,
-          decodedInvoice: {},
-          isInvoiceLoaded: false,
-          error: { message: 'Please enter a valid request or address and try again.'},
-        }));
+        return setErrorState('Please enter a valid request or address and try again.');
       }
 
-      const { isLNURL, data, error, isLNAddress } = parsedInvoiceResponse;
+      const { isLNURL: parsedIsLNURL, data, error: parseError, isLNAddress: parsedIsLNAddress } = parsedInvoiceResponse;
 
-      // If an error comes back from a nested operation in parsing it must
-      // propagate back to the end user
-      if (error && error.length > 0) {
-        return this.setState(() => ({
-          hasError: true,
-          decodedInvoice: {},
-          isInvoiceLoaded: false,
-          error: { message: error },
-        }));
+      if (parseError && parseError.length > 0) {
+        return setErrorState(parseError);
       }
 
-      // If data is null it means the parser could not understand the invoice
       if (!data) {
-        return this.setState(() => ({
-          hasError: true,
-          decodedInvoice: {},
-          isInvoiceLoaded: false,
-          error: { message: 'Could not parse/understand this invoice or request. Please try again.'},
-        }));
+        return setErrorState('Could not parse/understand this invoice or request. Please try again.');
       }
 
-      // Handle LNURLs differently
-      if (isLNURL) {
-        // If this is a Lightning Address, the contents have already been fetched
-        if (isLNAddress) {
+      if (parsedIsLNURL) {
+        if (parsedIsLNAddress) {
           response = data;
         } else {
-          // Otherwise this is an LNURL ready to be fetched
           response = await data;
         }
       } else {
-        // Handle normal invoices
         response = data;
       }
 
       if (response) {
-        // On successful response, set the request content on the addressbar
-        // if there isn't one already in there from before (user-entered)
         const currentUrl = window.location;
         const currentOrigin = window.location.origin;
         const currentPathname = window.location.pathname;
         const hasPathnameAlready = currentPathname && currentPathname !== '';
 
-        // If there's a pathname already, we can just remove it and let the
-        // new pathname be entered
         if (hasPathnameAlready) {
           window.history.pushState({}, null, `${currentOrigin}`);
         }
 
-        window.history.pushState({}, null, `${currentUrl}${text}`);
+        window.history.pushState({}, null, `${currentUrl}${textValue}`);
 
-        this.setState(() => ({
-          isLNURL,
-          error: {},
-          isLNAddress,
-          hasError: false,
-          isInvoiceLoaded: true,
-          decodedInvoice: response,
-        }));
+        setIsLNURL(parsedIsLNURL);
+        setError(null);
+        setIsLNAddress(parsedIsLNAddress);
+        setIsInvoiceLoaded(true);
+        setDecodedInvoice(response);
       }
-    } catch(error) {
-      this.setState(() => ({
-        error: error,
-        hasError: true,
-        decodedInvoice: {},
-        isInvoiceLoaded: false,
-      }));
+    } catch (caughtError) {
+      setError(caughtError);
+      setDecodedInvoice({});
+      setIsInvoiceLoaded(false);
     }
-  }
+  };
 
-  handleChange = (event) => {
-    const { target: { value: text } } = event;
+  const handleChange = (event) => {
+    const { target: { value } } = event;
+    setText(value);
+    setError(null);
+  };
 
-    this.setState(() => ({
-      text,
-      error: {},
-      hasError: false,
-    }));
-  }
-
-  handleKeyPress = (event) => {
-    const { text } = this.state;
-
+  const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      this.getInvoiceDetails(text);
+      getInvoiceDetails(text);
     }
-  }
+  };
 
-  handleQRCode = () => this.setState(prevState => ({
-    isQRCodeOpened: !prevState.isQRCodeOpened
-  }))
+  const handleScan = (value) => {
+    if (Object.is(value, null)) return;
 
-  renderErrorDetails = () => {
-    const { hasError, error } = this.state;
+    let nextText = value;
+    if (value.includes('lightning')) {
+      nextText = value.split('lightning:')[1];
+    }
 
-    if (!hasError) return null;
+    getInvoiceDetails(nextText);
+    setIsQRCodeOpened(false);
+    setText(nextText);
+  };
 
-    return (
-      <div className='error'>
-        <div className='error__container'>
-          <div className='error__message'>
-            {error.message}
-          </div>
-        </div>
+  const handleError = (qrError) => {
+    setError(qrError);
+    setIsInvoiceLoaded(false);
+    setIsQRCodeOpened(false);
+  };
+
+  const renderNestedItem = (label, value) => (
+    <div key={label} className="flex flex-col gap-1 rounded-md border border-border/70 bg-background/60 p-3">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {formatDetailsKey(label)}
       </div>
-    );
-  }
+      <div className="text-sm text-foreground break-words">{value}</div>
+    </div>
+  );
 
-  renderInput = () => {
-    const { text } = this.state;
-
-    return (
-      <div className='input'>
-        <img
-          alt='Lightning'
-          src={boltImage}
-          className='input__asset'
-        />
-        <input
-          value={text}
-          className='input__text'
-          onChange={this.handleChange}
-          onKeyPress={this.handleKeyPress}
-          placeholder={APP_INPUT_PLACEHOLDER}
-          autoFocus
-        />
-      </div>
-    );
-  }
-
-  renderInvoiceDetails = () => {
-    const { decodedInvoice, isInvoiceLoaded } = this.state;
-    const invoiceContainerClassnames = cx(
-      'invoice',
-      { 'invoice--opened': isInvoiceLoaded },
-    );
-
-    const invoiceDetails = Object.keys(decodedInvoice)
-      .map((key) => {
-        switch (key) {
-          case COMPLETE_KEY:
-            return null;
-          case TAGS_KEY:
-            return this.renderInvoiceInnerItem(key);
-          case TIMESTAMP_STRING_KEY:
-            return this.renderInvoiceItem(
-              key,
-              TIMESTAMP_STRING_KEY,
-            );
-          default:
-            return this.renderInvoiceItem(key);
-        }
-      });
-
-    return !isInvoiceLoaded ? null : (
-      <div className={invoiceContainerClassnames}>
-        {invoiceDetails}
-      </div>
-    );
-  }
-
-  renderInvoiceInnerItem = (key) => {
-    const { decodedInvoice } = this.state;
+  const renderInvoiceInnerItems = (key) => {
     const tags = decodedInvoice[key];
 
-    const renderTag = (tag) => (
-      typeof tag.data !== 'string' &&
-      typeof tag.data !== 'number'
-    ) ? renderNestedTag(tag) : renderNormalTag(tag);
-
-    const renderNestedItem = (label, value) => (
-      <div
-        key={label}
-        className='invoice__nested-item'
-      >
-        <div className='invoice__nested-title'>
-          {formatDetailsKey(label)}
-        </div>
-        <div className='invoice__nested-value'>
-          {value}
-        </div>
-      </div>
-    );
-
     const renderNestedTag = (tag) => (
-      <div key={tag.tagName} className='invoice__item invoice__item--nested'>
-        <div className='invoice__item-title'>
+      <div key={tag.tagName} className="space-y-3 rounded-lg border border-border bg-background/40 p-4">
+        <div className="text-sm font-semibold text-foreground">
           {formatDetailsKey(tag.tagName)}
         </div>
-        <div className='invoice__item-value invoice__item-value--nested'>
-          {/* Strings */}
+        <div className="space-y-3">
           {typeof tag.data === 'string' && (
-            <div className='invoice__nested-value'>
-              {tag.data}
-            </div>
+            <div className="text-sm text-foreground break-words">{tag.data}</div>
           )}
-          {/* Array of Objects */}
-          {Array.isArray(tag.data) && tag.data.map((item) => (
-            <>
+          {Array.isArray(tag.data) && tag.data.map((item, index) => (
+            <div key={`${tag.tagName}-${index}`} className="space-y-2">
               {Object.keys(item).map((label) => renderNestedItem(label, item[label]))}
-            </>
+            </div>
           ))}
-          {/* Objects */}
-          {(
-            !Array.isArray(tag.data) && (
-              (typeof tag.data !== 'string') || (typeof tag.data !== 'number'))
-            ) && (
-            <>
+          {!Array.isArray(tag.data) && tag.data && typeof tag.data === 'object' && (
+            <div className="space-y-2">
               {Object.keys(tag.data).map((label) => renderNestedItem(label, tag.data[label]))}
-            </>
+            </div>
           )}
         </div>
       </div>
     );
 
     const renderNormalTag = (tag) => (
-      <div key={tag.tagName} className='invoice__item'>
-        <div className='invoice__item-title'>
+      <div key={tag.tagName} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {formatDetailsKey(tag.tagName)}
         </div>
-        <div className='invoice__item-value'>
-          {`${tag.data || '--'}`}
-        </div>
+        <div className="text-sm text-foreground break-words">{`${tag.data || '--'}`}</div>
       </div>
-    )
+    );
 
-    return tags.map((tag) => renderTag(tag));
-  }
+    return tags.map((tag) => (
+      typeof tag.data !== 'string' && typeof tag.data !== 'number'
+        ? renderNestedTag(tag)
+        : renderNormalTag(tag)
+    ));
+  };
 
-  renderInvoiceItem = (key, valuePropFormat) => {
-    const { decodedInvoice } = this.state;
-
+  const renderInvoiceItem = (key, valuePropFormat) => {
     let value = `${decodedInvoice[key]}`;
-    if (
-      valuePropFormat &&
-      valuePropFormat === TIMESTAMP_STRING_KEY
-    ) {
-      // TODO: this breaks
-      // value = `${formatTimestamp(decodedInvoice[key])}`;
+    if (valuePropFormat && valuePropFormat === TIMESTAMP_STRING_KEY) {
+      value = `${decodedInvoice[key]}`;
     }
 
     return (
-      <div
-        key={key}
-        className='invoice__item'
-      >
-        <div className='invoice__item-title'>
+      <div key={key} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {formatDetailsKey(key)}
         </div>
-        <div className='invoice__item-value'>
-          {value}
-        </div>
+        <div className="text-sm text-foreground break-words">{value}</div>
       </div>
     );
-  }
+  };
 
-  renderLogo = () => (
-    <div className='logo'>
-      <div className='logo__title'>
-        {APP_NAME}
-      </div>
-      <div className='logo__subtitle'>
-        {APP_TAGLINE}
-        <span className="logo__subtitle-small">{APP_SUBTAGLINE}</span>
+  const invoiceDetails = !isInvoiceLoaded || isLNURL
+    ? null
+    : Object.keys(decodedInvoice).flatMap((key) => {
+      switch (key) {
+        case COMPLETE_KEY:
+          return [];
+        case TAGS_KEY:
+          return renderInvoiceInnerItems(key);
+        case TIMESTAMP_STRING_KEY:
+          return [renderInvoiceItem(key, TIMESTAMP_STRING_KEY)];
+        default:
+          return [renderInvoiceItem(key)];
+      }
+    });
+
+  const lnurlDetails = !isInvoiceLoaded || !isLNURL
+    ? null
+    : Object.keys(decodedInvoice).flatMap((key) => {
+      if (typeof decodedInvoice[key] === 'object') {
+        return [];
+      }
+
+      if (key === 'status') {
+        return [];
+      }
+
+      if (key === LNURL_TAG_KEY) {
+        const textLabel = decodedInvoice[key];
+        return [
+          <div key={`${key}-tag`} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {formatDetailsKey(key)}
+            </div>
+            <div className="text-sm text-foreground break-words">
+              <a className="text-primary underline-offset-4 hover:underline" href={decodedInvoice[key]}>
+                {textLabel}
+              </a>
+            </div>
+          </div>,
+        ];
+      }
+
+      if (key === CALLBACK_KEY) {
+        return [
+          <div key={`${key}-callback`} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {formatDetailsKey(key)}
+            </div>
+            <div className="text-sm text-foreground break-words">
+              <a className="text-primary underline-offset-4 hover:underline" href={decodedInvoice[key]}>
+                {decodedInvoice[key]}
+              </a>
+            </div>
+          </div>,
+        ];
+      }
+
+      if (key === LNURL_METADATA_KEY) {
+        const splitMetadata = JSON.parse(decodedInvoice[key]);
+
+        return splitMetadata.map((arrOfData, index) => {
+          if (arrOfData[0] === 'text/plain') {
+            return (
+              <div key={`${key}-description-${index}`} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+                <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Description
+                </div>
+                <div className="text-sm text-foreground break-words">{arrOfData[1]}</div>
+              </div>
+            );
+          }
+
+          if (arrOfData[0] === 'text/identifier') {
+            return (
+              <div key={`${key}-identifier-${index}`} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+                <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Lightning Address
+                </div>
+                <div className="text-sm text-foreground break-words">{arrOfData[1]}</div>
+              </div>
+            );
+          }
+
+          if (arrOfData[0] === 'image/png;base64') {
+            return (
+              <div key={`${key}-image-${index}`} className="flex flex-col gap-3 rounded-lg border border-border bg-background/40 p-4">
+                <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Image
+                </div>
+                <img
+                  alt="Image"
+                  className="max-w-[200px] rounded-md border border-border"
+                  src={`data:image/png;base64,${arrOfData[1]}`}
+                />
+              </div>
+            );
+          }
+
+          return null;
+        }).filter(Boolean);
+      }
+
+      return [
+        <div key={`${key}-default`} className="flex flex-col gap-1 rounded-lg border border-border bg-background/40 p-4">
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {formatDetailsKey(key)}
+          </div>
+          <div className="text-sm text-foreground break-words">{decodedInvoice[key]}</div>
+        </div>,
+      ];
+    });
+
+  const hasError = Boolean(error);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-slate-950 text-foreground">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-10">
+        <header className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+              <Zap className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">{APP_NAME}</h1>
+              <p className="text-sm text-muted-foreground">
+                {APP_TAGLINE}{' '}
+                <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+                  {APP_SUBTAGLINE}
+                </span>
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild variant="outline" className="gap-2">
+              <a href={APP_GITHUB} target="_blank" rel="noopener noreferrer">
+                <Github className="h-4 w-4" />
+                View on GitHub
+              </a>
+            </Button>
+            {isInvoiceLoaded && (
+              <Badge variant="secondary" className="self-center">Loaded</Badge>
+            )}
+            {isLNURL && (
+              <Badge variant="default" className="self-center">LNURL</Badge>
+            )}
+            {isLNAddress && (
+              <Badge variant="outline" className="self-center">Lightning Address</Badge>
+            )}
+          </div>
+        </header>
+
+        <Card className="bg-card/80">
+          <CardHeader>
+            <CardTitle>Decode an invoice</CardTitle>
+            <CardDescription>Paste a Lightning invoice, LNURL, or Lightning Address to inspect it.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="flex w-full items-center gap-3 rounded-md border border-border bg-background/60 px-3">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={text}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyPress}
+                  placeholder={APP_INPUT_PLACEHOLDER}
+                  className="border-none bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  autoFocus
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => (isInvoiceLoaded ? clearInvoiceDetails() : getInvoiceDetails(text))}>
+                  {isInvoiceLoaded ? (
+                    <>
+                      <RotateCcw className="h-4 w-4" />
+                      Reset
+                    </>
+                  ) : (
+                    <>
+                      <Search className="h-4 w-4" />
+                      Decode
+                    </>
+                  )}
+                </Button>
+                {!isInvoiceLoaded && (
+                  <Dialog open={isQRCodeOpened} onOpenChange={setIsQRCodeOpened}>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary">
+                        <QrCode className="h-4 w-4" />
+                        Scan QR
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Scan a Lightning QR</DialogTitle>
+                        <DialogDescription>Point your camera at a Lightning invoice QR code.</DialogDescription>
+                      </DialogHeader>
+                      <div className="rounded-lg border border-border bg-background/40 p-2">
+                        <QrReader
+                          delay={300}
+                          onError={handleError}
+                          onScan={handleScan}
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {isInvoiceLoaded && (
+          <Card className="bg-card/80">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>{isLNURL ? 'LNURL Details' : 'Invoice Details'}</CardTitle>
+                <CardDescription>
+                  {isLNURL
+                    ? 'Fetched metadata and fields for the LNURL request.'
+                    : 'Parsed invoice fields and tags.'}
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              {isLNURL ? lnurlDetails : invoiceDetails}
+            </CardContent>
+          </Card>
+        )}
+
+        {hasError && (
+          <Alert variant="destructive">
+            <AlertTitle>Unable to decode</AlertTitle>
+            <AlertDescription>{error.message || String(error)}</AlertDescription>
+          </Alert>
+        )}
       </div>
     </div>
   );
-
-  renderLNURLDetails = () => {
-    const { decodedInvoice, isInvoiceLoaded } = this.state;
-    const invoiceContainerClassnames = cx(
-      'invoice',
-      { 'invoice--opened': isInvoiceLoaded },
-    );
-
-    let requestContents = decodedInvoice;
-
-    return !isInvoiceLoaded ? null : (
-      <div className={invoiceContainerClassnames}>
-        {Object.keys(requestContents).map((key) => {
-          let text = decodedInvoice[key];
-          
-          if (typeof decodedInvoice[key] === 'object') {
-            return <></>;
-          }
-          
-          if (key === 'status') {
-            return <></>
-          }
-
-          if (key === LNURL_TAG_KEY) {
-            switch (key) {
-              case 'payRequest':
-                text = 'LNURL Pay (payRequest)'
-                break;
-              case 'withdrawRequest':
-                text = 'LNURL Withdraw (withdrawRequest)'
-                break;
-              default:
-                break;
-            }
-
-            return (
-              <div key={`${key}-${Math.random()}`} className='invoice__item'>
-                <div className='invoice__item-title'>
-                  {formatDetailsKey(key)}
-                </div>
-                <div className='invoice__item-value'>
-                  <a href={decodedInvoice[key]}>
-                    {text}
-                  </a>
-                </div>
-              </div>
-            )
-          }
-
-          if (key === CALLBACK_KEY) {
-            return (
-              <div key={`${key}-${Math.random()}`} className='invoice__item'>
-                <div className='invoice__item-title'>
-                  {formatDetailsKey(key)}
-                </div>
-                <div className='invoice__item-value'>
-                  <a href={decodedInvoice[key]}>
-                    {decodedInvoice[key]}
-                  </a>
-                </div>
-              </div>
-            )
-          }
-
-          if (key === LNURL_METADATA_KEY) {
-            const splitMetadata = JSON.parse(decodedInvoice[key]);
-
-            // eslint-disable-next-line array-callback-return
-            const toRender = splitMetadata.map((arrOfData) => {
-              if (arrOfData[0] === 'text/plain') {
-                return (
-                  <div key={`${key}-${Math.random()}`} className='invoice__item'>
-                    <div className='invoice__item-title'>
-                      Description
-                    </div>
-                    <div className='invoice__item-value'>
-                      {arrOfData[1]}
-                    </div>
-                  </div>
-                )
-              }
-
-              if (arrOfData[0] === 'text/identifier') {
-                return (
-                  <div key={`${key}-${Math.random()}`} className='invoice__item'>
-                    <div className='invoice__item-title'>
-                      Lightning Address
-                    </div>
-                    <div className='invoice__item-value'>
-                      {arrOfData[1]}
-                    </div>
-                  </div>
-                )
-              }
-
-              if (arrOfData[0] === 'image/png;base64') {
-                return (
-                  <div key={`${key}-${Math.random()}`} className='invoice__item'>
-                    <div className='invoice__item-title'>
-                      Image
-                    </div>
-                    <div className='invoice__item-value'>
-                      <img
-                        alt='Imager'
-                        style={{ maxWidth: '200px' }}
-                        src={`data:image/png;base64,${arrOfData[1]}`}
-                      />
-                    </div>
-                  </div>
-                );
-              }
-            });
-
-            return toRender;
-          }
-
-          return (
-            <div key={`${key}-${Math.random()}`} className='invoice__item'>
-              <div className='invoice__item-title'>
-                {formatDetailsKey(key)}
-              </div>
-              <div className='invoice__item-value'>
-                {decodedInvoice[key]}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  renderSubmit = () => {
-    const { isInvoiceLoaded, text } = this.state;
-    const submitClassnames = cx(
-      'submit',
-      { 'submit__close': isInvoiceLoaded },
-    );
-
-    const onClick = () => {
-      if (isInvoiceLoaded) {
-        this.clearInvoiceDetails();
-      } else {
-        this.getInvoiceDetails(text);
-      }
-    }
-
-    return (
-      <div
-        onClick={onClick}
-        className={submitClassnames}
-      >
-        <img
-          alt='Submit'
-          src={isInvoiceLoaded ? closeImage : arrowImage}
-          className='submit__asset'
-        />
-      </div>
-    );
-  }
-
-  renderOptions = () => {
-    const { isInvoiceLoaded } = this.state;
-    const optionsClassnames = cx(
-      'options',
-      { 'options--hide': isInvoiceLoaded },
-    );
-
-    return (
-      <div className={optionsClassnames}>
-        <div className='options__wrapper'>
-          <a
-            href={APP_GITHUB}
-            className='options__github'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <img
-              className='options__github-icon'
-              src={githubImage}
-              alt='GitHub'
-            />
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  renderCamera = () => {
-    const { isQRCodeOpened, isInvoiceLoaded } = this.state;
-
-    const styleQRWrapper = cx({
-      'qrcode' : true,
-      'qrcode--opened': isQRCodeOpened,
-    });
-    const styleQRContainer = cx(
-      'qrcode__container',
-      { 'qrcode__container--opened': isQRCodeOpened },
-    );
-    const styleImgQR = cx(
-      'qrcode__img',
-      { 'qrcode__img--opened': isQRCodeOpened },
-    );
-
-    const qrReaderStyles = {
-      width: '100%',
-      border: '2pt solid #000000',
-    };
-
-    const srcImage = isQRCodeOpened ? closeImage : qrcodeImage;
-
-    const handleScan = (value) => {
-      if (Object.is(value, null)) return;
-
-      let text = value;
-      if (value.includes('lightning')) {
-        text = value.split('lightning:')[1];
-      }
-
-      this.getInvoiceDetails(text);
-      this.setState(() => ({
-        isQRCodeOpened: false,
-        text,
-      }));
-    }
-
-    const handleError = (error) => this.setState(() => ({
-      isInvoiceLoaded: false,
-      hasError: true,
-      error,
-      isQRCodeOpened: false
-    }));
-
-    return isInvoiceLoaded ? null : (
-      <div className={styleQRWrapper}>
-        {isQRCodeOpened && (
-          <div className='qrcode__modal' />
-        )}
-        <div className={styleQRContainer}>
-          <img
-            className={styleImgQR}
-            src={srcImage}
-            alt='QRCode'
-            onClick={this.handleQRCode}
-          />
-          {!isQRCodeOpened ? null : (
-            <QrReader
-              delay={300}
-              onError={handleError}
-              onScan={handleScan}
-              style={qrReaderStyles}
-            />
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  render() {
-    const { isLNURL, isInvoiceLoaded, hasError } = this.state;
-
-    const appClasses = cx(
-      'app',
-      { 'app--opened': isInvoiceLoaded },
-    );
-    const appColumnClasses = cx(
-      'app__column',
-      {
-        'app__column--invoice-loaded': isInvoiceLoaded,
-        'app__column--error': hasError,
-      },
-    );
-    const appSubmitClasses = cx(
-      'app__submit',
-      { 'app__submit--invoice-loaded': isInvoiceLoaded },
-    );
-
-    return (
-      <div className={appClasses}>
-        {this.renderOptions()}
-        {this.renderLogo()}
-        <div className='app__row'>
-          {this.renderInput()}
-          <div className={appSubmitClasses}>
-            {this.renderSubmit()}
-            {this.renderCamera()}
-          </div>
-        </div>
-        <div className={appColumnClasses}>
-          {isLNURL ? this.renderLNURLDetails() : this.renderInvoiceDetails()}
-          {this.renderErrorDetails()}
-        </div>
-      </div>
-    );
-  }
 }
