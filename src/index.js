@@ -1,13 +1,13 @@
 // Core Libs
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
+import './index.css';
 
 // Main Component
 import { App } from './app';
 
-// DOM Render
-ReactDOM.render(
-  <App />,
-  document.getElementById('root'),
-);
+const container = document.getElementById('root');
+const root = createRoot(container);
 
+root.render(<App />);
