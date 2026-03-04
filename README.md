@@ -1,21 +1,65 @@
 # Lightning Decoder
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Built with Vite](https://img.shields.io/badge/Built%20with-Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+
 > [https://lightningdecoder.com](https://lightningdecoder.com)
 
 ![Image of Lightning Decoder](https://i.imgur.com/mg6opec.png)
 
-Lightning Decoder is a utility app that helps with understanding the individual parts of a Lightning Network Invoice/Payment Request (BOLT11s) and any [LNURL](https://github.com/btcontract/lnurl-rfc) request codes. It aims to be a tool for developers building applications on top of the LN network.
+Lightning Decoder is a developer utility for parsing and understanding Lightning Network payment data. Built for developers working in the Bitcoin/Lightning ecosystem.
 
-## Installing & Developing
+## Features
 
-To run this application locally, simply clone the repo and run `yarn` or `npm install` to install all dependencies. You should then be able to run `yarn start` or `npm start` to spin up a local development server.
+- **BOLT11 Invoice Decoding** — Parse Lightning Network invoices to view amount, description, expiry, payment hash, routing hints, and other encoded fields
+- **LNURL Decoding** — Decode [LNURL](https://github.com/lnurl/luds) requests (lnurl-pay, lnurl-withdraw, lnurl-auth, lnurl-channel) to inspect the underlying callback URLs and parameters
+- **Lightning Address Resolution** — Resolve Lightning Addresses (user@domain.com) to their LNURL-pay endpoints
+- **QR Code Scanning** — Scan QR codes directly from your camera to decode Lightning payment data
 
-## Building for Production
+## Getting Started
 
-To build the assets for production, use script `yarn build` or `npm run build`. A `/build` top-level folder will be created, hosting all of the necessary files and assets bundled for serving in production.
+### Prerequisites
 
-## Contributions
+- Node.js 18+
+- npm or yarn
 
-I'm always aiming to introduce new features and improvements to the application. If you see a need and would like to contribute, please send a PR with detailed descriptions and I'll evaluate as early as I can.
+### Development
 
-MIT Licensed 2023
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+### Production Build
+
+```bash
+# Build for production
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+Output is generated in the `/dist` directory.
+
+## Tech Stack
+
+- [React 19](https://react.dev/) — UI framework
+- [Vite](https://vitejs.dev/) — Build tool and dev server
+- [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib) — Bitcoin library for BOLT11 decoding
+- [bech32](https://github.com/bitcoinjs/bech32) — Bech32 encoding/decoding for LNURL
+
+## Contributing
+
+Contributions are welcome. If you find a bug or want to add a feature, please open a PR with a clear description of the changes.
+
+## License
+
+MIT Licensed 2026
+
