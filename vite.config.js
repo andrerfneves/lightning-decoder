@@ -24,5 +24,8 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+    'process.env': {},
+    'process.browser': true,
+    'process.version': JSON.stringify('v20.0.0'),
   },
 });
