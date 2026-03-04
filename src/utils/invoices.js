@@ -2,14 +2,14 @@ import bech32 from 'bech32';
 import { Buffer } from 'buffer';
 
 import { validateInternetIdentifier } from './internet-identifier';
-import LightningPayReq from '../lib/bolt11';
+import * as LightningPayReq from '../lib/bolt11';
 
 const LIGHTNING_SCHEME = 'lightning';
 const BOLT11_SCHEME_MAINNET = 'lnbc';
 const BOLT11_SCHEME_TESTNET = 'lntb';
 const LNURL_SCHEME = 'lnurl';
 
-export const parseInvoice = async (invoice: string) => {
+export const parseInvoice = async (invoice) => {
   if (!invoice || invoice === '') {
     return null;
   }
@@ -67,7 +67,7 @@ export const parseInvoice = async (invoice: string) => {
   }
 };
 
-const handleLNURL = (invoice: string) => {
+const handleLNURL = (invoice) => {
   // Decoding bech32 LNURL
   const decodedLNURL = bech32.decode(invoice, 1500);
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
@@ -76,7 +76,7 @@ const handleLNURL = (invoice: string) => {
   .then(r => r.json())
 };
 
-const handleLightningAddress = (internetIdentifier: string) => {
+const handleLightningAddress = (internetIdentifier) => {
   const addressArr = internetIdentifier.split('@');
 
   // Must only have 2 fields (username and domain name)
@@ -120,7 +120,7 @@ const handleLightningAddress = (internetIdentifier: string) => {
   });
 };
 
-const handleBOLT11 = (invoice: string) => {
+const handleBOLT11 = (invoice) => {
   // Check if Invoice starts with `lnbc` prefix
   if (!invoice.includes(BOLT11_SCHEME_MAINNET) && !invoice.includes(BOLT11_SCHEME_TESTNET)) {
     return null;
