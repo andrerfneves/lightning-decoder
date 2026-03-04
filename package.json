@@ -16,14 +16,17 @@
     "buffer": "^5.4.3",
     "classnames": "^2.2.6",
     "coininfo": "https://github.com/cryptocoinjs/coininfo#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
+    "crypto-browserify": "^3.12.1",
     "date-fns": "^2.1.0",
+    "events": "^3.3.0",
     "lodash": "^4.17.15",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "safe-buffer": "^5.2.0",
     "sass": "^1.37.5",
     "secp256k1": "^3.7.1",
-    "serve": "^11.1.0"
+    "serve": "^11.1.0",
+    "stream-browserify": "^3.0.0"
   },
   "scripts": {
     "start": "vite",
