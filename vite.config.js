@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     nodePolyfills({
       globals: { Buffer: true, global: true, process: true },
+      include: ['buffer', 'crypto', 'events', 'process', 'stream', 'util', 'vm'],
     }),
   ],
   build: {
