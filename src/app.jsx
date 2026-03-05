@@ -1,6 +1,6 @@
 // Core Libs & Utils
 import React, { PureComponent } from 'react';
-import QrReader from 'react-qr-reader';
+import { Scanner } from '@yudiel/react-qr-scanner';
 import cx from 'classnames';
 
 // Assets
@@ -608,11 +608,14 @@ export class App extends PureComponent {
             onClick={this.handleQRCode}
           />
           {!isQRCodeOpened ? null : (
-            <QrReader
-              delay={300}
+            <Scanner
+              onScan={(result) => {
+                if (result && result[0]) {
+                  handleScan(result[0].rawValue);
+                }
+              }}
               onError={handleError}
-              onScan={handleScan}
-              style={qrReaderStyles}
+              styles={{ container: qrReaderStyles }}
             />
           )}
         </div>

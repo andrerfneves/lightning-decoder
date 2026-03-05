@@ -1,12 +1,12 @@
 /* eslint-disable */
-const crypto = require('crypto')
-const bech32 = require('bech32')
-const secp256k1 = require('secp256k1')
-const Buffer = require('safe-buffer').Buffer
-const BN = require('bn.js')
-const bitcoinjsAddress = require('bitcoinjs-lib/src/address')
-const cloneDeep = require('lodash/cloneDeep')
-const coininfo = require('coininfo')
+import { createHash } from 'crypto'
+import bech32 from 'bech32'
+import secp256k1 from 'secp256k1'
+import { Buffer } from 'buffer'
+import BN from 'bn.js'
+import * as bitcoinjsAddress from 'bitcoinjs-lib/src/address'
+import cloneDeep from 'lodash/cloneDeep'
+import coininfo from 'coininfo'
 
 const BITCOINJS_NETWORK_INFO = {
   bitcoin: coininfo.bitcoin.main.toBitcoinJS(),
@@ -130,7 +130,7 @@ function intBEToWords (intBE, bits) {
 }
 
 function sha256 (data) {
-  return crypto.createHash('sha256').update(data).digest()
+  return createHash('sha256').update(data).digest()
 }
 
 function convert (data, inBits, outBits) {
@@ -853,7 +853,7 @@ function decode (paymentRequest, network) {
   return orderKeys(finalResult)
 }
 
-module.exports = {
+export {
   encode,
   decode,
   sign,
