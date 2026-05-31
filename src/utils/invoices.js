@@ -37,18 +37,26 @@ export const parseInvoice = async (invoice) => {
     }
   }
 
-  // Check if Invoice has `lightning` or `lnurl` prefixes
+  // Check if Invoice has `lightning:` or `lnurl:` prefixes
   // (9 chars + the `:` or `=` chars) --> 10 characters total
   const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}:`) !== -1;
   if (hasLightningPrefix) {
-    // Remove the `lightning` prefix
+    // Remove the `lightning:` prefix
     requestCode = lcInvoice.slice(10, lcInvoice.length);
+  }
+
+  // Check for LUD-01 fallback scheme: `lightning=` parameter
+  const hasLightningParam = lcInvoice.indexOf(`${LIGHTNING_SCHEME}=`) !== -1;
+  if (hasLightningParam) {
+    // Remove everything before and including the `lightning=` parameter,
+    // and stop at the next `&` if there are more query parameters
+    requestCode = lcInvoice.split(`${LIGHTNING_SCHEME}=`)[1].split('&')[0];
   }
 
   // (5 chars + the `:` or `=` chars) --> 6 characters total
   const hasLNURLPrefix = lcInvoice.indexOf(`${LNURL_SCHEME}:`) !== -1;
   if (hasLNURLPrefix) {
-    // Remove the `lightning` prefix
+    // Remove the `lnurl:` prefix
     requestCode = lcInvoice.slice(6, lcInvoice.length);
   }
 
