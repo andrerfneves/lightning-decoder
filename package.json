@@ -15,7 +15,7 @@
     "bn.js": "^5.0.0",
     "buffer": "^5.4.3",
     "classnames": "^2.2.6",
-    "coininfo": "https://github.com/cryptocoinjs/coininfo#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
+    "coininfo": "git+https://github.com/cryptocoinjs/coininfo.git#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
     "crypto-browserify": "^3.12.1",
     "date-fns": "^2.1.0",
     "events": "^3.3.0",
@@ -49,6 +49,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^6.1.0",
+    "jsdom": "^29.1.1",
     "vite": "^6.2.0",
     "vite-plugin-node-polyfills": "^0.25.0",
     "vitest": "^4.0.18"
