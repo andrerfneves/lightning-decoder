@@ -46,3 +46,27 @@ export const MAX_WITHDRAWABLE_KEY = 'maxWithdrawable';
 export const MIN_WITHDRAWABLE_KEY = 'minWithdrawable';
 export const LN_ADDRESS_DOMAIN_KEY = 'domain';
 export const LN_ADDRESS_USERNAME_KEY = 'username';
+
+// BOLT12 Keys
+export const BOLT12_TYPE_KEY = 'type';
+export const BOLT12_CHAINS_KEY = 'chains';
+export const BOLT12_METADATA_KEY = 'metadata';
+export const BOLT12_CURRENCY_KEY = 'currency';
+export const BOLT12_AMOUNT_KEY = 'amount';
+export const BOLT12_FEATURES_KEY = 'features';
+export const BOLT12_ABSOLUTE_EXPIRY_KEY = 'absoluteExpiry';
+export const BOLT12_PATHS_KEY = 'paths';
+export const BOLT12_ISSUER_KEY = 'issuer';
+export const BOLT12_QUANTITY_MAX_KEY = 'quantityMax';
+export const BOLT12_ISSUER_ID_KEY = 'issuerId';
+export const BOLT12_CHAIN_KEY = 'chain';
+export const BOLT12_QUANTITY_KEY = 'quantity';
+export const BOLT12_PAYER_ID_KEY = 'payerId';
+export const BOLT12_PAYER_NOTE_KEY = 'payerNote';
+export const BOLT12_SIGNATURE_KEY = 'signature';
+export const BOLT12_BLINDED_PAY_INFO_KEY = 'blindedPayInfo';
+export const BOLT12_CREATED_AT_KEY = 'createdAt';
+export const BOLT12_RELATIVE_EXPIRY_KEY = 'relativeExpiry';
+export const BOLT12_PAYMENT_HASH_KEY = 'paymentHash';
+export const BOLT12_FALLBACKS_KEY = 'fallbacks';
+export const BOLT12_NODE_ID_KEY = 'nodeId';

@@ -44,6 +44,28 @@ import {
   LN_ADDRESS_USERNAME_KEY,
   TIME_EXPIRE_DATE_STRING,
   DEFAULT_DESCRIPTION_KEY,
+  BOLT12_TYPE_KEY,
+  BOLT12_CHAINS_KEY,
+  BOLT12_METADATA_KEY,
+  BOLT12_CURRENCY_KEY,
+  BOLT12_AMOUNT_KEY,
+  BOLT12_FEATURES_KEY,
+  BOLT12_ABSOLUTE_EXPIRY_KEY,
+  BOLT12_PATHS_KEY,
+  BOLT12_ISSUER_KEY,
+  BOLT12_QUANTITY_MAX_KEY,
+  BOLT12_ISSUER_ID_KEY,
+  BOLT12_CHAIN_KEY,
+  BOLT12_QUANTITY_KEY,
+  BOLT12_PAYER_ID_KEY,
+  BOLT12_PAYER_NOTE_KEY,
+  BOLT12_SIGNATURE_KEY,
+  BOLT12_BLINDED_PAY_INFO_KEY,
+  BOLT12_CREATED_AT_KEY,
+  BOLT12_RELATIVE_EXPIRY_KEY,
+  BOLT12_PAYMENT_HASH_KEY,
+  BOLT12_FALLBACKS_KEY,
+  BOLT12_NODE_ID_KEY,
 } from '../constants/keys';
 
 export const formatDetailsKey = (key) => {
@@ -136,6 +158,51 @@ export const formatDetailsKey = (key) => {
       return 'Domain';
     case LN_ADDRESS_USERNAME_KEY:
       return 'Username';
+    // BOLT12 Keys
+    case BOLT12_TYPE_KEY:
+      return 'Type';
+    case BOLT12_CHAINS_KEY:
+      return 'Chains';
+    case BOLT12_METADATA_KEY:
+      return 'Metadata';
+    case BOLT12_CURRENCY_KEY:
+      return 'Currency';
+    case BOLT12_AMOUNT_KEY:
+      return 'Amount (MSats)';
+    case BOLT12_FEATURES_KEY:
+      return 'Features';
+    case BOLT12_ABSOLUTE_EXPIRY_KEY:
+      return 'Absolute Expiry';
+    case BOLT12_PATHS_KEY:
+      return 'Paths';
+    case BOLT12_ISSUER_KEY:
+      return 'Issuer';
+    case BOLT12_QUANTITY_MAX_KEY:
+      return 'Max Quantity';
+    case BOLT12_ISSUER_ID_KEY:
+      return 'Issuer ID';
+    case BOLT12_CHAIN_KEY:
+      return 'Chain';
+    case BOLT12_QUANTITY_KEY:
+      return 'Quantity';
+    case BOLT12_PAYER_ID_KEY:
+      return 'Payer ID';
+    case BOLT12_PAYER_NOTE_KEY:
+      return 'Payer Note';
+    case BOLT12_SIGNATURE_KEY:
+      return 'Signature';
+    case BOLT12_BLINDED_PAY_INFO_KEY:
+      return 'Blinded Pay Info';
+    case BOLT12_CREATED_AT_KEY:
+      return 'Created At';
+    case BOLT12_RELATIVE_EXPIRY_KEY:
+      return 'Relative Expiry (seconds)';
+    case BOLT12_PAYMENT_HASH_KEY:
+      return 'Payment Hash';
+    case BOLT12_FALLBACKS_KEY:
+      return 'Fallbacks';
+    case BOLT12_NODE_ID_KEY:
+      return 'Node ID';
     default:
       return 'Error';
   }
