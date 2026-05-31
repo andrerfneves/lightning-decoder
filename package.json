@@ -25,7 +25,6 @@
     "safe-buffer": "^5.2.0",
     "sass": "^1.37.5",
     "secp256k1": "^3.7.1",
-    "serve": "^11.1.0",
     "stream-browserify": "^3.0.0"
   },
   "scripts": {
@@ -34,7 +33,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "deploy": "npm run build && cd build && now"
+    "deploy": "npm run build && vercel --prod"
   },
   "browserslist": [
     ">0.2%",
