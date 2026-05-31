@@ -46,7 +46,7 @@ npm run build
 npm run preview
 ```
 
-Output is generated in the `/dist` directory.
+Output is generated in the `build/` directory.
 
 ## Tech Stack
 
