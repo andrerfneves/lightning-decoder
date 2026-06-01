@@ -387,7 +387,7 @@ export class App extends PureComponent {
           }
 
           if (key === LNURL_TAG_KEY) {
-            switch (key) {
+            switch (text) {
               case 'payRequest':
                 text = 'LNURL Pay (payRequest)'
                 break;
