@@ -1,5 +1,4 @@
 import * as React from "react"
-import { ThemeToggle } from "./theme-toggle"
 import { Button } from "./ui/button"
 import {
   DropdownMenu,
@@ -10,7 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
 import { cn } from "../lib/utils"
-import { Menu, Shield, QrCode } from "lucide-react"
+import { useTheme } from "./theme-provider"
+import { Menu, Shield, QrCode, Sun, Moon, Monitor } from "lucide-react"
 
 const GithubIcon = () => (
   <svg
@@ -48,6 +48,8 @@ const Header: React.FC<HeaderProps> = ({
   onOpenQRScanner,
   className,
 }) => {
+  const { setTheme } = useTheme()
+
   return (
     <header className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-8">
@@ -56,6 +58,7 @@ const Header: React.FC<HeaderProps> = ({
           <p className="text-sm text-muted-foreground">{tagline}</p>
           <p className="text-xs text-muted-foreground">{subTagline}</p>
         </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-10 w-10">
@@ -63,17 +66,51 @@ const Header: React.FC<HeaderProps> = ({
               <span className="sr-only">Menu</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent
+            align="end"
+            className="w-72 bg-popover text-popover-foreground"
+          >
             <DropdownMenuLabel>Tools</DropdownMenuLabel>
-            <DropdownMenuItem onClick={onNavigateToVerifier} className="gap-2">
+            <DropdownMenuItem
+              onClick={onNavigateToVerifier}
+              className="gap-2 whitespace-nowrap"
+            >
               <Shield className="h-4 w-4" />
               Payment Hash Verifier
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onOpenQRScanner} className="gap-2">
+            <DropdownMenuItem
+              onClick={onOpenQRScanner}
+              className="gap-2 whitespace-nowrap"
+            >
               <QrCode className="h-4 w-4" />
               Scan QR Code
             </DropdownMenuItem>
-            <ThemeToggle />
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuLabel>Swap Theme</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => setTheme("light")}
+              className="gap-2"
+            >
+              <Sun className="h-4 w-4" />
+              Light
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme("dark")}
+              className="gap-2"
+            >
+              <Moon className="h-4 w-4" />
+              Dark
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme("system")}
+              className="gap-2"
+            >
+              <Monitor className="h-4 w-4" />
+              System
+            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Resources</DropdownMenuLabel>
             <DropdownMenuItem asChild>
@@ -81,10 +118,10 @@ const Header: React.FC<HeaderProps> = ({
                 href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="gap-2 cursor-pointer flex items-center"
+                className="gap-2 w-full cursor-pointer"
               >
                 <GithubIcon />
-                GitHub Repository
+                GitHub
               </a>
             </DropdownMenuItem>
           </DropdownMenuContent>
