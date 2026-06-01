@@ -175,8 +175,7 @@ const handleBOLT12 = (invoice) => {
   try {
     const decoded = BOLT12Decoder.decode(invoice);
     return decoded;
-  } catch (error) {
-    console.error('BOLT12 decode error:', error);
+  } catch (_) {
     return null;
   }
 };

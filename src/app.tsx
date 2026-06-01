@@ -7,10 +7,13 @@ import { ErrorDisplay } from "./components/error-display"
 import { PaymentHashVerifier } from "./components/payment-hash-verifier"
 import { Dialog, DialogContent } from "./components/ui/dialog"
 import { parseInvoice } from "./utils/invoices"
+import {
+  getInvoiceFromUrl,
+  isPaymentHashVerifierRoute,
+  PAYMENT_HASH_VERIFIER_ROUTE,
+} from "./utils/app-routes"
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
-
-const PAYMENT_HASH_VERIFIER_ROUTE = "verify-payment-hash"
 
 function App() {
   const [inputValue, setInputValue] = useState("")
@@ -27,16 +30,12 @@ function App() {
   const verifierReturnUrlRef = useRef("/")
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const queryInvoice = urlParams.get("q")
-    const pathInvoice = window.location.pathname.replace(/^\/+|\/+$/g, "")
-
-    if (pathInvoice === PAYMENT_HASH_VERIFIER_ROUTE) {
+    if (isPaymentHashVerifierRoute(window.location.pathname)) {
       setPaymentHashVerifierOpen(true)
       return
     }
 
-    const invoiceToLoad = queryInvoice || pathInvoice
+    const invoiceToLoad = getInvoiceFromUrl(window.location.pathname, window.location.search)
 
     if (invoiceToLoad) {
       setInputValue(invoiceToLoad)
@@ -47,8 +46,7 @@ function App() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.replace(/^\/+|\/+$/g, "")
-      setPaymentHashVerifierOpen(path === PAYMENT_HASH_VERIFIER_ROUTE)
+      setPaymentHashVerifierOpen(isPaymentHashVerifierRoute(window.location.pathname))
     }
 
     window.addEventListener("popstate", handlePopState)
@@ -146,7 +144,7 @@ function App() {
   const handlePaymentHashVerifierOpenChange = (open: boolean) => {
     setPaymentHashVerifierOpen(open)
 
-    if (!open && window.location.pathname.replace(/^\/+|\/+$/g, "") === PAYMENT_HASH_VERIFIER_ROUTE) {
+    if (!open && isPaymentHashVerifierRoute(window.location.pathname)) {
       window.history.replaceState({}, "", verifierReturnUrlRef.current || "/")
     }
   }

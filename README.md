@@ -112,17 +112,18 @@ src/
 │   │   ├── card.tsx
 │   │   └── ...
 │   ├── header.tsx             # App header with theme toggle
-│   ├── search-input.tsx       # Invoice input with QR scanner
+│   ├── search-input.tsx       # Invoice/address input
 │   ├── invoice-details.tsx    # Decoded invoice display
-│   ├── error-display.tsx      # Error message component
+│   ├── error-display.tsx      # Error/warning callout component
 │   └── theme-provider.tsx     # Theme context provider
 ├── lib/
 │   └── utils.ts               # Utility functions (cn helper)
 ├── utils/
-│   ├── invoices.ts            # Invoice parsing logic
-│   ├── internet-identifier.ts # Lightning Address validation
-│   └── keys.ts                # Key formatting utilities
-└── App.tsx                    # Main application component
+│   ├── app-routes.ts          # Reserved route and invoice URL helpers
+│   ├── invoices.js            # Invoice parsing logic
+│   ├── internet-identifier.js # Lightning Address validation
+│   └── keys.js                # Key formatting utilities
+└── app.tsx                    # Main application component
 ```
 
 ### Key Libraries

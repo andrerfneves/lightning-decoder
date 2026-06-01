@@ -17,6 +17,11 @@ const meta: Meta<typeof ErrorDisplay> = {
       control: 'text',
       description: 'Optional error title',
     },
+    tone: {
+      control: 'select',
+      options: ['error', 'warning'],
+      description: 'Visual tone for the callout',
+    },
   },
 };
 
@@ -33,6 +38,13 @@ export const WithTitle: Story = {
   args: {
     message: 'The invoice format is invalid',
     title: 'Invalid Invoice',
+  },
+};
+
+export const Warning: Story = {
+  args: {
+    message: 'Please enter a Lightning invoice, LNURL, or Lightning address',
+    tone: 'warning',
   },
 };
 

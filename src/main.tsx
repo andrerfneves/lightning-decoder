@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import App from './app.tsx'
 import { ThemeProvider } from './components/theme-provider.tsx'
 import '@fontsource/geist-mono/300.css'
 import '@fontsource/geist-mono/400.css'
