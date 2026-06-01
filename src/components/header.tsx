@@ -10,7 +10,7 @@ import {
 } from "./ui/dropdown-menu"
 import { cn } from "../lib/utils"
 import { useTheme } from "./theme-provider"
-import { Menu, Shield, QrCode, Sun, Moon, Monitor, Check } from "lucide-react"
+import { Menu, Shield, QrCode, Sun, Moon, Monitor, Check, Zap } from "lucide-react"
 
 const GithubIcon = () => (
   <svg
@@ -54,7 +54,10 @@ const Header: React.FC<HeaderProps> = ({
     <header className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
-          <h1 className="text-5xl font-bold tracking-tight">{appName}</h1>
+          <h1 className="flex items-center gap-3 text-5xl font-bold tracking-tight">
+            <Zap className="h-8 w-8 text-black" />
+            <span>{appName}</span>
+          </h1>
           <p className="text-md text-[hsl(var(--muted-foreground))]">{tagline}</p>
           <p className="text-sm text-[hsl(var(--secondary-foreground))]">{subTagline}</p>
         </div>

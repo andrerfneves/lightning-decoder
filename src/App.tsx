@@ -19,16 +19,16 @@ function App() {
   const [shouldLiftContent, setShouldLiftContent] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Check URL for invoice on mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const queryInvoice = urlParams.get("q")
-    const pathInvoice = window.location.pathname.slice(1) // Remove leading slash
+    const pathInvoice = window.location.pathname.slice(1)
 
     const invoiceToLoad = queryInvoice || pathInvoice
 
     if (invoiceToLoad) {
       setInputValue(invoiceToLoad)
+      setShouldLiftContent(true)
       handleDecode(invoiceToLoad)
     }
   }, [])
@@ -42,10 +42,12 @@ function App() {
   const handleDecode = async (value?: string) => {
     const invoiceToDecode = value || inputValue
     if (!invoiceToDecode.trim()) {
+      setShouldLiftContent(true)
       setError("Please enter a Lightning invoice, LNURL, or Lightning address")
       return
     }
 
+    setShouldLiftContent(true)
     setIsLoading(true)
     setError(null)
     setInvoiceData(null)
@@ -64,22 +66,15 @@ function App() {
         return
       }
 
-      // Determine invoice type
       if (result.isBOLT12) {
         setInvoiceType("bolt12")
       } else if (result.isLNURL) {
-        if (result.isLNAddress) {
-          setInvoiceType("lightning-address")
-        } else {
-          setInvoiceType("lnurl")
-        }
+        setInvoiceType(result.isLNAddress ? "lightning-address" : "lnurl")
       } else {
         setInvoiceType("bolt11")
       }
 
       setInvoiceData(result.data)
-
-      // Update URL - prefer ?q= parameter, but also support / path for backwards compatibility
       window.history.pushState({}, "", `/?q=${encodeURIComponent(invoiceToDecode)}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred while decoding")
@@ -118,97 +113,88 @@ function App() {
   }
 
   const hasActiveContent = isLoading || !!error || !!invoiceData
-
-  useEffect(() => {
-    if (hasActiveContent) {
-      setShouldLiftContent(true)
-    }
-  }, [hasActiveContent])
+  const errorTone = error?.toLowerCase().includes("please enter") ? "warning" : "error"
 
   return (
     <div className="min-h-screen bg-background">
       <LayoutGroup>
-        <AnimatePresence mode="wait" initial={false}>
-          {currentView === "home" ? (
-            <motion.main
-              key="home-view"
-              className="container mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center px-4 py-8"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{
-                opacity: 1,
-                y: shouldLiftContent ? "-4vh" : "0px",
-              }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-            >
-              <Header
-                onNavigateToVerifier={handleNavigateToVerifier}
-                onOpenQRScanner={handleOpenQRScanner}
+        {currentView === "home" ? (
+          <motion.main
+            className="container mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center px-4 py-8"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{
+              opacity: 1,
+              y: shouldLiftContent ? "-4vh" : "0px",
+            }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            <Header
+              onNavigateToVerifier={handleNavigateToVerifier}
+              onOpenQRScanner={handleOpenQRScanner}
+            />
+
+            <div className="mt-6 space-y-6">
+              <SearchInput
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value)
+                  if (error) {
+                    setError(null)
+                  }
+                }}
+                onSubmit={invoiceData ? handleClear : () => handleDecode()}
+                isLoading={isLoading}
+                hasResult={!!invoiceData}
+                placeholder="Enter invoice or address"
+                className="w-full"
+                autoFocus
               />
 
-              <div className="mt-6 space-y-6">
-                <SearchInput
-                  ref={inputRef}
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onSubmit={invoiceData ? handleClear : () => handleDecode()}
-                  isLoading={isLoading}
-                  hasResult={!!invoiceData}
-                  placeholder="Enter invoice or address"
-                  className="w-full"
-                  autoFocus
-                />
+              <AnimatePresence
+                mode="popLayout"
+                initial={false}
+                onExitComplete={() => {
+                  if (!hasActiveContent) {
+                    setShouldLiftContent(false)
+                  }
+                }}
+              >
+                {error && (
+                  <motion.div
+                    key="error"
+                    layout
+                    initial={{ opacity: 0, height: 0, y: -8 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -8 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    className="overflow-hidden"
+                  >
+                    <ErrorDisplay message={error} tone={errorTone} />
+                  </motion.div>
+                )}
 
-                <AnimatePresence
-                  mode="popLayout"
-                  initial={false}
-                  onExitComplete={() => {
-                    if (!hasActiveContent) {
-                      setShouldLiftContent(false)
-                    }
-                  }}
-                >
-                  {error && (
-                    <motion.div
-                      key="error"
-                      layout
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.18, ease: "easeOut" }}
-                    >
-                      <ErrorDisplay message={error} />
-                    </motion.div>
-                  )}
-
-                  {invoiceData && invoiceType && (
-                    <motion.div
-                      key="invoice"
-                      layout
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.18, ease: "easeOut" }}
-                    >
-                      <InvoiceDetails type={invoiceType} data={invoiceData} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.main>
-          ) : (
-            <motion.main
-              key="verifier-view"
-              className="container mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center px-4 py-8"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-            >
-              <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
-            </motion.main>
-          )}
-        </AnimatePresence>
+                {invoiceData && invoiceType && (
+                  <motion.div
+                    key="invoice"
+                    layout
+                    initial={{ opacity: 0, height: 0, y: -8 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -8 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    className="overflow-hidden"
+                  >
+                    <InvoiceDetails type={invoiceType} data={invoiceData} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.main>
+        ) : (
+          <div className="container mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center px-4 py-8">
+            <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
+          </div>
+        )}
       </LayoutGroup>
 
       <QRScanner
