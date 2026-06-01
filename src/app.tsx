@@ -204,7 +204,7 @@ function App() {
                   isLoading={isLoading}
                   hasResult={!!invoiceData}
                   placeholder="Enter invoice or address"
-                  className="w-full [&_input]:bg-input"
+                  className="w-full [&_input]:!bg-gray-50 dark:[&_input]:!bg-gray-900"
                   autoFocus
                 />
               </div>
@@ -230,7 +230,7 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="flex items-center gap-3 rounded-lg border border-input bg-card p-4 text-card-foreground shadow-sm">
+                    <div className="flex items-center gap-3 rounded-lg border border-input !bg-gray-50 p-4 text-card-foreground shadow-sm dark:!bg-gray-900">
                       <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">Decoding request</p>
@@ -264,7 +264,7 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <InvoiceDetails type={invoiceType} data={invoiceData} className="bg-border" />
+                    <InvoiceDetails type={invoiceType} data={invoiceData} className="!bg-gray-50 dark:!bg-gray-900" />
                   </motion.div>
                 )}
               </AnimatePresence>
