@@ -36,16 +36,16 @@ const QRScanner: React.FC<QRScannerProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
         <DialogHeader>
           <DialogTitle>Scan QR Code</DialogTitle>
           <DialogDescription>
             Point your camera at a Lightning invoice, LNURL, or BOLT12 offer
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center justify-center p-2">
+        <div className="flex items-center justify-center p-2 bg-[hsl(var(--background))] rounded-lg">
           {open ? (
-            <div className="aspect-square w-full max-w-sm rounded-lg overflow-hidden border border-border">
+            <div className="aspect-square w-full max-w-sm rounded-lg overflow-hidden border border-border bg-[hsl(var(--background))]">
               <Scanner
                 onScan={handleScan}
                 onError={handleError}
@@ -59,7 +59,7 @@ const QRScanner: React.FC<QRScannerProps> = ({
               />
             </div>
           ) : (
-            <div className="aspect-square w-full max-w-sm rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
+            <div className="aspect-square w-full max-w-sm rounded-lg border-2 border-dashed border-muted-foreground/25 bg-[hsl(var(--background))] flex items-center justify-center">
               <p className="text-sm text-muted-foreground">
                 Camera preview will appear here
               </p>
