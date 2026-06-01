@@ -1,7 +1,14 @@
 import * as React from "react"
 import { ThemeToggle } from "./theme-toggle"
 import { Button } from "./ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu"
 import { cn } from "../lib/utils"
+import { Wrench, Shield } from "lucide-react"
 
 const GithubIcon = () => (
   <svg
@@ -25,6 +32,7 @@ export interface HeaderProps {
   tagline?: string
   subTagline?: string
   githubUrl?: string
+  onNavigateToVerifier?: () => void
   className?: string
 }
 
@@ -33,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({
   tagline = "Decode Lightning Network Requests",
   subTagline = "Lightning Address, LNURL, BOLT11, and BOLT12",
   githubUrl = "https://github.com/andrerfneves/lightning-decoder",
+  onNavigateToVerifier,
   className,
 }) => {
   return (
@@ -44,6 +53,20 @@ const Header: React.FC<HeaderProps> = ({
           <p className="text-xs text-muted-foreground">{subTagline}</p>
         </div>
         <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Wrench className="h-5 w-5" />
+                <span className="sr-only">Tools</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onNavigateToVerifier} className="gap-2">
+                <Shield className="h-4 w-4" />
+                Payment Hash Verifier
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <ThemeToggle />
           <Button variant="ghost" size="icon" asChild>
             <a

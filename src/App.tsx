@@ -5,15 +5,8 @@ import { SubmitButton } from "./components/submit-button"
 import { QRScanner } from "./components/qr-scanner"
 import { InvoiceDetails } from "./components/invoice-details"
 import { ErrorDisplay } from "./components/error-display"
+import { PaymentHashVerifier } from "./components/payment-hash-verifier"
 import { parseInvoice } from "./utils/invoices"
-import { Scanner } from "@yudiel/react-qr-scanner"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./components/ui/dialog"
 
 function App() {
   const [inputValue, setInputValue] = useState("")
@@ -22,6 +15,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [qrScannerOpen, setQrScannerOpen] = useState(false)
+  const [currentView, setCurrentView] = useState<"home" | "payment-hash-verifier">("home")
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Check URL for invoice on mount
@@ -102,40 +96,54 @@ function App() {
     handleDecode(data)
   }
 
+  const handleNavigateToVerifier = () => {
+    setCurrentView("payment-hash-verifier")
+    window.history.pushState({}, "", "/verify-payment-hash")
+  }
+
+  const handleNavigateHome = () => {
+    setCurrentView("home")
+    window.history.pushState({}, "", "/")
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Header />
+        <Header onNavigateToVerifier={handleNavigateToVerifier} />
         
-        <div className="space-y-6">
-          <div className="flex gap-2">
-            <SearchInput
-              ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onDecode={() => handleDecode()}
-              placeholder="Enter Lightning invoice, LNURL, or Lightning address"
-              className="flex-1"
-              autoFocus
-            />
-            <SubmitButton
-              onClick={invoiceData ? handleClear : () => handleDecode()}
-              isLoading={isLoading}
-              hasResult={!!invoiceData}
-            />
-            <QRScanner
-              open={qrScannerOpen}
-              onOpenChange={setQrScannerOpen}
-              onScan={handleQRScan}
-            />
+        {currentView === "home" ? (
+          <div className="space-y-6">
+            <div className="flex gap-2">
+              <SearchInput
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onDecode={() => handleDecode()}
+                placeholder="Enter Lightning invoice, LNURL, or Lightning address"
+                className="flex-1"
+                autoFocus
+              />
+              <SubmitButton
+                onClick={invoiceData ? handleClear : () => handleDecode()}
+                isLoading={isLoading}
+                hasResult={!!invoiceData}
+              />
+              <QRScanner
+                open={qrScannerOpen}
+                onOpenChange={setQrScannerOpen}
+                onScan={handleQRScan}
+              />
+            </div>
+
+            {error && <ErrorDisplay message={error} />}
+
+            {invoiceData && invoiceType && (
+              <InvoiceDetails type={invoiceType} data={invoiceData} />
+            )}
           </div>
-
-          {error && <ErrorDisplay message={error} />}
-
-          {invoiceData && invoiceType && (
-            <InvoiceDetails type={invoiceType} data={invoiceData} />
-          )}
-        </div>
+        ) : (
+          <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
+        )}
       </div>
     </div>
   )
