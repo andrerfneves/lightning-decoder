@@ -95,7 +95,24 @@ const handleLNURL = (invoice) => {
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
   return fetch(url)
-  .then(r => r.json())
+    .then(r => {
+      if (r.ok === false) {
+        return Promise.reject(new Error(`LNURL service returned ${r.status || '?'} ${r.statusText || '?'}`));
+      }
+      return r.json();
+    })
+    .catch(error => {
+      if (error.message && error.message.includes('NetworkError')) {
+        return Promise.reject(new Error('Network error: Could not reach LNURL service. It may be offline or blocked by CORS.'));
+      }
+      if (error.message && error.message.includes('Failed to fetch')) {
+        return Promise.reject(new Error('Network error: Could not reach LNURL service. It may be offline or blocked by CORS.'));
+      }
+      if (error.message && error.message.includes('JSON')) {
+        return Promise.reject(new Error('Invalid response: LNURL service returned non-JSON data.'));
+      }
+      return Promise.reject(new Error(`LNURL fetch failed: ${error.message || 'Unknown error'}`));
+    });
 };
 
 const handleLightningAddress = (internetIdentifier) => {
