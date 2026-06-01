@@ -113,17 +113,28 @@ function App() {
   const shouldShiftUp = isLoading || !!error || !!invoiceData
 
   return (
-    <motion.div
-      className="min-h-screen bg-background flex flex-col"
-      animate={{ justifyContent: shouldShiftUp ? "flex-start" : "center" }}
-      transition={{ duration: 0.35, ease: "easeInOut" }}
-    >
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Header
-          onNavigateToVerifier={handleNavigateToVerifier}
-          onOpenQRScanner={handleOpenQRScanner}
-        />
-        
+    <div className="min-h-screen bg-background overflow-hidden">
+      <motion.div
+        className="container mx-auto px-4 pb-8 max-w-4xl"
+        initial={{
+          paddingTop: shouldShiftUp ? "2rem" : "20vh",
+        }}
+        animate={{
+          paddingTop: shouldShiftUp ? "2rem" : "20vh",
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 220,
+          damping: 30,
+        }}
+      >
+        <motion.div layout className="space-y-4">
+          <Header
+            onNavigateToVerifier={handleNavigateToVerifier}
+            onOpenQRScanner={handleOpenQRScanner}
+          />
+        </motion.div>
+
         {currentView === "home" ? (
           <motion.div layout className="space-y-6">
             <SearchInput
@@ -146,6 +157,7 @@ function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2 }}
+                  layout
                 >
                   <ErrorDisplay message={error} />
                 </motion.div>
@@ -158,6 +170,7 @@ function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2 }}
+                  layout
                 >
                   <InvoiceDetails type={invoiceType} data={invoiceData} />
                 </motion.div>
@@ -173,8 +186,8 @@ function App() {
           onOpenChange={setQrScannerOpen}
           onScan={handleQRScan}
         />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   )
 }
 

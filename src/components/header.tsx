@@ -55,8 +55,8 @@ const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
           <h1 className="text-5xl font-bold tracking-tight">{appName}</h1>
-          <p className="text-md text-[hsl(var(--secondary-foreground))]">{tagline}</p>
-          <p className="text-sm text-[hsl(var(--muted-foreground))]">{subTagline}</p>
+          <p className="text-md text-[hsl(var(--muted-foreground))]">{tagline}</p>
+          <p className="text-sm text-[hsl(var(--secondary-foreground))]">{subTagline}</p>
         </div>
 
         <DropdownMenu>
