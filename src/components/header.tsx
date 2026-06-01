@@ -62,8 +62,8 @@ const Header: React.FC<HeaderProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="ghost"
-              className="h-10 px-3 gap-2"
+              variant="outline"
+              className="h-10 px-3 gap-2 rounded-md border-input"
             >
               <Menu className="h-5 w-5" />
               <span className="text-sm font-medium">Menu</span>
