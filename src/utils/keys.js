@@ -68,6 +68,13 @@ import {
   BOLT12_NODE_ID_KEY,
 } from '../constants/keys';
 
+const humanizeKey = (key) => key
+  .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  .replace(/[_-]+/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .replace(/\w\S*/g, word => word.charAt(0).toUpperCase() + word.slice(1));
+
 export const formatDetailsKey = (key) => {
   switch (key) {
     case COIN_TYPE_KEY:
@@ -75,7 +82,7 @@ export const formatDetailsKey = (key) => {
     case PAYEE_NODE_KEY:
       return 'Payee Pub Key';
     case EXPIRE_TIME:
-      return 'Expire Time';
+      return 'Expire Time (Seconds)';
     case PAYMENT_REQUEST_KEY:
       return 'Invoice';
     case PREFIX_KEY:
@@ -127,7 +134,7 @@ export const formatDetailsKey = (key) => {
     case CLTV_EXPIRY_DELTA_KEY:
       return 'CLTV Expiry Delta';
     case FEE_BASE_MSAT_KEY:
-      return 'Fee Base (MSats)';
+      return 'Fee Base (millisats)';
     case FEE_PROPORTIONAL_KEY:
       return 'Tag Words';
     case PUBKEY_KEY:
@@ -137,19 +144,19 @@ export const formatDetailsKey = (key) => {
     case CALLBACK_KEY:
       return 'Callback URL';
     case COMMENT_ALLOWED_KEY:
-      return 'Comment Allowed (Chars)';
+      return 'Comment Allowed (# of chars)';
     case MAX_SENDABLE_KEY:
-      return 'Max Sendable (MSats)';
+      return 'Max Sendable (millisats)';
     case MIN_SENDABLE_KEY:
-      return 'Min Sendable (MSats)';
+      return 'Min Sendable (millisats)';
     case MAX_WITHDRAWABLE_KEY:
-      return 'Max Withdrawable (MSats)';
+      return 'Max Withdrawable (millisats)';
     case MIN_WITHDRAWABLE_KEY:
-      return 'Min Withdrawable (MSats)';
+      return 'Min Withdrawable (millisats)';
     case LNURL_TAG_KEY:
-      return 'LNURL Tag/Type';
+      return 'LNURL Type';
     case LNURL_METADATA_KEY:
-      return 'LNURL Metadata';
+      return 'Metadata';
     case LNURL_K1_KEY:
       return 'K1';
     case DEFAULT_DESCRIPTION_KEY:
@@ -168,7 +175,7 @@ export const formatDetailsKey = (key) => {
     case BOLT12_CURRENCY_KEY:
       return 'Currency';
     case BOLT12_AMOUNT_KEY:
-      return 'Amount (MSats)';
+      return 'Amount (millisats)';
     case BOLT12_FEATURES_KEY:
       return 'Features';
     case BOLT12_ABSOLUTE_EXPIRY_KEY:
@@ -204,6 +211,6 @@ export const formatDetailsKey = (key) => {
     case BOLT12_NODE_ID_KEY:
       return 'Node ID';
     default:
-      return 'Error';
+      return humanizeKey(key);
   }
 }

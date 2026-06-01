@@ -39,9 +39,8 @@ export const parseInvoice = async (invoice) => {
     }
   }
 
-  // Check if Invoice has `lightning:` or `lnurl:` prefixes
-  // (9 chars + the `:` or `=` chars) --> 10 characters total
-  const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}:`) !== -1;
+  // Check if Invoice has `lightning:` or `lnurl:` URI prefixes
+  const hasLightningPrefix = lcInvoice.startsWith(`${LIGHTNING_SCHEME}:`);
   if (hasLightningPrefix) {
     // Remove the `lightning:` prefix
     requestCode = lcInvoice.slice(10, lcInvoice.length);
@@ -55,8 +54,8 @@ export const parseInvoice = async (invoice) => {
     requestCode = lcInvoice.split(`${LIGHTNING_SCHEME}=`)[1].split('&')[0];
   }
 
-  // (5 chars + the `:` or `=` chars) --> 6 characters total
-  const hasLNURLPrefix = lcInvoice.indexOf(`${LNURL_SCHEME}:`) !== -1;
+  // (5 chars + the `:` char) --> 6 characters total
+  const hasLNURLPrefix = lcInvoice.startsWith(`${LNURL_SCHEME}:`);
   if (hasLNURLPrefix) {
     // Remove the `lnurl:` prefix
     requestCode = lcInvoice.slice(6, lcInvoice.length);
@@ -65,9 +64,10 @@ export const parseInvoice = async (invoice) => {
   // Parse LNURL, BOLT12, or BOLT11
   const isLNURL = requestCode.startsWith(LNURL_SCHEME);
   if (isLNURL) {
+    const lnurlData = await handleLNURL(requestCode);
     return {
       isLNURL: true,
-      data: handleLNURL(requestCode)
+      data: lnurlData
     };
   }
 
@@ -94,7 +94,24 @@ const handleLNURL = (invoice) => {
   const url = Buffer.from(bech32.fromWords(decodedLNURL.words)).toString();
 
   return fetch(url)
-  .then(r => r.json())
+    .then(r => {
+      if (r.ok === false) {
+        return Promise.reject(new Error(`LNURL service returned ${r.status || '?'} ${r.statusText || '?'}`));
+      }
+      return r.json();
+    })
+    .catch(error => {
+      if (error.message && error.message.includes('NetworkError')) {
+        return Promise.reject(new Error('Network error: Could not reach LNURL service. It may be offline or blocked by CORS.'));
+      }
+      if (error.message && error.message.includes('Failed to fetch')) {
+        return Promise.reject(new Error('Network error: Could not reach LNURL service. It may be offline or blocked by CORS.'));
+      }
+      if (error.message && error.message.includes('JSON')) {
+        return Promise.reject(new Error('Invalid response: LNURL service returned non-JSON data.'));
+      }
+      return Promise.reject(new Error(`LNURL fetch failed: ${error.message || 'Unknown error'}`));
+    });
 };
 
 const handleLightningAddress = (internetIdentifier) => {
@@ -121,9 +138,19 @@ const handleLightningAddress = (internetIdentifier) => {
   const url = `https://${domain}/.well-known/lnurlp/${username}`;
 
   return fetch(url)
-  .then(r => r.json())
+  .then(r => {
+    if (r.ok === false) {
+      return Promise.reject(new Error(`Lightning Address service returned ${r.status || '?'} ${r.statusText || '?'}`));
+    }
+    return r.json();
+  })
   .then(data => {
-    data.domain = domain;
+    if (data?.status === 'ERROR') {
+      return {
+        success: false,
+        message: data.reason || 'Lightning Address service returned an error.',
+      };
+    }
 
     return {
       success: true,
@@ -143,7 +170,7 @@ const handleLightningAddress = (internetIdentifier) => {
 
 const handleBOLT11 = (invoice) => {
   // Check if Invoice starts with `lnbc` prefix
-  if (!invoice.includes(BOLT11_SCHEME_MAINNET) && !invoice.includes(BOLT11_SCHEME_TESTNET)) {
+  if (!invoice.startsWith(BOLT11_SCHEME_MAINNET) && !invoice.startsWith(BOLT11_SCHEME_TESTNET)) {
     return null;
   }
 
@@ -157,9 +184,7 @@ const handleBOLT12 = (invoice) => {
   try {
     const decoded = BOLT12Decoder.decode(invoice);
     return decoded;
-  } catch (error) {
-    console.error('BOLT12 decode error:', error);
+  } catch (_) {
     return null;
   }
 };
-

@@ -6,7 +6,7 @@ describe('formatDetailsKey', () => {
     const cases = [
       { key: 'coinType', expected: 'Chain' },
       { key: 'payeeNodeKey', expected: 'Payee Pub Key' },
-      { key: 'expire_time', expected: 'Expire Time' },
+      { key: 'expire_time', expected: 'Expire Time (Seconds)' },
       { key: 'paymentRequest', expected: 'Invoice' },
       { key: 'prefix', expected: 'Prefix' },
       { key: 'recoveryFlag', expected: 'Recovery Flag' },
@@ -32,18 +32,18 @@ describe('formatDetailsKey', () => {
       { key: 'tagCode', expected: 'Tag Code' },
       { key: 'words', expected: 'Tag Words' },
       { key: 'cltv_expiry_delta', expected: 'CLTV Expiry Delta' },
-      { key: 'fee_base_msat', expected: 'Fee Base (MSats)' },
+      { key: 'fee_base_msat', expected: 'Fee Base (millisats)' },
       { key: 'fee_proportional_millionths', expected: 'Tag Words' },
       { key: 'pubkey', expected: 'Public Key' },
       { key: 'short_channel_id', expected: 'Short Channel ID' },
       { key: 'callback', expected: 'Callback URL' },
-      { key: 'commentAllowed', expected: 'Comment Allowed (Chars)' },
-      { key: 'maxSendable', expected: 'Max Sendable (MSats)' },
-      { key: 'minSendable', expected: 'Min Sendable (MSats)' },
-      { key: 'minWithdrawable', expected: 'Min Withdrawable (MSats)' },
-      { key: 'maxWithdrawable', expected: 'Max Withdrawable (MSats)' },
-      { key: 'tag', expected: 'LNURL Tag/Type' },
-      { key: 'metadata', expected: 'LNURL Metadata' },
+      { key: 'commentAllowed', expected: 'Comment Allowed (# of chars)' },
+      { key: 'maxSendable', expected: 'Max Sendable (millisats)' },
+      { key: 'minSendable', expected: 'Min Sendable (millisats)' },
+      { key: 'minWithdrawable', expected: 'Min Withdrawable (millisats)' },
+      { key: 'maxWithdrawable', expected: 'Max Withdrawable (millisats)' },
+      { key: 'tag', expected: 'LNURL Type' },
+      { key: 'metadata', expected: 'Metadata' },
       { key: 'k1', expected: 'K1' },
       { key: 'defaultDescription', expected: 'Description' },
       { key: 'domain', expected: 'Domain' },
@@ -55,10 +55,11 @@ describe('formatDetailsKey', () => {
     });
   });
 
-  it('returns "Error" for unknown keys', () => {
-    expect(formatDetailsKey('nonexistent')).toBe('Error');
-    expect(formatDetailsKey('')).toBe('Error');
-    expect(formatDetailsKey('random')).toBe('Error');
+  it('humanizes unknown keys instead of rendering them as errors', () => {
+    expect(formatDetailsKey('allowsNostr')).toBe('Allows Nostr');
+    expect(formatDetailsKey('nostrPubkey')).toBe('Nostr Pubkey');
+    expect(formatDetailsKey('payer-data')).toBe('Payer Data');
+    expect(formatDetailsKey('random_field')).toBe('Random Field');
   });
 
   it('returns formatted label for BOLT12 keys', () => {
@@ -66,7 +67,7 @@ describe('formatDetailsKey', () => {
       { key: 'type', expected: 'Type' },
       { key: 'chains', expected: 'Chains' },
       { key: 'currency', expected: 'Currency' },
-      { key: 'amount', expected: 'Amount (MSats)' },
+      { key: 'amount', expected: 'Amount (millisats)' },
       { key: 'features', expected: 'Features' },
       { key: 'absoluteExpiry', expected: 'Absolute Expiry' },
       { key: 'paths', expected: 'Paths' },
@@ -84,7 +85,7 @@ describe('formatDetailsKey', () => {
       { key: 'paymentHash', expected: 'Payment Hash' },
       { key: 'fallbacks', expected: 'Fallbacks' },
       { key: 'nodeId', expected: 'Node ID' },
-      { key: 'metadata', expected: 'LNURL Metadata' },
+      { key: 'metadata', expected: 'Metadata' },
     ];
 
     bolt12Cases.forEach(({ key, expected }) => {

@@ -1,0 +1,74 @@
+import * as React from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog"
+import { Scanner } from "@yudiel/react-qr-scanner"
+
+export interface QRScannerProps {
+  onScan?: (data: string) => void
+  onError?: (error: Error) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+const QRScanner: React.FC<QRScannerProps> = ({
+  onScan,
+  onError,
+  open,
+  onOpenChange,
+}) => {
+  const handleScan = (result: any) => {
+    if (result && result[0] && result[0].rawValue) {
+      const scannedValue = result[0].rawValue
+      onScan?.(scannedValue)
+      onOpenChange?.(false)
+    }
+  }
+
+  const handleError = (error: Error) => {
+    console.error("QR Scanner error:", error)
+    onError?.(error)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
+        <DialogHeader>
+          <DialogTitle>Scan QR Code</DialogTitle>
+          <DialogDescription>
+            Point your camera at a Lightning invoice, LNURL, or BOLT12 offer
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex items-center justify-center p-2 bg-[hsl(var(--background))] rounded-lg">
+          {open ? (
+            <div className="aspect-square w-full max-w-sm rounded-lg overflow-hidden border border-border bg-[hsl(var(--background))]">
+              <Scanner
+                onScan={handleScan}
+                onError={handleError}
+                styles={{
+                  container: {
+                    width: "100%",
+                    height: "100%",
+                    aspectRatio: "1/1",
+                  },
+                }}
+              />
+            </div>
+          ) : (
+            <div className="aspect-square w-full max-w-sm rounded-lg border-2 border-dashed border-muted-foreground/25 bg-[hsl(var(--background))] flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">
+                Camera preview will appear here
+              </p>
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export { QRScanner }

@@ -96,6 +96,22 @@ describe('parseInvoice', () => {
         username: 'user',
       });
     });
+
+    it('returns the service reason when lightning address response is an error', async () => {
+      globalThis.fetch.mockResolvedValueOnce({
+        json: () => Promise.resolve({ status: 'ERROR', reason: 'User not found' }),
+      });
+
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice('missing@example.com');
+
+      expect(result).toEqual({
+        data: null,
+        error: 'User not found',
+        isLNURL: false,
+        isLNAddress: true,
+      });
+    });
   });
 
   describe('lightning: prefix', () => {
@@ -121,6 +137,16 @@ describe('parseInvoice', () => {
       expect(result.isLNURL).toBe(false);
       expect(result.data).toBeDefined();
       expect(result.data.satoshis).toBe(1000);
+    });
+
+    it('does not strip lightning: when it appears inside an unrelated string', async () => {
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice(`not-a-prefix-lightning:${VALID_BOLT11}`);
+
+      expect(result).toEqual({
+        data: null,
+        isLNURL: false,
+      });
     });
   });
 
@@ -185,6 +211,17 @@ describe('parseInvoice', () => {
 
       expect(result.isLNURL).toBe(true);
       expect(result.data).toBeDefined();
+    });
+
+    it('does not strip lnurl: when it appears inside an unrelated string', async () => {
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice(`not-a-prefix-lnurl:${VALID_LNURL_BECH32_LOWER}`);
+
+      expect(result).toEqual({
+        data: null,
+        isLNURL: false,
+      });
+      expect(globalThis.fetch).not.toHaveBeenCalled();
     });
   });
 
