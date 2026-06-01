@@ -139,9 +139,19 @@ const handleLightningAddress = (internetIdentifier) => {
   const url = `https://${domain}/.well-known/lnurlp/${username}`;
 
   return fetch(url)
-  .then(r => r.json())
+  .then(r => {
+    if (r.ok === false) {
+      return Promise.reject(new Error(`Lightning Address service returned ${r.status || '?'} ${r.statusText || '?'}`));
+    }
+    return r.json();
+  })
   .then(data => {
-    data.domain = domain;
+    if (data?.status === 'ERROR') {
+      return {
+        success: false,
+        message: data.reason || 'Lightning Address service returned an error.',
+      };
+    }
 
     return {
       success: true,

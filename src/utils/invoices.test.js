@@ -96,6 +96,22 @@ describe('parseInvoice', () => {
         username: 'user',
       });
     });
+
+    it('returns the service reason when lightning address response is an error', async () => {
+      globalThis.fetch.mockResolvedValueOnce({
+        json: () => Promise.resolve({ status: 'ERROR', reason: 'User not found' }),
+      });
+
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice('missing@example.com');
+
+      expect(result).toEqual({
+        data: null,
+        error: 'User not found',
+        isLNURL: false,
+        isLNAddress: true,
+      });
+    });
   });
 
   describe('lightning: prefix', () => {

@@ -55,10 +55,11 @@ describe('formatDetailsKey', () => {
     });
   });
 
-  it('returns "Error" for unknown keys', () => {
-    expect(formatDetailsKey('nonexistent')).toBe('Error');
-    expect(formatDetailsKey('')).toBe('Error');
-    expect(formatDetailsKey('random')).toBe('Error');
+  it('humanizes unknown keys instead of rendering them as errors', () => {
+    expect(formatDetailsKey('allowsNostr')).toBe('Allows Nostr');
+    expect(formatDetailsKey('nostrPubkey')).toBe('Nostr Pubkey');
+    expect(formatDetailsKey('payer-data')).toBe('Payer Data');
+    expect(formatDetailsKey('random_field')).toBe('Random Field');
   });
 
   it('returns formatted label for BOLT12 keys', () => {

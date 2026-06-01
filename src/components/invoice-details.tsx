@@ -44,7 +44,37 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
       case "lightning-address":
         return "Lightning Address"
       default:
-        return "Invoice"
+        return "Request"
+    }
+  }
+
+  const getResultTitle = () => {
+    switch (type) {
+      case "bolt11":
+        return "Decoded BOLT11 Invoice"
+      case "lnurl":
+        return "Decoded LNURL"
+      case "bolt12":
+        return "Decoded BOLT12"
+      case "lightning-address":
+        return "Decoded Lightning Address"
+      default:
+        return "Decoded Request"
+    }
+  }
+
+  const getResultDescription = () => {
+    switch (type) {
+      case "bolt11":
+        return "Lightning Network invoice payment request details"
+      case "lnurl":
+        return "LNURL request details and service metadata"
+      case "bolt12":
+        return "BOLT12 offer, invoice, or invoice request details"
+      case "lightning-address":
+        return "Lightning Address LNURL-pay metadata and payment limits"
+      default:
+        return "Lightning Network request details"
     }
   }
 
@@ -83,6 +113,74 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
     return value.substring(0, maxLength) + "..."
   }
 
+  const renderMetadataValue = (value: string): React.ReactNode => {
+    try {
+      const metadata = JSON.parse(value)
+
+      if (!Array.isArray(metadata)) {
+        throw new Error("Invalid metadata shape")
+      }
+
+      return (
+        <div className="ml-auto max-w-xl space-y-2 text-right">
+          {metadata.map((entry, index) => {
+            if (!Array.isArray(entry) || entry.length < 2) {
+              return null
+            }
+
+            const [mimeType, content] = entry
+
+            if (typeof mimeType !== "string" || typeof content !== "string") {
+              return null
+            }
+
+            if (mimeType.startsWith("image/")) {
+              return (
+                <div key={`${mimeType}-${index}`} className="flex justify-end">
+                  <img
+                    src={`data:${mimeType};base64,${content}`}
+                    alt="LNURL metadata"
+                    className="max-h-24 max-w-24 rounded-md border border-border object-cover"
+                  />
+                </div>
+              )
+            }
+
+            return (
+              <div key={`${mimeType}-${index}`} className="space-y-1">
+                <div className="text-xs text-muted-foreground">{mimeType}</div>
+                <div className="text-sm break-words">{content}</div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    } catch (_) {
+      return renderStringValue(value)
+    }
+  }
+
+  const renderStringValue = (value: string): React.ReactNode => {
+    if (value.length > 50) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <code className="text-xs bg-muted px-2 py-1 rounded break-all font-mono">
+                {truncateValue(value)}
+              </code>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-md">
+              <code className="text-xs break-all">{value}</code>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )
+    }
+
+    return <code className="text-xs bg-muted px-2 py-1 rounded font-mono">{value}</code>
+  }
+
   const renderValue = (value: any, key: string): React.ReactNode => {
     if (value === null || value === undefined) {
       return <span className="text-muted-foreground">N/A</span>
@@ -97,7 +195,6 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
     }
 
     if (typeof value === "number") {
-      // Special formatting for amounts
       if (key.toLowerCase().includes("amount") || key.toLowerCase().includes("sat")) {
         const btc = (value / 100000000).toFixed(8)
         return (
@@ -117,7 +214,10 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
     }
 
     if (typeof value === "string") {
-      // Special handling for timestamps
+      if (key === "metadata") {
+        return renderMetadataValue(value)
+      }
+
       if (key.toLowerCase().includes("timestamp") || key.toLowerCase().includes("time")) {
         const date = new Date(value)
         const now = new Date()
@@ -145,25 +245,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
         )
       }
 
-      // Truncate long strings with tooltip
-      if (value.length > 50) {
-        return (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <code className="text-xs bg-muted px-2 py-1 rounded break-all font-mono">
-                  {truncateValue(value)}
-                </code>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-md">
-                <code className="text-xs break-all">{value}</code>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )
-      }
-
-      return <code className="text-xs bg-muted px-2 py-1 rounded font-mono">{value}</code>
+      return renderStringValue(value)
     }
 
     if (typeof value === "object") {
@@ -217,14 +299,12 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
   return (
     <Card className={className}>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-xl">Decoded Invoice</CardTitle>
-            <CardDescription>
-              Lightning Network payment request details
-            </CardDescription>
+            <CardTitle className="text-xl">{getResultTitle()}</CardTitle>
+            <CardDescription>{getResultDescription()}</CardDescription>
           </div>
-          <Badge variant={getTypeVariant()} className={`${getTypeColor()} text-white`}>
+          <Badge variant={getTypeVariant()} className={`${getTypeColor()} text-white whitespace-nowrap`}>
             {getTypeLabel()}
           </Badge>
         </div>

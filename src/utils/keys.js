@@ -68,6 +68,13 @@ import {
   BOLT12_NODE_ID_KEY,
 } from '../constants/keys';
 
+const humanizeKey = (key) => key
+  .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  .replace(/[_-]+/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .replace(/\w\S*/g, word => word.charAt(0).toUpperCase() + word.slice(1));
+
 export const formatDetailsKey = (key) => {
   switch (key) {
     case COIN_TYPE_KEY:
@@ -204,6 +211,6 @@ export const formatDetailsKey = (key) => {
     case BOLT12_NODE_ID_KEY:
       return 'Node ID';
     default:
-      return 'Error';
+      return humanizeKey(key);
   }
 }
