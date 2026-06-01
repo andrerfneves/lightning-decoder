@@ -1,0 +1,139 @@
+import { useState, useEffect, useRef } from "react"
+import { Header } from "./components/header"
+import { SearchInput } from "./components/search-input"
+import { SubmitButton } from "./components/submit-button"
+import { QRScanner } from "./components/qr-scanner"
+import { InvoiceDetails } from "./components/invoice-details"
+import { ErrorDisplay } from "./components/error-display"
+import { parseInvoice } from "./utils/invoices"
+import { Scanner } from "@yudiel/react-qr-scanner"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./components/ui/dialog"
+
+function App() {
+  const [inputValue, setInputValue] = useState("")
+  const [invoiceData, setInvoiceData] = useState<Record<string, any> | null>(null)
+  const [invoiceType, setInvoiceType] = useState<"bolt11" | "lnurl" | "bolt12" | "lightning-address" | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [qrScannerOpen, setQrScannerOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Check URL for invoice on mount
+  useEffect(() => {
+    const pathInvoice = window.location.pathname.slice(1) // Remove leading slash
+    if (pathInvoice) {
+      setInputValue(pathInvoice)
+      handleDecode(pathInvoice)
+    }
+  }, [])
+
+  const handleDecode = async (value?: string) => {
+    const invoiceToDecode = value || inputValue
+    if (!invoiceToDecode.trim()) {
+      setError("Please enter a Lightning invoice, LNURL, or Lightning address")
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    setInvoiceData(null)
+    setInvoiceType(null)
+
+    try {
+      const result = await parseInvoice(invoiceToDecode)
+      
+      if (result.error) {
+        setError(result.error)
+        return
+      }
+
+      if (!result.data) {
+        setError("Could not decode this invoice")
+        return
+      }
+
+      // Determine invoice type
+      if (result.isBOLT12) {
+        setInvoiceType("bolt12")
+      } else if (result.isLNURL) {
+        if (result.isLNAddress) {
+          setInvoiceType("lightning-address")
+        } else {
+          setInvoiceType("lnurl")
+        }
+      } else {
+        setInvoiceType("bolt11")
+      }
+
+      setInvoiceData(result.data)
+      
+      // Update URL
+      window.history.pushState({}, "", `/${invoiceToDecode}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred while decoding")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleClear = () => {
+    setInputValue("")
+    setInvoiceData(null)
+    setInvoiceType(null)
+    setError(null)
+    window.history.pushState({}, "", "/")
+    inputRef.current?.focus()
+  }
+
+  const handleQRScan = (data: string) => {
+    setInputValue(data)
+    setQrScannerOpen(false)
+    handleDecode(data)
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Header />
+        
+        <div className="space-y-6">
+          <div className="flex gap-2">
+            <SearchInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onDecode={() => handleDecode()}
+              placeholder="Enter Lightning invoice, LNURL, or Lightning address"
+              className="flex-1"
+              autoFocus
+            />
+            <SubmitButton
+              onClick={invoiceData ? handleClear : () => handleDecode()}
+              isLoading={isLoading}
+              hasResult={!!invoiceData}
+            />
+            <QRScanner
+              open={qrScannerOpen}
+              onOpenChange={setQrScannerOpen}
+              onScan={handleQRScan}
+            />
+          </div>
+
+          {error && <ErrorDisplay message={error} />}
+
+          {invoiceData && invoiceType && (
+            <InvoiceDetails type={invoiceType} data={invoiceData} />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App
