@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog"
 import { QrCode } from "lucide-react"
+import { Scanner } from "@yudiel/react-qr-scanner"
 
 export interface QRScannerProps {
   onScan?: (data: string) => void
@@ -23,8 +24,19 @@ const QRScanner: React.FC<QRScannerProps> = ({
   open,
   onOpenChange,
 }) => {
-  // Note: In a real implementation, you'd integrate @yudiel/react-qr-scanner here
-  // For now, this is a placeholder showing the structure
+  const handleScan = (result: any) => {
+    if (result && result[0] && result[0].rawValue) {
+      const scannedValue = result[0].rawValue
+      onScan?.(scannedValue)
+      onOpenChange?.(false)
+    }
+  }
+
+  const handleError = (error: Error) => {
+    console.error("QR Scanner error:", error)
+    onError?.(error)
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -40,12 +52,28 @@ const QRScanner: React.FC<QRScannerProps> = ({
             Point your camera at a Lightning invoice, LNURL, or BOLT12 offer
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center justify-center p-6">
-          <div className="aspect-square w-full max-w-sm rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
-            <p className="text-sm text-muted-foreground">
-              Camera preview would appear here
-            </p>
-          </div>
+        <div className="flex items-center justify-center p-2">
+          {open ? (
+            <div className="aspect-square w-full max-w-sm rounded-lg overflow-hidden border border-border">
+              <Scanner
+                onScan={handleScan}
+                onError={handleError}
+                styles={{
+                  container: {
+                    width: "100%",
+                    height: "100%",
+                    aspectRatio: "1/1",
+                  },
+                }}
+              />
+            </div>
+          ) : (
+            <div className="aspect-square w-full max-w-sm rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">
+                Camera preview will appear here
+              </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
