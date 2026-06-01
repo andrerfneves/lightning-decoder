@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Header } from "./components/header"
 import { SearchInput } from "./components/search-input"
-import { SubmitButton } from "./components/submit-button"
 import { QRScanner } from "./components/qr-scanner"
 import { InvoiceDetails } from "./components/invoice-details"
 import { ErrorDisplay } from "./components/error-display"
@@ -106,34 +105,31 @@ function App() {
     window.history.pushState({}, "", "/")
   }
 
+  const handleOpenQRScanner = () => {
+    setQrScannerOpen(true)
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col justify-center">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Header onNavigateToVerifier={handleNavigateToVerifier} />
+        <Header 
+          onNavigateToVerifier={handleNavigateToVerifier}
+          onOpenQRScanner={handleOpenQRScanner}
+        />
         
         {currentView === "home" ? (
           <div className="space-y-6">
-            <div className="flex gap-2">
-              <SearchInput
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onDecode={() => handleDecode()}
-                placeholder="Enter Lightning invoice, LNURL, or Lightning address"
-                className="flex-1"
-                autoFocus
-              />
-              <SubmitButton
-                onClick={invoiceData ? handleClear : () => handleDecode()}
-                isLoading={isLoading}
-                hasResult={!!invoiceData}
-              />
-              <QRScanner
-                open={qrScannerOpen}
-                onOpenChange={setQrScannerOpen}
-                onScan={handleQRScan}
-              />
-            </div>
+            <SearchInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onSubmit={invoiceData ? handleClear : () => handleDecode()}
+              isLoading={isLoading}
+              hasResult={!!invoiceData}
+              placeholder="Enter invoice or address"
+              className="w-full"
+              autoFocus
+            />
 
             {error && <ErrorDisplay message={error} />}
 
@@ -144,6 +140,12 @@ function App() {
         ) : (
           <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
         )}
+
+        <QRScanner
+          open={qrScannerOpen}
+          onOpenChange={setQrScannerOpen}
+          onScan={handleQRScan}
+        />
       </div>
     </div>
   )

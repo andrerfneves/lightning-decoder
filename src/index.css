@@ -50,9 +50,11 @@
 @layer base {
   * {
     border-color: hsl(var(--border));
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   }
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   }
 }

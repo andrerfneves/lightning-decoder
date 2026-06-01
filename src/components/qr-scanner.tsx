@@ -1,14 +1,11 @@
 import * as React from "react"
-import { Button } from "./ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog"
-import { QrCode } from "lucide-react"
 import { Scanner } from "@yudiel/react-qr-scanner"
 
 export interface QRScannerProps {
@@ -39,12 +36,6 @@ const QRScanner: React.FC<QRScannerProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-12 w-12">
-          <QrCode className="h-5 w-5" />
-          <span className="sr-only">Scan QR Code</span>
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Scan QR Code</DialogTitle>

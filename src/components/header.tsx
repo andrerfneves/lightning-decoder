@@ -5,16 +5,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
 import { cn } from "../lib/utils"
-import { Wrench, Shield } from "lucide-react"
+import { Menu, Shield, QrCode } from "lucide-react"
 
 const GithubIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
+    width="16"
+    height="16"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -33,6 +35,7 @@ export interface HeaderProps {
   subTagline?: string
   githubUrl?: string
   onNavigateToVerifier?: () => void
+  onOpenQRScanner?: () => void
   className?: string
 }
 
@@ -42,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({
   subTagline = "Lightning Address, LNURL, BOLT11, and BOLT12",
   githubUrl = "https://github.com/andrerfneves/lightning-decoder",
   onNavigateToVerifier,
+  onOpenQRScanner,
   className,
 }) => {
   return (
@@ -52,33 +56,39 @@ const Header: React.FC<HeaderProps> = ({
           <p className="text-sm text-muted-foreground">{tagline}</p>
           <p className="text-xs text-muted-foreground">{subTagline}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Wrench className="h-5 w-5" />
-                <span className="sr-only">Tools</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onNavigateToVerifier} className="gap-2">
-                <Shield className="h-4 w-4" />
-                Payment Hash Verifier
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <ThemeToggle />
-          <Button variant="ghost" size="icon" asChild>
-            <a
-              href={githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="View on GitHub"
-            >
-              <GithubIcon />
-            </a>
-          </Button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Tools</DropdownMenuLabel>
+            <DropdownMenuItem onClick={onNavigateToVerifier} className="gap-2">
+              <Shield className="h-4 w-4" />
+              Payment Hash Verifier
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onOpenQRScanner} className="gap-2">
+              <QrCode className="h-4 w-4" />
+              Scan QR Code
+            </DropdownMenuItem>
+            <ThemeToggle />
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Resources</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gap-2 cursor-pointer flex items-center"
+              >
+                <GithubIcon />
+                GitHub Repository
+              </a>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )
