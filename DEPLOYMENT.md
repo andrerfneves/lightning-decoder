@@ -2,11 +2,51 @@
 
 Lightning Decoder can be deployed to various platforms. This guide covers the most common options.
 
-## Table of Contents
+## Deployment Options
 
-- [Vercel Deployment](./DEPLOYMENT_VERCEL.md)
-- [Docker Deployment](./DEPLOYMENT_DOCKER.md)
-- [Static Hosting](#static-hosting)
+### 1. [Docker Deployment](./DEPLOYMENT_DOCKER.md) ⭐ Recommended
+
+Deploy using Docker containers for maximum portability and consistency across environments.
+
+- **Best for**: Production deployments, self-hosting, Kubernetes
+- **Difficulty**: Easy
+- **Time**: 5-10 minutes
+- **Features**: Containerized, reproducible, scalable
+
+[Get started with Docker →](./DEPLOYMENT_DOCKER.md)
+
+### 2. [exe.dev Deployment](./DEPLOYMENT_EXEDEV.md)
+
+Deploy to exe.dev VMs with built-in HTTPS proxies and zero configuration.
+
+- **Best for**: Quick deployments, development, demos
+- **Difficulty**: Very Easy
+- **Time**: 2-5 minutes
+- **Features**: Instant VMs, automatic HTTPS, public/private sharing
+
+[Get started with exe.dev →](./DEPLOYMENT_EXEDEV.md)
+
+### 3. [Vercel Deployment](./DEPLOYMENT_VERCEL.md)
+
+Deploy to Vercel's edge network with automatic CI/CD and preview deployments.
+
+- **Best for**: Production deployments, teams, automatic deployments
+- **Difficulty**: Easy
+- **Time**: 5-10 minutes
+- **Features**: Edge network, preview deployments, analytics
+
+[Get started with Vercel →](./DEPLOYMENT_VERCEL.md)
+
+### 4. [Static Hosting](#static-hosting)
+
+Deploy to any static hosting service (Netlify, GitHub Pages, Cloudflare Pages, etc.).
+
+- **Best for**: Simple deployments, free hosting
+- **Difficulty**: Easy
+- **Time**: 5-15 minutes
+- **Features**: Global CDN, free tier available
+
+[Learn more about static hosting ↓](#static-hosting)
 
 ## Static Hosting
 
