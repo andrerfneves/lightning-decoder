@@ -65,9 +65,10 @@ export const parseInvoice = async (invoice) => {
   // Parse LNURL, BOLT12, or BOLT11
   const isLNURL = requestCode.startsWith(LNURL_SCHEME);
   if (isLNURL) {
+    const lnurlData = await handleLNURL(requestCode);
     return {
       isLNURL: true,
-      data: handleLNURL(requestCode)
+      data: lnurlData
     };
   }
 
