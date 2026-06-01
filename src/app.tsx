@@ -55,6 +55,11 @@ function App() {
 
   useEffect(() => {
     const updateIdleOffset = () => {
+      if (window.innerWidth < 640) {
+        setIdleTopOffset(32)
+        return
+      }
+
       const topModuleHeight = topModuleRef.current?.getBoundingClientRect().height ?? 0
       const centeredOffset = (window.innerHeight - topModuleHeight) / 2
       setIdleTopOffset(Math.max(32, centeredOffset))
