@@ -13,6 +13,7 @@ Lightning Decoder is a developer utility for parsing and understanding Lightning
 ## Features
 
 - **BOLT11 Invoice Decoding** — Parse Lightning Network invoices to view amount, description, expiry, payment hash, routing hints, and other encoded fields
+- **BOLT12 Offer/Invoice/Invoice Request Decoding** — Decode [BOLT12](https://github.com/lightning/bolts/blob/master/12-offer-encoding.md) payment requests (offers, invoices, and invoice requests) to inspect encoded fields
 - **LNURL Decoding** — Decode [LNURL](https://github.com/lnurl/luds) requests (lnurl-pay, lnurl-withdraw, lnurl-auth, lnurl-channel) to inspect the underlying callback URLs and parameters
 - **Lightning Address Resolution** — Resolve Lightning Addresses (user@domain.com) to their LNURL-pay endpoints
 - **QR Code Scanning** — Scan QR codes directly from your camera to decode Lightning payment data
@@ -53,6 +54,7 @@ Output is generated in the `build/` directory.
 - [React 19](https://react.dev/) — UI framework
 - [Vite](https://vitejs.dev/) — Build tool and dev server
 - [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib) — Bitcoin library for BOLT11 decoding
+- [bolt12-decoder](https://github.com/andrerfneves/bolt12-decoder) — BOLT12 offer, invoice, and invoice request decoding
 - [bech32](https://github.com/bitcoinjs/bech32) — Bech32 encoding/decoding for LNURL
 
 ## Contributing
