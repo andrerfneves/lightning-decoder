@@ -23,8 +23,8 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       variant="default"
       className={cn(
         isWarning
-          ? "border-amber-500/40 bg-amber-50 text-amber-950 dark:border-amber-500/40 dark:bg-amber-950/25 dark:text-amber-100 [&>svg]:text-amber-500"
-          : "border-red-500/40 bg-red-50 text-red-950 dark:border-red-500/40 dark:bg-red-950/25 dark:text-red-100 [&>svg]:text-red-500",
+          ? "border-amber-300 bg-amber-100/90 text-amber-950 dark:border-amber-500/40 dark:bg-amber-950/25 dark:text-amber-100 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-500"
+          : "border-red-300 bg-red-100/90 text-red-950 dark:border-red-500/40 dark:bg-red-950/25 dark:text-red-100 [&>svg]:text-red-600 dark:[&>svg]:text-red-500",
         className
       )}
     >

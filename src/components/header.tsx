@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
           <h1 className="flex items-center gap-3 text-5xl font-bold tracking-tight">
-            <Zap className="h-8 w-8 text-black" />
+            <Zap className="h-8 w-8 text-black dark:text-white" />
             <span>{appName}</span>
           </h1>
           <p className="text-md text-[hsl(var(--muted-foreground))]">{tagline}</p>
