@@ -204,7 +204,7 @@ function App() {
                   isLoading={isLoading}
                   hasResult={!!invoiceData}
                   placeholder="Enter invoice or address"
-                  className="w-full"
+                  className="w-full [&_input]:bg-input"
                   autoFocus
                 />
               </div>
@@ -264,7 +264,7 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <InvoiceDetails type={invoiceType} data={invoiceData} />
+                    <InvoiceDetails type={invoiceType} data={invoiceData} className="bg-border" />
                   </motion.div>
                 )}
               </AnimatePresence>
