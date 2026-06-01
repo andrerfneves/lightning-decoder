@@ -6,9 +6,8 @@ import { validateInternetIdentifier } from './internet-identifier';
 import * as LightningPayReq from '../lib/bolt11';
 
 const LIGHTNING_SCHEME = 'lightning';
-const BOLT11_SCHEME_MAINNET = 'lnbc';
-const BOLT11_SCHEME_TESTNET = 'lntb';
 const LNURL_SCHEME = 'lnurl';
+const BOLT11_SCHEMES = ['lnbcrt', 'lntbs', 'lnbc', 'lntb']; // regtest, signet, mainnet, testnet/testnet4
 const BOLT12_SCHEMES = ['lno1', 'lni1', 'lnr1']; // offer, invoice, invoice_request
 
 export const parseInvoice = async (invoice) => {
@@ -169,8 +168,9 @@ const handleLightningAddress = (internetIdentifier) => {
 };
 
 const handleBOLT11 = (invoice) => {
-  // Check if Invoice starts with `lnbc` prefix
-  if (!invoice.startsWith(BOLT11_SCHEME_MAINNET) && !invoice.startsWith(BOLT11_SCHEME_TESTNET)) {
+  // Check if Invoice starts with a known BOLT11 prefix
+  const isBOLT11 = BOLT11_SCHEMES.some(prefix => invoice.startsWith(prefix));
+  if (!isBOLT11) {
     return null;
   }
 
