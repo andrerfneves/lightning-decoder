@@ -10,7 +10,7 @@ import {
 } from "./ui/dropdown-menu"
 import { cn } from "../lib/utils"
 import { useTheme } from "./theme-provider"
-import { Menu, Shield, QrCode, Sun, Moon, Monitor } from "lucide-react"
+import { Menu, Shield, QrCode, Sun, Moon, Monitor, Check } from "lucide-react"
 
 const GithubIcon = () => (
   <svg
@@ -48,22 +48,25 @@ const Header: React.FC<HeaderProps> = ({
   onOpenQRScanner,
   className,
 }) => {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
 
   return (
     <header className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold tracking-tight">{appName}</h1>
-          <p className="text-sm text-[hsl(var(--secondary))]">{tagline}</p>
+          <p className="text-sm text-[hsl(var(--secondary-foreground))]">{tagline}</p>
           <p className="text-xs text-[hsl(var(--muted-foreground))]">{subTagline}</p>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-10 w-10">
+            <Button
+              variant="ghost"
+              className="h-10 px-3"
+            >
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Menu</span>
+              <span className="text-sm font-medium">Menu</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -88,27 +91,30 @@ const Header: React.FC<HeaderProps> = ({
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuLabel>Swap Theme</DropdownMenuLabel>
+            <DropdownMenuLabel>Theme</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => setTheme("light")}
               className="gap-2"
             >
               <Sun className="h-4 w-4" />
-              Light
+              <span>Light</span>
+              {theme === "light" && <Check className="ml-auto h-4 w-4" />}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setTheme("dark")}
               className="gap-2"
             >
               <Moon className="h-4 w-4" />
-              Dark
+              <span>Dark</span>
+              {theme === "dark" && <Check className="ml-auto h-4 w-4" />}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setTheme("system")}
               className="gap-2"
             >
               <Monitor className="h-4 w-4" />
-              System
+              <span>System</span>
+              {theme === "system" && <Check className="ml-auto h-4 w-4" />}
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
