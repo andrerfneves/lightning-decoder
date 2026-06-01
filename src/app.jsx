@@ -39,6 +39,8 @@ const INITIAL_STATE = {
   error: {},
   hasError: false,
   decodedInvoice: {},
+  isLNURL: false,
+  isBOLT12: false,
   isLNAddress: false,
   isQRCodeOpened: false,
   isInvoiceLoaded: false,
@@ -94,7 +96,7 @@ export class App extends PureComponent {
         }));
       }
 
-      const { isLNURL, data, error, isLNAddress } = parsedInvoiceResponse;
+      const { isLNURL, isBOLT12, data, error, isLNAddress } = parsedInvoiceResponse;
 
       // If an error comes back from a nested operation in parsing it must
       // propagate back to the end user
@@ -126,6 +128,9 @@ export class App extends PureComponent {
           // Otherwise this is an LNURL ready to be fetched
           response = await data;
         }
+      } else if (isBOLT12) {
+        // BOLT12 data is already decoded
+        response = data;
       } else {
         // Handle normal invoices
         response = data;
@@ -149,6 +154,7 @@ export class App extends PureComponent {
 
         this.setState(() => ({
           isLNURL,
+          isBOLT12,
           error: {},
           isLNAddress,
           hasError: false,
@@ -363,6 +369,106 @@ export class App extends PureComponent {
       </div>
     </div>
   );
+
+  renderBOLT12Details = () => {
+    const { decodedInvoice, isInvoiceLoaded } = this.state;
+    const invoiceContainerClassnames = cx(
+      'invoice',
+      { 'invoice--opened': isInvoiceLoaded },
+    );
+
+    const requestContents = decodedInvoice;
+
+    return !isInvoiceLoaded ? null : (
+      <div className={invoiceContainerClassnames}>
+        {Object.keys(requestContents).map((key) => {
+          const value = decodedInvoice[key];
+          
+          // Skip null/undefined values
+          if (value === null || value === undefined) {
+            return null;
+          }
+
+          // Handle type field specially
+          if (key === 'type') {
+            const typeLabels = {
+              'offer': 'BOLT12 Offer',
+              'invoice': 'BOLT12 Invoice',
+              'invoice_request': 'BOLT12 Invoice Request'
+            };
+            return (
+              <div key={key} className='invoice__item'>
+                <div className='invoice__item-title'>
+                  Type
+                </div>
+                <div className='invoice__item-value'>
+                  {typeLabels[value] || value}
+                </div>
+              </div>
+            );
+          }
+
+          // Handle arrays (paths, chains, blindedPayInfo)
+          if (Array.isArray(value)) {
+            return (
+              <div key={key} className='invoice__item invoice__item--nested'>
+                <div className='invoice__item-title'>
+                  {formatDetailsKey(key)}
+                </div>
+                <div className='invoice__item-value invoice__item-value--nested'>
+                  {value.map((item, idx) => (
+                    <div key={idx} className='invoice__nested-item'>
+                      {typeof item === 'object' ? (
+                        Object.keys(item).map((subKey) => (
+                          <div key={subKey} className='invoice__nested-value'>
+                            <strong>{formatDetailsKey(subKey)}:</strong> {String(item[subKey])}
+                          </div>
+                        ))
+                      ) : (
+                        <div className='invoice__nested-value'>{String(item)}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+
+          // Handle objects
+          if (typeof value === 'object') {
+            return (
+              <div key={key} className='invoice__item invoice__item--nested'>
+                <div className='invoice__item-title'>
+                  {formatDetailsKey(key)}
+                </div>
+                <div className='invoice__item-value invoice__item-value--nested'>
+                  {Object.keys(value).map((subKey) => (
+                    <div key={subKey} className='invoice__nested-item'>
+                      <div className='invoice__nested-value'>
+                        <strong>{formatDetailsKey(subKey)}:</strong> {String(value[subKey])}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+
+          // Handle primitive values
+          return (
+            <div key={key} className='invoice__item'>
+              <div className='invoice__item-title'>
+                {formatDetailsKey(key)}
+              </div>
+              <div className='invoice__item-value'>
+                {String(value)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   renderLNURLDetails = () => {
     const { decodedInvoice, isInvoiceLoaded } = this.state;
@@ -628,7 +734,7 @@ export class App extends PureComponent {
   }
 
   render() {
-    const { isLNURL, isInvoiceLoaded, hasError } = this.state;
+    const { isLNURL, isBOLT12, isInvoiceLoaded, hasError } = this.state;
 
     const appClasses = cx(
       'app',
@@ -658,7 +764,7 @@ export class App extends PureComponent {
           </div>
         </div>
         <div className={appColumnClasses}>
-          {isLNURL ? this.renderLNURLDetails() : this.renderInvoiceDetails()}
+          {isBOLT12 ? this.renderBOLT12Details() : isLNURL ? this.renderLNURLDetails() : this.renderInvoiceDetails()}
           {this.renderErrorDetails()}
         </div>
       </div>

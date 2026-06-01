@@ -60,4 +60,35 @@ describe('formatDetailsKey', () => {
     expect(formatDetailsKey('')).toBe('Error');
     expect(formatDetailsKey('random')).toBe('Error');
   });
+
+  it('returns formatted label for BOLT12 keys', () => {
+    const bolt12Cases = [
+      { key: 'type', expected: 'Type' },
+      { key: 'chains', expected: 'Chains' },
+      { key: 'currency', expected: 'Currency' },
+      { key: 'amount', expected: 'Amount (MSats)' },
+      { key: 'features', expected: 'Features' },
+      { key: 'absoluteExpiry', expected: 'Absolute Expiry' },
+      { key: 'paths', expected: 'Paths' },
+      { key: 'issuer', expected: 'Issuer' },
+      { key: 'quantityMax', expected: 'Max Quantity' },
+      { key: 'issuerId', expected: 'Issuer ID' },
+      { key: 'chain', expected: 'Chain' },
+      { key: 'quantity', expected: 'Quantity' },
+      { key: 'payerId', expected: 'Payer ID' },
+      { key: 'payerNote', expected: 'Payer Note' },
+      { key: 'signature', expected: 'Transaction Signature' },
+      { key: 'blindedPayInfo', expected: 'Blinded Pay Info' },
+      { key: 'createdAt', expected: 'Created At' },
+      { key: 'relativeExpiry', expected: 'Relative Expiry (seconds)' },
+      { key: 'paymentHash', expected: 'Payment Hash' },
+      { key: 'fallbacks', expected: 'Fallbacks' },
+      { key: 'nodeId', expected: 'Node ID' },
+      { key: 'metadata', expected: 'LNURL Metadata' },
+    ];
+
+    bolt12Cases.forEach(({ key, expected }) => {
+      expect(formatDetailsKey(key)).toBe(expected);
+    });
+  });
 });

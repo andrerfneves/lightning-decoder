@@ -1,5 +1,6 @@
 import bech32 from 'bech32';
 import { Buffer } from 'buffer';
+import BOLT12Decoder from 'bolt12-decoder';
 
 import { validateInternetIdentifier } from './internet-identifier';
 import * as LightningPayReq from '../lib/bolt11';
@@ -8,6 +9,7 @@ const LIGHTNING_SCHEME = 'lightning';
 const BOLT11_SCHEME_MAINNET = 'lnbc';
 const BOLT11_SCHEME_TESTNET = 'lntb';
 const LNURL_SCHEME = 'lnurl';
+const BOLT12_SCHEMES = ['lno1', 'lni1', 'lnr1']; // offer, invoice, invoice_request
 
 export const parseInvoice = async (invoice) => {
   if (!invoice || invoice === '') {
@@ -60,19 +62,30 @@ export const parseInvoice = async (invoice) => {
     requestCode = lcInvoice.slice(6, lcInvoice.length);
   }
 
-  // Parse LNURL or BOLT11
+  // Parse LNURL, BOLT12, or BOLT11
   const isLNURL = requestCode.startsWith(LNURL_SCHEME);
   if (isLNURL) {
     return {
       isLNURL: true,
       data: handleLNURL(requestCode)
     };
-  } else {
+  }
+
+  // Check for BOLT12 (offer, invoice, or invoice_request)
+  const isBOLT12 = BOLT12_SCHEMES.some(prefix => requestCode.startsWith(prefix));
+  if (isBOLT12) {
     return {
+      isBOLT12: true,
       isLNURL: false,
-      data: handleBOLT11(requestCode)
+      data: handleBOLT12(requestCode)
     };
   }
+
+  // Default to BOLT11
+  return {
+    isLNURL: false,
+    data: handleBOLT11(requestCode)
+  };
 };
 
 const handleLNURL = (invoice) => {
@@ -138,5 +151,15 @@ const handleBOLT11 = (invoice) => {
   const result = LightningPayReq.decode(invoice);
 
   return result;
+};
+
+const handleBOLT12 = (invoice) => {
+  try {
+    const decoded = BOLT12Decoder.decode(invoice);
+    return decoded;
+  } catch (error) {
+    console.error('BOLT12 decode error:', error);
+    return null;
+  }
 };
 
