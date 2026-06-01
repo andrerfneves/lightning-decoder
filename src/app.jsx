@@ -300,8 +300,7 @@ export class App extends PureComponent {
           ))}
           {/* Objects */}
           {(
-            !Array.isArray(tag.data) && (
-              (typeof tag.data !== 'string') || (typeof tag.data !== 'number'))
+            !Array.isArray(tag.data) && typeof tag.data !== 'string' && typeof tag.data !== 'number'
             ) && (
             <>
               {Object.keys(tag.data).map((label) => renderNestedItem(label, tag.data[label]))}
