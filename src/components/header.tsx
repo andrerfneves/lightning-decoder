@@ -54,9 +54,9 @@ const Header: React.FC<HeaderProps> = ({
     <header className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">{appName}</h1>
-          <p className="text-sm text-muted-foreground">{tagline}</p>
-          <p className="text-xs text-muted-foreground">{subTagline}</p>
+          <h1 className="text-4xl font-bold tracking-tight">{appName}</h1>
+          <p className="text-sm text-[hsl(var(--secondary))]">{tagline}</p>
+          <p className="text-xs text-[hsl(var(--muted-foreground))]">{subTagline}</p>
         </div>
 
         <DropdownMenu>
@@ -68,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-72 bg-popover text-popover-foreground"
+            className="w-80 bg-[hsl(var(--popover))] text-[hsl(var(--popover-foreground))]"
           >
             <DropdownMenuLabel>Tools</DropdownMenuLabel>
             <DropdownMenuItem
