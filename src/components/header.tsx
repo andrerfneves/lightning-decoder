@@ -54,16 +54,16 @@ const Header: React.FC<HeaderProps> = ({
     <header className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight">{appName}</h1>
-          <p className="text-sm text-[hsl(var(--secondary-foreground))]">{tagline}</p>
-          <p className="text-xs text-[hsl(var(--muted-foreground))]">{subTagline}</p>
+          <h1 className="text-5xl font-bold tracking-tight">{appName}</h1>
+          <p className="text-md text-[hsl(var(--secondary-foreground))]">{tagline}</p>
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">{subTagline}</p>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="h-10 px-3"
+              className="h-10 px-3 gap-2"
             >
               <Menu className="h-5 w-5" />
               <span className="text-sm font-medium">Menu</span>
