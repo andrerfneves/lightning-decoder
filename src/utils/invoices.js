@@ -39,9 +39,8 @@ export const parseInvoice = async (invoice) => {
     }
   }
 
-  // Check if Invoice has `lightning:` or `lnurl:` prefixes
-  // (9 chars + the `:` or `=` chars) --> 10 characters total
-  const hasLightningPrefix = lcInvoice.indexOf(`${LIGHTNING_SCHEME}:`) !== -1;
+  // Check if Invoice has `lightning:` or `lnurl:` URI prefixes
+  const hasLightningPrefix = lcInvoice.startsWith(`${LIGHTNING_SCHEME}:`);
   if (hasLightningPrefix) {
     // Remove the `lightning:` prefix
     requestCode = lcInvoice.slice(10, lcInvoice.length);
@@ -55,8 +54,8 @@ export const parseInvoice = async (invoice) => {
     requestCode = lcInvoice.split(`${LIGHTNING_SCHEME}=`)[1].split('&')[0];
   }
 
-  // (5 chars + the `:` or `=` chars) --> 6 characters total
-  const hasLNURLPrefix = lcInvoice.indexOf(`${LNURL_SCHEME}:`) !== -1;
+  // (5 chars + the `:` char) --> 6 characters total
+  const hasLNURLPrefix = lcInvoice.startsWith(`${LNURL_SCHEME}:`);
   if (hasLNURLPrefix) {
     // Remove the `lnurl:` prefix
     requestCode = lcInvoice.slice(6, lcInvoice.length);
@@ -171,7 +170,7 @@ const handleLightningAddress = (internetIdentifier) => {
 
 const handleBOLT11 = (invoice) => {
   // Check if Invoice starts with `lnbc` prefix
-  if (!invoice.includes(BOLT11_SCHEME_MAINNET) && !invoice.includes(BOLT11_SCHEME_TESTNET)) {
+  if (!invoice.startsWith(BOLT11_SCHEME_MAINNET) && !invoice.startsWith(BOLT11_SCHEME_TESTNET)) {
     return null;
   }
 
@@ -189,4 +188,3 @@ const handleBOLT12 = (invoice) => {
     return null;
   }
 };
-

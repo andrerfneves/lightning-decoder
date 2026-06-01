@@ -41,6 +41,7 @@ export interface HeaderProps {
   tagline?: string
   subTagline?: string
   githubUrl?: string
+  onClearResults?: () => void
   onNavigateToVerifier?: () => void
   onOpenQRScanner?: () => void
   className?: string
@@ -51,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({
   tagline = "Decode Lightning Network Requests",
   subTagline = "Lightning Address, LNURL, BOLT11 & BOLT12",
   githubUrl = "https://github.com/andrerfneves/lightning-decoder",
+  onClearResults,
   onNavigateToVerifier,
   onOpenQRScanner,
   className,
@@ -68,7 +70,17 @@ const Header: React.FC<HeaderProps> = ({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div className="space-y-1">
           <h1 className="whitespace-nowrap text-3xl font-bold tracking-tight sm:text-5xl">
-            <span>{appName}</span>
+            {onClearResults ? (
+              <button
+                type="button"
+                className="text-left"
+                onClick={onClearResults}
+              >
+                {appName}
+              </button>
+            ) : (
+              <span>{appName}</span>
+            )}
           </h1>
           <p className="text-md text-[hsl(var(--muted-foreground))]">{tagline}</p>
           <p className="whitespace-nowrap text-xs text-[hsl(var(--secondary-foreground))] sm:text-sm">{subTagline}</p>

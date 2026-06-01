@@ -186,6 +186,7 @@ function App() {
           >
             <div ref={topModuleRef}>
               <Header
+                onClearResults={invoiceData ? handleClear : undefined}
                 onNavigateToVerifier={handleOpenPaymentHashVerifier}
                 onOpenQRScanner={handleOpenQRScanner}
               />

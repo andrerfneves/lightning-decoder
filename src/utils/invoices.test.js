@@ -138,6 +138,16 @@ describe('parseInvoice', () => {
       expect(result.data).toBeDefined();
       expect(result.data.satoshis).toBe(1000);
     });
+
+    it('does not strip lightning: when it appears inside an unrelated string', async () => {
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice(`not-a-prefix-lightning:${VALID_BOLT11}`);
+
+      expect(result).toEqual({
+        data: null,
+        isLNURL: false,
+      });
+    });
   });
 
   describe('lightning= fallback param (LUD-01)', () => {
@@ -201,6 +211,17 @@ describe('parseInvoice', () => {
 
       expect(result.isLNURL).toBe(true);
       expect(result.data).toBeDefined();
+    });
+
+    it('does not strip lnurl: when it appears inside an unrelated string', async () => {
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice(`not-a-prefix-lnurl:${VALID_LNURL_BECH32_LOWER}`);
+
+      expect(result).toEqual({
+        data: null,
+        isLNURL: false,
+      });
+      expect(globalThis.fetch).not.toHaveBeenCalled();
     });
   });
 

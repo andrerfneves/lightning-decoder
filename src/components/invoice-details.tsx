@@ -176,11 +176,6 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
     }
   }
 
-  const truncateValue = (value: string, maxLength: number = 50) => {
-    if (value.length <= maxLength) return value
-    return value.substring(0, maxLength) + "..."
-  }
-
   const humanizeNestedKey = (key: string) => key
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/[_-]+/g, " ")
