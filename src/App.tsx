@@ -6,6 +6,7 @@ import { InvoiceDetails } from "./components/invoice-details"
 import { ErrorDisplay } from "./components/error-display"
 import { PaymentHashVerifier } from "./components/payment-hash-verifier"
 import { parseInvoice } from "./utils/invoices"
+import { AnimatePresence, motion } from "framer-motion"
 
 function App() {
   const [inputValue, setInputValue] = useState("")
@@ -109,16 +110,22 @@ function App() {
     setQrScannerOpen(true)
   }
 
+  const shouldShiftUp = isLoading || !!error || !!invoiceData
+
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center">
+    <motion.div
+      className="min-h-screen bg-background flex flex-col"
+      animate={{ justifyContent: shouldShiftUp ? "flex-start" : "center" }}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+    >
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Header 
+        <Header
           onNavigateToVerifier={handleNavigateToVerifier}
           onOpenQRScanner={handleOpenQRScanner}
         />
         
         {currentView === "home" ? (
-          <div className="space-y-6">
+          <motion.div layout className="space-y-6">
             <SearchInput
               ref={inputRef}
               value={inputValue}
@@ -131,12 +138,32 @@ function App() {
               autoFocus
             />
 
-            {error && <ErrorDisplay message={error} />}
+            <AnimatePresence mode="wait">
+              {error && (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ErrorDisplay message={error} />
+                </motion.div>
+              )}
 
-            {invoiceData && invoiceType && (
-              <InvoiceDetails type={invoiceType} data={invoiceData} />
-            )}
-          </div>
+              {invoiceData && invoiceType && (
+                <motion.div
+                  key="invoice"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <InvoiceDetails type={invoiceType} data={invoiceData} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         ) : (
           <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
         )}
@@ -147,7 +174,7 @@ function App() {
           onScan={handleQRScan}
         />
       </div>
-    </div>
+    </motion.div>
   )
 }
 

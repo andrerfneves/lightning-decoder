@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
-import { ArrowRight, X } from "lucide-react"
+import { ArrowRight, Loader2, X } from "lucide-react"
 import { cn } from "../lib/utils"
 
 export interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -25,6 +25,10 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     }
 
     const handleClick = () => {
+      if (isLoading) {
+        return
+      }
+
       if (onSubmit) {
         onSubmit()
       } else if (onDecode) {
@@ -48,7 +52,9 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           onClick={handleClick}
           disabled={isLoading}
         >
-          {hasResult ? (
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : hasResult ? (
             <X className="h-4 w-4" />
           ) : (
             <ArrowRight className="h-4 w-4" />

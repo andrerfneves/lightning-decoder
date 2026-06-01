@@ -29,6 +29,7 @@
     "crypto-browserify": "^3.12.1",
     "date-fns": "^2.1.0",
     "events": "^3.3.0",
+    "framer-motion": "^12.40.0",
     "lodash": "^4.17.15",
     "lucide-react": "^1.17.0",
     "react": "^19.0.0",
