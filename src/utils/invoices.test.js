@@ -3,10 +3,25 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // Mock the bolt11 module to avoid infinite loop bug
 vi.mock('../lib/bolt11', () => ({
   decode: vi.fn((invoice) => {
-    if (invoice.includes('lnbc')) {
+    if (invoice.startsWith('lnbcrt')) {
+      return {
+        complete: true,
+        prefix: 'lnbcrt',
+        coinType: 'regtest',
+        satoshis: 500,
+        millisatoshis: 500000,
+        timestamp: 1672531200,
+        tags: [
+          { tagName: 'payment_hash', data: '0001020304050607080900010203040506070809000102030405060708090102' },
+          { tagName: 'description', data: 'Regtest invoice' },
+        ],
+      };
+    }
+    if (invoice.startsWith('lnbc')) {
       return {
         complete: true,
         prefix: 'lnbc',
+        coinType: 'bitcoin',
         satoshis: 1000,
         millisatoshis: 1000000,
         timestamp: 1672531200,
@@ -17,10 +32,25 @@ vi.mock('../lib/bolt11', () => ({
         ],
       };
     }
-    if (invoice.includes('lntb')) {
+    if (invoice.startsWith('lntbs')) {
+      return {
+        complete: true,
+        prefix: 'lntbs',
+        coinType: 'signet',
+        satoshis: 500,
+        millisatoshis: 500000,
+        timestamp: 1672531200,
+        tags: [
+          { tagName: 'payment_hash', data: '0001020304050607080900010203040506070809000102030405060708090102' },
+          { tagName: 'description', data: 'Signet invoice' },
+        ],
+      };
+    }
+    if (invoice.startsWith('lntb')) {
       return {
         complete: true,
         prefix: 'lntb',
+        coinType: 'testnet',
         satoshis: 500,
         millisatoshis: 500000,
         timestamp: 1672531200,
@@ -139,6 +169,19 @@ describe('parseInvoice', () => {
       expect(result.data.satoshis).toBe(1000);
     });
 
+    it.each([
+      ['testnet/testnet4', 'lntb1pjtestnet', 'testnet'],
+      ['signet', 'lntbs1pjsignet', 'signet'],
+      ['regtest', 'lnbcrt1pjregtest', 'regtest'],
+    ])('strips lightning: prefix from BOLT11 %s invoice strings', async (_, invoice, coinType) => {
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice(`lightning:${invoice}`);
+
+      expect(result.isLNURL).toBe(false);
+      expect(result.data).toBeDefined();
+      expect(result.data.coinType).toBe(coinType);
+    });
+
     it('does not strip lightning: when it appears inside an unrelated string', async () => {
       const { parseInvoice } = await import('./invoices');
       const result = await parseInvoice(`not-a-prefix-lightning:${VALID_BOLT11}`);
@@ -245,6 +288,19 @@ describe('parseInvoice', () => {
       expect(result.isLNURL).toBe(false);
       expect(result.data).toBeDefined();
       expect(result.data.satoshis).toBe(1000);
+    });
+
+    it.each([
+      ['testnet/testnet4', 'lntb1pjtestnet', 'testnet'],
+      ['signet', 'lntbs1pjsignet', 'signet'],
+      ['regtest', 'lnbcrt1pjregtest', 'regtest'],
+    ])('handles raw BOLT11 %s invoice strings', async (_, invoice, coinType) => {
+      const { parseInvoice } = await import('./invoices');
+      const result = await parseInvoice(invoice);
+
+      expect(result.isLNURL).toBe(false);
+      expect(result.data).toBeDefined();
+      expect(result.data.coinType).toBe(coinType);
     });
   });
 

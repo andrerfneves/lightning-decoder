@@ -8,20 +8,28 @@ import * as bitcoinjsAddress from 'bitcoinjs-lib/src/address'
 import cloneDeep from 'lodash/cloneDeep'
 import coininfo from 'coininfo'
 
-const BITCOINJS_NETWORK_INFO = {
-  bitcoin: coininfo.bitcoin.main.toBitcoinJS(),
-  testnet: coininfo.bitcoin.test.toBitcoinJS(),
-  regtest: coininfo.bitcoin.regtest.toBitcoinJS(),
-  simnet: coininfo.bitcoin.regtest.toBitcoinJS(),
-  litecoin: coininfo.litecoin.main.toBitcoinJS(),
-  litecoin_testnet: coininfo.litecoin.test.toBitcoinJS()
+function createBitcoinJSNetwork (network, invoiceBech32, addressBech32) {
+  return {
+    ...network,
+    bech32: invoiceBech32,
+    addressBech32: addressBech32 || invoiceBech32
+  }
 }
-BITCOINJS_NETWORK_INFO.bitcoin.bech32 = 'bc'
-BITCOINJS_NETWORK_INFO.testnet.bech32 = 'tb'
-BITCOINJS_NETWORK_INFO.regtest.bech32 = 'bcrt'
-BITCOINJS_NETWORK_INFO.simnet.bech32 = 'sb'
-BITCOINJS_NETWORK_INFO.litecoin.bech32 = 'ltc'
-BITCOINJS_NETWORK_INFO.litecoin_testnet.bech32 = 'tltc'
+
+function getAddressBech32 (network) {
+  return network.addressBech32 || network.bech32
+}
+
+const BITCOINJS_NETWORK_INFO = {
+  bitcoin: createBitcoinJSNetwork(coininfo.bitcoin.main.toBitcoinJS(), 'bc'),
+  testnet: createBitcoinJSNetwork(coininfo.bitcoin.test.toBitcoinJS(), 'tb'),
+  testnet4: createBitcoinJSNetwork(coininfo.bitcoin.test.toBitcoinJS(), 'tb'),
+  signet: createBitcoinJSNetwork(coininfo.bitcoin.test.toBitcoinJS(), 'tbs', 'tb'),
+  regtest: createBitcoinJSNetwork(coininfo.bitcoin.regtest.toBitcoinJS(), 'bcrt'),
+  simnet: createBitcoinJSNetwork(coininfo.bitcoin.regtest.toBitcoinJS(), 'sb'),
+  litecoin: createBitcoinJSNetwork(coininfo.litecoin.main.toBitcoinJS(), 'ltc'),
+  litecoin_testnet: createBitcoinJSNetwork(coininfo.litecoin.test.toBitcoinJS(), 'tltc')
+}
 
 // defaults for encode; default timestamp is current time at call
 const DEFAULTNETWORKSTRING = 'main'
@@ -35,6 +43,7 @@ const VALIDWITNESSVERSIONS = [0]
 const BECH32CODES = {
   bc: 'bitcoin',
   tb: 'testnet',
+  tbs: 'signet',
   bcrt: 'regtest',
   sb: 'simnet',
   ltc: 'litecoin',
@@ -205,7 +214,7 @@ function fallbackAddressParser (words, network) {
       address = bitcoinjsAddress.toBase58Check(addressHash, network.scriptHash)
       break
     case 0:
-      address = bitcoinjsAddress.toBech32(addressHash, version, network.bech32)
+      address = bitcoinjsAddress.toBech32(addressHash, version, getAddressBech32(network))
       break
   }
 
@@ -562,7 +571,7 @@ function encode (inputData, addDefaults) {
       if (bech32addr && !(bech32addr.version in VALIDWITNESSVERSIONS)) {
         throw new Error('Fallback address witness version is unknown')
       }
-      if (bech32addr && bech32addr.prefix !== coinTypeObj.bech32) {
+      if (bech32addr && bech32addr.prefix !== getAddressBech32(coinTypeObj)) {
         throw new Error('Fallback address network type does not match payment request network type')
       }
       if (base58addr && base58addr.version !== coinTypeObj.pubKeyHash &&
