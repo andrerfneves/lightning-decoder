@@ -26,10 +26,15 @@ function App() {
 
   // Check URL for invoice on mount
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const queryInvoice = urlParams.get('q')
     const pathInvoice = window.location.pathname.slice(1) // Remove leading slash
-    if (pathInvoice) {
-      setInputValue(pathInvoice)
-      handleDecode(pathInvoice)
+    
+    const invoiceToLoad = queryInvoice || pathInvoice
+    
+    if (invoiceToLoad) {
+      setInputValue(invoiceToLoad)
+      handleDecode(invoiceToLoad)
     }
   }, [])
 
@@ -73,8 +78,8 @@ function App() {
 
       setInvoiceData(result.data)
       
-      // Update URL
-      window.history.pushState({}, "", `/${invoiceToDecode}`)
+      // Update URL - prefer ?q= parameter, but also support / path for backwards compatibility
+      window.history.pushState({}, "", `/?q=${encodeURIComponent(invoiceToDecode)}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred while decoding")
     } finally {
