@@ -20,7 +20,6 @@
     "crypto-browserify": "^3.12.1",
     "date-fns": "^2.1.0",
     "events": "^3.3.0",
-    "lodash": "^4.17.15",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "safe-buffer": "^5.2.0",
