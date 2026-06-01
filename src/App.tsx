@@ -113,14 +113,12 @@ function App() {
   const shouldShiftUp = isLoading || !!error || !!invoiceData
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center overflow-hidden">
       <motion.div
-        className="container mx-auto px-4 pb-8 max-w-4xl"
-        initial={{
-          paddingTop: shouldShiftUp ? "2rem" : "20vh",
-        }}
+        className="container mx-auto px-4 pb-8 max-w-4xl w-full"
+        initial={false}
         animate={{
-          paddingTop: shouldShiftUp ? "2rem" : "20vh",
+          y: shouldShiftUp ? "-20vh" : "0px",
         }}
         transition={{
           type: "spring",
