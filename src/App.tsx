@@ -6,7 +6,7 @@ import { InvoiceDetails } from "./components/invoice-details"
 import { ErrorDisplay } from "./components/error-display"
 import { PaymentHashVerifier } from "./components/payment-hash-verifier"
 import { parseInvoice } from "./utils/invoices"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion"
 
 function App() {
   const [inputValue, setInputValue] = useState("")
@@ -16,21 +16,28 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [qrScannerOpen, setQrScannerOpen] = useState(false)
   const [currentView, setCurrentView] = useState<"home" | "payment-hash-verifier">("home")
+  const [shouldLiftContent, setShouldLiftContent] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Check URL for invoice on mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
-    const queryInvoice = urlParams.get('q')
+    const queryInvoice = urlParams.get("q")
     const pathInvoice = window.location.pathname.slice(1) // Remove leading slash
-    
+
     const invoiceToLoad = queryInvoice || pathInvoice
-    
+
     if (invoiceToLoad) {
       setInputValue(invoiceToLoad)
       handleDecode(invoiceToLoad)
     }
   }, [])
+
+  useEffect(() => {
+    if (currentView !== "home") {
+      setShouldLiftContent(false)
+    }
+  }, [currentView])
 
   const handleDecode = async (value?: string) => {
     const invoiceToDecode = value || inputValue
@@ -46,7 +53,7 @@ function App() {
 
     try {
       const result = await parseInvoice(invoiceToDecode)
-      
+
       if (result.error) {
         setError(result.error)
         return
@@ -71,7 +78,7 @@ function App() {
       }
 
       setInvoiceData(result.data)
-      
+
       // Update URL - prefer ?q= parameter, but also support / path for backwards compatibility
       window.history.pushState({}, "", `/?q=${encodeURIComponent(invoiceToDecode)}`)
     } catch (err) {
@@ -111,7 +118,6 @@ function App() {
   }
 
   const hasActiveContent = isLoading || !!error || !!invoiceData
-  const [shouldLiftContent, setShouldLiftContent] = useState(false)
 
   useEffect(() => {
     if (hasActiveContent) {
@@ -120,103 +126,96 @@ function App() {
   }, [hasActiveContent])
 
   return (
-    <div className="min-h-screen bg-background flex items-center">
-      <motion.div
-        className="container mx-auto px-4 pb-8 max-w-4xl w-full"
-        initial={false}
-        animate={{
-          y: shouldLiftContent ? "-8vh" : "0px",
-        }}
-        transition={{
-          type: "tween",
-          duration: 0.28,
-          ease: "easeInOut",
-        }}
-      >
-        <motion.div layout className="space-y-4">
-          <Header
-            onNavigateToVerifier={handleNavigateToVerifier}
-            onOpenQRScanner={handleOpenQRScanner}
-          />
-        </motion.div>
-
-        <AnimatePresence mode="wait">
+    <div className="min-h-screen bg-background">
+      <LayoutGroup>
+        <AnimatePresence mode="wait" initial={false}>
           {currentView === "home" ? (
-            <motion.div
+            <motion.main
               key="home-view"
-              className="space-y-6"
-              initial={{ opacity: 0.85, y: shouldLiftContent ? -10 : 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
+              className="container mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center px-4 py-8"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{
+                opacity: 1,
+                y: shouldLiftContent ? "-4vh" : "0px",
+              }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
-              <SearchInput
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onSubmit={invoiceData ? handleClear : () => handleDecode()}
-                isLoading={isLoading}
-                hasResult={!!invoiceData}
-                placeholder="Enter invoice or address"
-                className="w-full"
-                autoFocus
+              <Header
+                onNavigateToVerifier={handleNavigateToVerifier}
+                onOpenQRScanner={handleOpenQRScanner}
               />
 
-              <AnimatePresence
-                mode="wait"
-                onExitComplete={() => {
-                  if (!hasActiveContent) {
-                    setShouldLiftContent(false)
-                  }
-                }}
-              >
-                {error && (
-                  <motion.div
-                    key="error"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
-                    layout
-                  >
-                    <ErrorDisplay message={error} />
-                  </motion.div>
-                )}
+              <div className="mt-6 space-y-6">
+                <SearchInput
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onSubmit={invoiceData ? handleClear : () => handleDecode()}
+                  isLoading={isLoading}
+                  hasResult={!!invoiceData}
+                  placeholder="Enter invoice or address"
+                  className="w-full"
+                  autoFocus
+                />
 
-                {invoiceData && invoiceType && (
-                  <motion.div
-                    key="invoice"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
-                    layout
-                  >
-                    <InvoiceDetails type={invoiceType} data={invoiceData} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+                <AnimatePresence
+                  mode="popLayout"
+                  initial={false}
+                  onExitComplete={() => {
+                    if (!hasActiveContent) {
+                      setShouldLiftContent(false)
+                    }
+                  }}
+                >
+                  {error && (
+                    <motion.div
+                      key="error"
+                      layout
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                    >
+                      <ErrorDisplay message={error} />
+                    </motion.div>
+                  )}
+
+                  {invoiceData && invoiceType && (
+                    <motion.div
+                      key="invoice"
+                      layout
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                    >
+                      <InvoiceDetails type={invoiceType} data={invoiceData} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.main>
           ) : (
-            <motion.div
+            <motion.main
               key="verifier-view"
-              className="space-y-6"
-              initial={{ opacity: 0.85, y: 8 }}
+              className="container mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center px-4 py-8"
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
               <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
-            </motion.div>
+            </motion.main>
           )}
         </AnimatePresence>
+      </LayoutGroup>
 
-        <QRScanner
-          open={qrScannerOpen}
-          onOpenChange={setQrScannerOpen}
-          onScan={handleQRScan}
-        />
-      </motion.div>
+      <QRScanner
+        open={qrScannerOpen}
+        onOpenChange={setQrScannerOpen}
+        onScan={handleQRScan}
+      />
     </div>
   )
 }
