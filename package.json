@@ -43,6 +43,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
     "deploy": "npm run build && vercel --prod",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
