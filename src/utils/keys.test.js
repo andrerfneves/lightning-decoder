@@ -33,7 +33,7 @@ describe('formatDetailsKey', () => {
       { key: 'words', expected: 'Tag Words' },
       { key: 'cltv_expiry_delta', expected: 'CLTV Expiry Delta' },
       { key: 'fee_base_msat', expected: 'Fee Base (millisats)' },
-      { key: 'fee_proportional_millionths', expected: 'Tag Words' },
+      { key: 'fee_proportional_millionths', expected: 'Fee Proportional (millionths)' },
       { key: 'pubkey', expected: 'Public Key' },
       { key: 'short_channel_id', expected: 'Short Channel ID' },
       { key: 'callback', expected: 'Callback URL' },

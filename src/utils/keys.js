@@ -136,7 +136,7 @@ export const formatDetailsKey = (key) => {
     case FEE_BASE_MSAT_KEY:
       return 'Fee Base (millisats)';
     case FEE_PROPORTIONAL_KEY:
-      return 'Tag Words';
+      return 'Fee Proportional (millionths)';
     case PUBKEY_KEY:
       return 'Public Key';
     case SHORT_CHANNEL_KEY:
