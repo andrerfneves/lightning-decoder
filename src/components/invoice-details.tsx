@@ -30,7 +30,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "./ui/sheet"
-import { formatDetailsKey } from "../utils/keys"
+import { formatDetailsKey, humanizeKey } from "../utils/keys"
 import { Check, Copy, ExternalLink, Info } from "lucide-react"
 
 export interface InvoiceDetailsProps {
@@ -176,16 +176,9 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
     }
   }
 
-  const humanizeNestedKey = (key: string) => key
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/\w\S*/g, word => word.charAt(0).toUpperCase() + word.slice(1))
-
   const getDisplayKey = (key: string) => {
     if (key.startsWith("payerData.")) {
-      return `Payer Data ${humanizeNestedKey(key.replace("payerData.", ""))}`
+      return `Payer Data ${humanizeKey(key.replace("payerData.", ""))}`
     }
 
     if (key === "amount") {
@@ -416,7 +409,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
         <div className="space-y-1">
           {Object.entries(value).map(([nestedKey, nestedValue]) => (
             <div key={nestedKey} className="flex items-center justify-between gap-3 text-xs">
-              <span className="text-muted-foreground">{humanizeNestedKey(nestedKey)}</span>
+              <span className="text-muted-foreground">{humanizeKey(nestedKey)}</span>
               <span className="text-right">{renderPayerDataFieldValue(nestedValue)}</span>
             </div>
           ))}
