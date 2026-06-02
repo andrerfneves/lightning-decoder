@@ -5,7 +5,17 @@ import secp256k1 from 'secp256k1'
 import { Buffer } from 'buffer'
 import BN from 'bn.js'
 import * as bitcoinjsAddress from 'bitcoinjs-lib/src/address'
-import cloneDeep from 'lodash/cloneDeep'
+function cloneDeep (obj) {
+  if (obj === null || typeof obj !== 'object') return obj
+  if (Array.isArray(obj)) return obj.map(cloneDeep)
+  const cloned = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      cloned[key] = cloneDeep(obj[key])
+    }
+  }
+  return cloned
+}
 import coininfo from 'coininfo'
 
 function createBitcoinJSNetwork (network, invoiceBech32, addressBech32) {
