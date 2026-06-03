@@ -1,4 +1,4 @@
 export const validateInternetIdentifier = (internetIdentifier) => {
-    var re = /\S+@\S+\.\S+/;
+    var re = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)*\.[^\s@.]+$/;
     return re.test(internetIdentifier);
 }

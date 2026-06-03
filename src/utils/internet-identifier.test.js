@@ -19,5 +19,7 @@ describe('validateInternetIdentifier', () => {
     expect(validateInternetIdentifier('user@.com')).toBe(false);
     expect(validateInternetIdentifier('LNURL1...')).toBe(false);
     expect(validateInternetIdentifier('lnbc1...')).toBe(false);
+    expect(validateInternetIdentifier('user@@domain.com')).toBe(false);
+    expect(validateInternetIdentifier('user@domain..com')).toBe(false);
   });
 });
