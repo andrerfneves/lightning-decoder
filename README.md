@@ -31,7 +31,7 @@ A modern, developer-focused utility for parsing and understanding Lightning Netw
 - **Component Library** — Built with shadcn/ui components, fully customizable
 - **Storybook Documentation** — Interactive component documentation with live examples
 - **Type Safety** — Full TypeScript support across the codebase
-- **Comprehensive Testing** — 33 tests covering all invoice types and edge cases
+- **Comprehensive Testing** — 52 tests covering all invoice types and edge cases
 - **Modern Architecture** — Modular component design with clear separation of concerns
 
 ## 🚀 Quick Start
@@ -140,15 +140,9 @@ src/
 ```bash
 # Run all tests
 npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage
-npm run test:coverage
 ```
 
-Current coverage: **33 tests** across 5 test suites
+Current test suite: **52 tests** across 8 test suites
 
 - Invoice parsing (BOLT11, LNURL, BOLT12)
 - Lightning Address validation
