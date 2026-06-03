@@ -5,7 +5,6 @@ import secp256k1 from 'secp256k1'
 import { Buffer } from 'buffer'
 import BN from 'bn.js'
 import * as bitcoinjsAddress from 'bitcoinjs-lib/src/address'
-import cloneDeep from 'lodash/cloneDeep'
 import coininfo from 'coininfo'
 
 function createBitcoinJSNetwork (network, invoiceBech32, addressBech32) {
@@ -383,7 +382,7 @@ function hrpToMillisat (hrpString, outputString) {
 }
 
 function sign (inputPayReqObj, inputPrivateKey) {
-  let payReqObj = cloneDeep(inputPayReqObj)
+  let payReqObj = structuredClone(inputPayReqObj)
   let privateKey = hexToBuffer(inputPrivateKey)
   if (payReqObj.complete && payReqObj.paymentRequest) return payReqObj
 
@@ -458,7 +457,7 @@ function sign (inputPayReqObj, inputPrivateKey) {
 */
 function encode (inputData, addDefaults) {
   // we don't want to affect the data being passed in, so we copy the object
-  let data = cloneDeep(inputData)
+  let data = structuredClone(inputData)
 
   // by default we will add default values to description, expire time, and min cltv
   if (addDefaults === undefined) addDefaults = true
