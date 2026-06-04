@@ -24,7 +24,6 @@ export const EXPIRY_HTLC = 'expiry_htlc';
 export const MIN_FINAL_CLTV_EXPIRY = 'min_final_cltv_expiry';
 export const TIME_EXPIRE_DATE_STRING = 'timeExpireDateString';
 export const TIME_EXPIRE_DATE = 'timeExpireDate';
-export const timeExpireDate = 'min_final_cltv_expiry';
 export const UNKNOWN_TAG_KEY = 'unknownTag';
 export const ROUTING_INFO_KEY = 'routing_info';
 export const TAG_CODE_KEY = 'tagCode';
