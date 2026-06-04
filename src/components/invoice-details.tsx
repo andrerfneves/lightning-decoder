@@ -554,7 +554,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
       }
 
       if (key === "payeeNodeKey") {
-        return renderUrlValue(`https://amboss.space/${value}`, value)
+        return renderUrlValue(`https://amboss.space/node/${value}`, value)
       }
 
       if (key === "paymentRequest") {
