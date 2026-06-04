@@ -117,6 +117,8 @@ src/
 │   ├── error-display.tsx      # Error/warning callout component
 │   └── theme-provider.tsx     # Theme context provider
 ├── lib/
+│   ├── bolt11.js              # BOLT11 invoice encode/decode
+│   ├── bolt11-networks.test.js # BOLT11 network tests
 │   └── utils.ts               # Utility functions (cn helper)
 ├── utils/
 │   ├── app-routes.ts          # Reserved route and invoice URL helpers
@@ -167,7 +169,7 @@ npm run build
 npm run preview
 ```
 
-Output is generated in the `dist/` directory.
+Output is generated in the `build/` directory.
 
 ## 🎨 Theming
 
