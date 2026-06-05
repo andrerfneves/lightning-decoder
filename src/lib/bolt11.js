@@ -166,7 +166,7 @@ function convert (data, inBits, outBits) {
 }
 
 function wordsToBuffer (words, trim) {
-  let buffer = Buffer.from(convert(words, 5, 8, true))
+  let buffer = Buffer.from(convert(words, 5, 8))
   if (trim && words.length * 5 % 8 !== 0) {
     buffer = buffer.slice(0, -1)
   }
