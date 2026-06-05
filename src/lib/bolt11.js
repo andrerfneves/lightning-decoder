@@ -751,7 +751,7 @@ function decode (paymentRequest, network) {
   let recoveryFlag = sigBuffer.slice(-1)[0]
   sigBuffer = sigBuffer.slice(0, -1)
 
-  if (!(recoveryFlag in [0, 1, 2, 3]) || sigBuffer.length !== 64) {
+  if (recoveryFlag < 0 || recoveryFlag > 3 || sigBuffer.length !== 64) {
     throw new Error('Signature is missing or incorrect')
   }
 
