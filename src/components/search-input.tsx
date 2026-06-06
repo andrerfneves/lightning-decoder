@@ -12,8 +12,8 @@ export interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputEle
 }
 
 const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ className, onDecode, onSubmit, isLoading, hasResult, onKeyPress, ...props }, ref) => {
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  ({ className, onDecode, onSubmit, isLoading, hasResult, onKeyDown, ...props }, ref) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         if (onSubmit) {
           onSubmit()
@@ -21,7 +21,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           onDecode()
         }
       }
-      onKeyPress?.(e)
+      onKeyDown?.(e)
     }
 
     const handleClick = () => {
@@ -41,7 +41,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         <Input
           ref={ref}
           className="pr-14"
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           {...props}
         />
         <Button
