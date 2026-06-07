@@ -26,15 +26,12 @@
     "clsx": "^2.1.1",
     "coininfo": "git+https://github.com/cryptocoinjs/coininfo.git#dc3e6cc59e593ee7dbeb7c993485706e72d32743",
     "crypto-browserify": "^3.12.1",
-    "events": "^3.3.0",
     "framer-motion": "^12.40.0",
     "lodash": "^4.17.15",
     "lucide-react": "^1.17.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "safe-buffer": "^5.2.0",
     "secp256k1": "^3.8.1",
-    "stream-browserify": "^3.0.0",
     "tailwind-merge": "^3.6.0"
   },
   "scripts": {
