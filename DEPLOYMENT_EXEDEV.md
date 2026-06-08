@@ -35,21 +35,29 @@ npm install
 
 ### 3. Configure Vite for exe.dev
 
-Update `vite.config.ts` to allow requests from your exe.dev hostname:
+Update `vite.config.js` to allow requests from your exe.dev hostname:
 
-```typescript
+```javascript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: { Buffer: true, global: true, process: true },
+      include: ['buffer', 'crypto', 'events', 'process', 'stream', 'util', 'vm'],
+    }),
+  ],
   server: {
     host: '0.0.0.0',
-    port: 5173,
     allowedHosts: ['lightning-decoder.exe.xyz'],
   },
 });
 ```
+
+> **Note**: The Node.js polyfills plugin is essential — the decoder uses `Buffer`, `crypto`, and other Node.js built-ins internally. Without it, the app will fail at runtime with `Buffer is not defined` errors.
 
 ### 4. Run Development Server
 
