@@ -106,26 +106,35 @@ Storybook will be available at `http://localhost:6006`.
 ```
 src/
 ├── components/
-│   ├── ui/                    # shadcn/ui base components
+│   ├── ui/                         # shadcn/ui base components
 │   │   ├── button.tsx
 │   │   ├── input.tsx
 │   │   ├── card.tsx
 │   │   └── ...
-│   ├── header.tsx             # App header with theme toggle
-│   ├── search-input.tsx       # Invoice/address input
-│   ├── invoice-details.tsx    # Decoded invoice display
-│   ├── error-display.tsx      # Error/warning callout component
-│   └── theme-provider.tsx     # Theme context provider
+│   ├── header.tsx                  # App header with theme toggle & menu
+│   ├── search-input.tsx            # Invoice/address input
+│   ├── invoice-details.tsx         # Decoded invoice display
+│   ├── error-display.tsx           # Error/warning callout component
+│   ├── payment-hash-verifier.tsx   # Payment hash verification tool
+│   ├── qr-scanner.tsx              # QR code scanner modal
+│   ├── theme-provider.tsx          # Theme context provider
+│   ├── *.stories.tsx               # Storybook stories for each component
+│   └── *.test.tsx                  # Component unit tests
+├── constants/
+│   └── keys.js                     # Shared BOLT11/LNURL/BOLT12 key constants
 ├── lib/
-│   ├── bolt11.js              # BOLT11 invoice encode/decode
-│   ├── bolt11-networks.test.js # BOLT11 network tests
-│   └── utils.ts               # Utility functions (cn helper)
+│   ├── bolt11.js                   # BOLT11 invoice encode/decode
+│   ├── bolt11-networks.test.js     # BOLT11 network tests
+│   └── utils.ts                    # Utility functions (cn helper)
 ├── utils/
-│   ├── app-routes.ts          # Reserved route and invoice URL helpers
-│   ├── invoices.js            # Invoice parsing logic
-│   ├── internet-identifier.js # Lightning Address validation
-│   └── keys.js                # Key formatting utilities
-└── app.tsx                    # Main application component
+│   ├── app-routes.ts               # Reserved route and invoice URL helpers
+│   ├── invoices.js                 # Invoice parsing logic
+│   ├── internet-identifier.js      # Lightning Address validation
+│   ├── keys.js                     # Key formatting utilities
+│   └── *.test.js                   # Utility function unit tests
+├── app.tsx                         # Main application component
+├── main.tsx                        # React DOM entry point
+└── index.css                       # Tailwind CSS imports and theme variables
 ```
 
 ### Key Libraries
