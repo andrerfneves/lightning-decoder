@@ -5,7 +5,6 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 export default defineConfig({
   server: {
     host: '0.0.0.0',
-    allowedHosts: ['hermes-an.exe.xyz'],
   },
   plugins: [
     react(),
