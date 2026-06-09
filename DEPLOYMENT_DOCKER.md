@@ -203,8 +203,10 @@ USER appuser
 2. **Scan for vulnerabilities**:
 
 ```bash
-docker scan lightning-decoder
+docker scout quickview lightning-decoder
 ```
+
+> **Note**: `docker scan` has been replaced by `docker scout`. If you have an older Docker version, upgrade or visit [docker scout docs](https://docs.docker.com/scout/) for alternative installation instructions.
 
 3. **Use specific image tags**:
 
