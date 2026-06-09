@@ -100,10 +100,7 @@ const handleLNURL = (invoice) => {
       return r.json();
     })
     .catch(error => {
-      if (error.message && error.message.includes('NetworkError')) {
-        return Promise.reject(new Error('Network error: Could not reach LNURL service. It may be offline or blocked by CORS.'));
-      }
-      if (error.message && error.message.includes('Failed to fetch')) {
+      if (error.message && (error.message.includes('NetworkError') || error.message.includes('Failed to fetch'))) {
         return Promise.reject(new Error('Network error: Could not reach LNURL service. It may be offline or blocked by CORS.'));
       }
       if (error.message && error.message.includes('JSON')) {
