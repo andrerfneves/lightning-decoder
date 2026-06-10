@@ -58,16 +58,16 @@ Since Lightning Decoder is a static site built with Vite, it can be deployed to 
 npm run build
 ```
 
-This creates a `dist/` folder with the production build.
+This creates a `build/` folder with the production build.
 
-### Deploy the dist folder
+### Deploy the build folder
 
-Upload the contents of `dist/` to your hosting provider:
+Upload the contents of `build/` to your hosting provider:
 
-- **Netlify**: Drag and drop the `dist/` folder to Netlify's deploy interface
-- **GitHub Pages**: Push the `dist/` contents to a `gh-pages` branch
-- **Cloudflare Pages**: Connect your repository and set the build command to `npm run build` with output directory `dist`
-- **AWS S3 + CloudFront**: Upload `dist/` to an S3 bucket and configure CloudFront for CDN delivery
+- **Netlify**: Drag and drop the `build/` folder to Netlify's deploy interface
+- **GitHub Pages**: Push the `build/` contents to a `gh-pages` branch
+- **Cloudflare Pages**: Connect your repository and set the build command to `npm run build` with output directory `build`
+- **AWS S3 + CloudFront**: Upload `build/` to an S3 bucket and configure CloudFront for CDN delivery
 
 ### Environment Variables
 
@@ -106,7 +106,7 @@ Run the test suite with Vitest.
 npm run build
 ```
 
-The optimized production build will be in the `dist/` folder.
+The optimized production build will be in the `build/` folder.
 
 ## Troubleshooting
 
