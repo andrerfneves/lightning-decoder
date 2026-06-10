@@ -41,13 +41,13 @@ services:
 Run with:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Stop with:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Production Deployment
