@@ -28,8 +28,6 @@ The application will be available at `http://localhost:8080`
 For easier management, create a `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
-
 services:
   lightning-decoder:
     build: .
@@ -57,8 +55,6 @@ docker-compose down
 Use a reverse proxy like nginx or Traefik to handle SSL:
 
 ```yaml
-version: '3.8'
-
 services:
   lightning-decoder:
     build: .
