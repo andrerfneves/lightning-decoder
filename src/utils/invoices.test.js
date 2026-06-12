@@ -97,7 +97,7 @@ describe('parseInvoice', () => {
 
       expect(result).toEqual({
         data: null,
-        error: 'This identifier does not support Lightning Address yet.',
+        error: 'Not found',
         isLNURL: false,
         isLNAddress: true,
       });

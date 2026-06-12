@@ -156,10 +156,10 @@ const handleLightningAddress = (internetIdentifier) => {
         username,
       },
     }
-  }).catch(_ => {
+  }).catch(error => {
     return {
       success: false,
-      message: 'This identifier does not support Lightning Address yet.',
+      message: error.message || 'Could not resolve Lightning Address.',
     };
   });
 };
