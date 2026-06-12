@@ -54,7 +54,7 @@ describe("InvoiceDetails", () => {
     )
 
     expect(html).toContain(">Bitcoin<")
-    expect(html).toContain(`href="https://amboss.space/${bolt11Data.payeeNodeKey}"`)
+    expect(html).toContain(`href="https://amboss.space/node/${bolt11Data.payeeNodeKey}"`)
   })
 
   it("places unknown tags and words temp after regular detail rows", () => {
