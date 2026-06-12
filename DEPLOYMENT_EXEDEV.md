@@ -113,8 +113,8 @@ npm run build
 # Install a simple HTTP server
 npm install -g serve
 
-# Serve the dist directory
-serve -s dist -l 3000
+# Serve the build directory
+serve -s build -l 3000
 ```
 
 Accessible at: `https://lightning-decoder.exe.xyz:3000`

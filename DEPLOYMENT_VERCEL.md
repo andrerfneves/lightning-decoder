@@ -49,7 +49,7 @@ Create a `vercel.json` file in your project root for custom configuration:
 ```json
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "build",
   "devCommand": "npm run dev",
   "installCommand": "npm install"
 }
