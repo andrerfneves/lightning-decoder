@@ -35,7 +35,7 @@ npm install
 
 ### 3. Configure Vite for exe.dev
 
-Update `vite.config.ts` to allow requests from your exe.dev hostname:
+Update `vite.config.js` to allow requests from your exe.dev hostname:
 
 ```typescript
 import { defineConfig } from 'vite';
@@ -69,7 +69,7 @@ For production, build and serve the static files:
 # Build the app
 npm run build
 
-# Update vite.config.ts for preview server
+# Update vite.config.js for preview server
 # Add preview configuration:
 ```
 
@@ -269,7 +269,7 @@ netstat -tlnp | grep -E '5173|4173|80|3000'
 
 ### "Host not allowed" Error
 
-If you see this error, update `vite.config.ts`:
+If you see this error, update `vite.config.js`:
 
 ```typescript
 server: {
