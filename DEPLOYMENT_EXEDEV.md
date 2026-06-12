@@ -97,7 +97,7 @@ If you have Docker installed on your VM:
 
 ```bash
 # Build and run with Docker Compose
-docker-compose up -d
+docker compose up -d
 
 # The app will be available on port 80
 ```
@@ -234,7 +234,7 @@ npm run build
 pm2 restart lightning-decoder
 
 # Or restart Docker
-docker-compose restart
+docker compose restart
 ```
 
 ## Monitoring
@@ -246,7 +246,7 @@ docker-compose restart
 pm2 logs lightning-decoder
 
 # Docker logs
-docker-compose logs -f
+docker compose logs -f
 
 # System logs
 journalctl -u lightning-decoder
@@ -259,7 +259,7 @@ journalctl -u lightning-decoder
 pm2 status
 
 # Docker status
-docker-compose ps
+docker compose ps
 
 # Port availability
 netstat -tlnp | grep -E '5173|4173|80|3000'
