@@ -18,7 +18,6 @@ export const ADDRESS_KEY = 'address';
 export const ADDRESS_HASH_KEY = 'addressHash';
 export const DESCRIPTION_KEY = 'description';
 export const EXPIRE_TIME = 'expire_time';
-export const EXPIRY_HTLC = 'expiry_htlc';
 export const MIN_FINAL_CLTV_EXPIRY = 'min_final_cltv_expiry';
 export const TIME_EXPIRE_DATE_STRING = 'timeExpireDateString';
 export const TIME_EXPIRE_DATE = 'timeExpireDate';
