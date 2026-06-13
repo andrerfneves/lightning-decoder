@@ -5,7 +5,6 @@ import {
   PUBKEY_KEY,
   EXPIRE_TIME,
   ADDRESS_KEY,
-  EXPIRY_HTLC,
   SATOSHIS_KEY,
   TAG_CODE_KEY,
   CALLBACK_KEY,
@@ -113,8 +112,6 @@ export const formatDetailsKey = (key) => {
       return 'Code';
     case DESCRIPTION_KEY:
       return 'Description';
-    case EXPIRY_HTLC:
-      return 'Expiry CLTV';
     case TIME_EXPIRE_DATE_STRING:
       return 'Time Expire Date String';
     case TIME_EXPIRE_DATE:
