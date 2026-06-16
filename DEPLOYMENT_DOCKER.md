@@ -72,7 +72,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./ssl:/etc/nginx/ssl
     depends_on:
       - lightning-decoder
