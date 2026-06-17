@@ -42,18 +42,19 @@ This runs `npm run build && vercel --prod`.
 
 ## Configuration
 
-### vercel.json (Optional)
+### vercel.json
 
-Create a `vercel.json` file in your project root for custom configuration:
+The project includes a `vercel.json` with the following configuration:
 
 ```json
 {
+  "framework": "vite",
   "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install"
+  "outputDirectory": "build"
 }
 ```
+
+The `framework` field tells Vercel to use Vite-optimized settings. The `buildCommand` and `outputDirectory` fields ensure Vercel uses the correct build output path. If you need to add custom configuration (e.g., rewrites), merge them into the existing file rather than replacing it.
 
 ### Environment Variables
 
@@ -91,10 +92,13 @@ Check the build logs in your Vercel dashboard. Common issues:
 
 ### 404 errors on page refresh
 
-This is a common issue with single-page applications. Create a `vercel.json`:
+This is a common issue with single-page applications. Add the following rewrites to the project's existing `vercel.json`:
 
 ```json
 {
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
