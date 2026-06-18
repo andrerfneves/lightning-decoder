@@ -8,6 +8,9 @@
   },
   "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@fontsource/geist-mono": "^5.2.8",
     "@radix-ui/react-accordion": "^1.2.12",
