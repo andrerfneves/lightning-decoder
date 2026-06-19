@@ -142,6 +142,7 @@ src/
 - **bitcoinjs-lib** — BOLT11 invoice decoding
 - **bech32** — LNURL bech32 decoding
 - **bolt12-decoder** — BOLT12 offer/invoice parsing
+- **framer-motion** — Animation library for React, used for layout transitions and mount/unmount animations
 - **@radix-ui** — Accessible UI primitives
 - **lucide-react** — Beautiful icon set
 - **tailwind-merge** — Smart class merging
