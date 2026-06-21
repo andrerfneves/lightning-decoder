@@ -186,6 +186,9 @@ Typical size: ~25-30 MB
 Add health checks to your container:
 
 ```dockerfile
+# Install curl for health checks (nginx:alpine doesn't include it by default)
+RUN apk add --no-cache curl
+
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/ || exit 1
 ```
