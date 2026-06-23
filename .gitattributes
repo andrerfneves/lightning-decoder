@@ -1,0 +1,14 @@
+# Normalize line endings to LF for all text files
+* text=auto eol=lf
+
+# Binary files - declare as binary to prevent line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.webp binary
