@@ -68,6 +68,7 @@ services:
 
   nginx:
     image: nginx:alpine
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
