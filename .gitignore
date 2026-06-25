@@ -12,6 +12,8 @@
 
 # misc
 .DS_Store
+.agents
+.codex
 .env
 .env.local
 .env.development.local
