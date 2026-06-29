@@ -185,7 +185,7 @@ Output is generated in the `build/` directory.
 The application supports light and dark themes with system preference detection:
 
 ```tsx
-import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeProvider } from './components/theme-provider'
 
 <ThemeProvider defaultTheme="system" storageKey="ui-theme">
   <App />
