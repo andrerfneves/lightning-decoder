@@ -67,7 +67,7 @@ services:
       - web
 
   nginx:
-    image: nginx:alpine
+    image: nginx:1.25-alpine
     ports:
       - "80:80"
       - "443:443"
