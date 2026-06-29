@@ -142,9 +142,11 @@ src/
 - **bitcoinjs-lib** — BOLT11 invoice decoding
 - **bech32** — LNURL bech32 decoding
 - **bolt12-decoder** — BOLT12 offer/invoice parsing
+- **class-variance-authority** — Component variant system for shadcn/ui components
 - **@radix-ui** — Accessible UI primitives
 - **lucide-react** — Beautiful icon set
 - **tailwind-merge** — Smart class merging
+- **@yudiel/react-qr-scanner** — QR code scanning with device camera
 
 ## 🧪 Testing
 
