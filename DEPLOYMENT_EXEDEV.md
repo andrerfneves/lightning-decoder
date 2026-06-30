@@ -247,9 +247,6 @@ pm2 logs lightning-decoder
 
 # Docker logs
 docker compose logs -f
-
-# System logs
-journalctl -u lightning-decoder
 ```
 
 ### Check Status
