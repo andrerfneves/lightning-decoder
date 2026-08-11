@@ -245,7 +245,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: yourusername/lightning-decoder:latest
+          tags: yourusername/lightning-decoder:latest,yourusername/lightning-decoder:${{ github.sha }}
 ```
 
 ### GitLab CI
