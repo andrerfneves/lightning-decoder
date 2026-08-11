@@ -252,13 +252,14 @@ jobs:
 
 ```yaml
 docker-build:
-  image: docker:latest
+  image: docker:27.2.0
   services:
-    - docker:dind
+    - docker:27.2.0-dind
+  before_script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - docker build -t lightning-decoder .
-    - docker tag lightning-decoder registry.gitlab.com/yourusername/lightning-decoder:latest
-    - docker push registry.gitlab.com/yourusername/lightning-decoder:latest
+    - docker build -t yourusername/lightning-decoder:$CI_COMMIT_SHORT_SHA .
+    - docker push yourusername/lightning-decoder:$CI_COMMIT_SHORT_SHA
 ```
 
 ## Troubleshooting
