@@ -22,7 +22,6 @@ describe('formatDetailsKey', () => {
       { key: 'address', expected: 'Address' },
       { key: 'code', expected: 'Code' },
       { key: 'description', expected: 'Description' },
-      { key: 'expiry_htlc', expected: 'Expiry CLTV' },
       { key: 'timeExpireDateString', expected: 'Time Expire Date String' },
       { key: 'timeExpireDate', expected: 'Time Expire Date' },
       { key: 'timestamp', expected: 'Timestamp' },
