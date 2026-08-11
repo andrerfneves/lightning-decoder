@@ -139,10 +139,11 @@ src/
 
 ### Key Libraries
 
-- **bitcoinjs-lib** — BOLT11 invoice decoding
-- **bech32** — LNURL bech32 decoding
-- **bolt12-decoder** — BOLT12 offer/invoice parsing
+- **@fontsource/geist-mono** — Primary monospace font used throughout the app
 - **@radix-ui** — Accessible UI primitives
+- **bech32** — LNURL bech32 decoding
+- **bitcoinjs-lib** — BOLT11 invoice decoding
+- **bolt12-decoder** — BOLT12 offer/invoice parsing
 - **lucide-react** — Beautiful icon set
 - **tailwind-merge** — Smart class merging
 
