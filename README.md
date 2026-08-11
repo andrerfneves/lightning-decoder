@@ -164,8 +164,9 @@ Current test suite: **52 tests** across 8 test suites
 
 ### Quick Deploy
 
-- **[Vercel](./DEPLOYMENT_VERCEL.md)** — One-click deployment with automatic CI/CD
 - **[Docker](./DEPLOYMENT_DOCKER.md)** — Containerized deployment for any environment
+- **[exe.dev](./DEPLOYMENT_EXEDEV.md)** — Instant VMs with automatic HTTPS and zero configuration
+- **[Vercel](./DEPLOYMENT_VERCEL.md)** — One-click deployment with automatic CI/CD
 - **[Static Hosting](./DEPLOYMENT.md)** — Deploy to any static hosting service
 
 ### Build for Production
