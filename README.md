@@ -144,6 +144,7 @@ src/
 - **bolt12-decoder** — BOLT12 offer/invoice parsing
 - **@radix-ui** — Accessible UI primitives
 - **lucide-react** — Beautiful icon set
+- **clsx** — Conditional classname construction, used by the `cn()` utility throughout all components
 - **tailwind-merge** — Smart class merging
 
 ## 🧪 Testing
