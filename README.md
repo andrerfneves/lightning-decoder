@@ -107,10 +107,17 @@ Storybook will be available at `http://localhost:6006`.
 src/
 ├── components/
 │   ├── ui/                         # shadcn/ui base components
+│   │   ├── accordion.tsx
+│   │   ├── alert.tsx
+│   │   ├── badge.tsx
 │   │   ├── button.tsx
-│   │   ├── input.tsx
 │   │   ├── card.tsx
-│   │   └── ...
+│   │   ├── dialog.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── input.tsx
+│   │   ├── separator.tsx
+│   │   ├── sheet.tsx
+│   │   └── tooltip.tsx
 │   ├── header.tsx                  # App header with theme toggle & menu
 │   ├── search-input.tsx            # Invoice/address input
 │   ├── invoice-details.tsx         # Decoded invoice display
