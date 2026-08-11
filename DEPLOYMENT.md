@@ -73,67 +73,12 @@ Upload the contents of `build/` to your hosting provider:
 
 No environment variables are required for the base application. All Lightning Network decoding happens client-side.
 
-## Development
-
-### Local Development
-
-```bash
-npm install
-npm run dev
-```
-
-The app will be available at `http://localhost:5173`
-
-### Storybook
-
-```bash
-npm run storybook
-```
-
-Storybook will be available at `http://localhost:6006`
-
-### Testing
-
-```bash
-npm test
-```
-
-Run the test suite with Vitest.
-
 ## Build for Production
 
 ```bash
 npm run build
 ```
 
-The optimized production build will be in the `build/` folder.
+The optimized production build will be in the `build/` folder. All static hosting providers can serve this directory.
 
-## Troubleshooting
-
-### Build fails with dependency errors
-
-Make sure you're using Node.js 18 or higher:
-
-```bash
-node --version
-```
-
-If you need to upgrade Node.js, use a version manager like nvm.
-
-### Storybook not loading
-
-Clear the Storybook cache:
-
-```bash
-rm -rf node_modules/.cache/storybook
-npm run storybook
-```
-
-### Tests failing
-
-Make sure all dependencies are installed:
-
-```bash
-npm install
-npm test
-```
+> **Note**: See [README.md](./README.md) for development, testing, and troubleshooting instructions.
