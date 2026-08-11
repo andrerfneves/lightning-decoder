@@ -9,6 +9,7 @@
 # production
 /build
 /storybook-static
+/.vercel
 
 # misc
 .DS_Store
