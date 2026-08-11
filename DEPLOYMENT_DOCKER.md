@@ -105,7 +105,7 @@ spec:
     spec:
       containers:
       - name: lightning-decoder
-        image: lightning-decoder:latest
+        image: lightning-decoder:0.7.1  # Update to match your built image version
         ports:
         - containerPort: 80
         resources:
