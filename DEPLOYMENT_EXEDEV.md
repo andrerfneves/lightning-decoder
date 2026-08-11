@@ -40,9 +40,23 @@ Update `vite.config.js` to allow requests from your exe.dev hostname:
 ```typescript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: { Buffer: true, global: true, process: true },
+      include: ['buffer', 'crypto', 'events', 'process', 'stream', 'util', 'vm'],
+    }),
+  ],
+  build: {
+    outDir: 'build',
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,
