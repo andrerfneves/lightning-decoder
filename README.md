@@ -187,7 +187,7 @@ The application supports light and dark themes with system preference detection:
 ```tsx
 import { ThemeProvider } from '@/components/theme-provider'
 
-<ThemeProvider defaultTheme="system" storageKey="ui-theme">
+<ThemeProvider defaultTheme="system" storageKey="lightning-decoder-theme">
   <App />
 </ThemeProvider>
 ```
