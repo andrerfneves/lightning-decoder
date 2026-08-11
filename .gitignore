@@ -10,6 +10,10 @@
 /build
 /storybook-static
 
+# editor / ide
+/.agents
+/.codex
+
 # misc
 .DS_Store
 .env
